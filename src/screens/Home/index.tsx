@@ -1,5 +1,12 @@
-import React from 'react';
-import {Button, SafeAreaView} from 'react-native';
+import React, {useState} from 'react';
+import {
+  Button,
+  PermissionsAndroid,
+  Platform,
+  SafeAreaView,
+  Text,
+  View,
+} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {
   ImagePickerResponse,
@@ -7,12 +14,99 @@ import {
   launchCamera,
   // launchImageLibrary,
 } from 'react-native-image-picker';
+import Geolocation, {
+  requestAuthorization,
+} from 'react-native-geolocation-service';
 
 function Home() {
+  const [location, setLocation] = useState(false);
+  async function requestLocationPermissionA() {
+    if (Platform.OS === 'ios') {
+      const res = await Geolocation.requestAuthorization('whenInUse');
+      console.log('Res', res);
+      // Geolocation.requestAuthorization();
+      // IOS permission request does not offer a callback :/
+      // return null;
+    } else if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          return true;
+        } else {
+          return false;
+        }
+      } catch (err) {
+        console.warn(err.message);
+        return false;
+      }
+    }
+  }
+  const requestLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Geolocation Permission',
+          message: 'Can we access your location?',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      console.log('granted', granted);
+      if (granted === 'granted') {
+        console.log('You can use Geolocation');
+        return true;
+      } else {
+        console.log('You cannot use Geolocation');
+        return false;
+      }
+    } catch (err) {
+      return false;
+    }
+  };
+
+  const getLocation = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        console.log(position);
+        setLocation(position);
+      },
+      error => {
+        // See error code charts below.
+        console.log(error.code, error.message);
+        setLocation(false);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+
+    // const result = requestLocationPermissionA();
+    // result.then(res => {
+    //   console.log('res is:', res);
+    //   if (res) {
+    //     Geolocation.getCurrentPosition(
+    //       position => {
+    //         console.log(position);
+    //         setLocation(position);
+    //       },
+    //       error => {
+    //         // See error code charts below.
+    //         console.log(error.code, error.message);
+    //         setLocation(false);
+    //       },
+    //       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    //     );
+    //   }
+    // });
+    console.log(location);
+  };
+
   const handleSelectPicture = async () => {
     // dispatch(setPickerOpen(true));
     const options: CameraOptions = {
-      includeExtra: true,
+      // includeExtra: true,
       mediaType: 'photo',
       // title: '',
       // takePhotoButtonTitle: '写真を撮る',
@@ -57,7 +151,13 @@ function Home() {
   return (
     <SafeAreaView>
       <Button title="Log out" onPress={logOut} />
-      <Button title="Take photo" onPress={() => handleSelectPicture()} />
+      <Button title="Take phot" onPress={() => handleSelectPicture()} />
+      <View
+        style={{marginTop: 10, padding: 10, borderRadius: 10, width: '40%'}}>
+        <Button title="Get Location" onPress={getLocation} />
+      </View>
+      <Text>Latitude: </Text>
+      <Text>Longitude: </Text>
     </SafeAreaView>
   );
 }
