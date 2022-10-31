@@ -3,7 +3,7 @@ import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import {Button, SafeAreaView, Text} from 'react-native';
+import {Button, SafeAreaView} from 'react-native';
 import auth from '@react-native-firebase/auth';
 
 GoogleSignin.configure({
@@ -14,7 +14,57 @@ GoogleSignin.configure({
 });
 
 function Login() {
-  async function onGoogleButtonPress() {
+  const emailSignUp = async () => {
+    try {
+      await auth().createUserWithEmailAndPassword(
+        'jane.doe@example.com',
+        '12345qwerty',
+      );
+      console.log('User account created & signed in!');
+    } catch (error: any) {
+      if (error.code === 'auth/user-not-found') {
+        console.log(
+          'There is no user record corresponding to this identifier. The user may have been deleted.',
+        );
+      }
+      if (error.code === 'auth/email-already-in-use') {
+        console.log('That email address is already in use!');
+      }
+
+      if (error.code === 'auth/invalid-email') {
+        console.log('That email address is invalid!');
+      }
+
+      console.error(error);
+    }
+  };
+
+  const emailLogin = async () => {
+    try {
+      await auth().signInWithEmailAndPassword(
+        'jane.doe@example.com',
+        '12345qwerty',
+      );
+      console.log('User account signed in!');
+    } catch (error: any) {
+      if (error.code === 'auth/user-not-found') {
+        console.log(
+          'There is no user record corresponding to this identifier. The user may have been deleted.',
+        );
+      }
+      if (error.code === 'auth/email-already-in-use') {
+        console.log('That email address is already in use!');
+      }
+
+      if (error.code === 'auth/invalid-email') {
+        console.log('That email address is invalid!');
+      }
+
+      console.error(error);
+    }
+  };
+
+  const onGoogleButtonPress = async () => {
     try {
       // Check if your device supports Google Play
       await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
@@ -37,11 +87,11 @@ function Login() {
         // some other error happened
       }
     }
-  }
+  };
 
   return (
     <SafeAreaView>
-      <Text>Login</Text>
+      <Button title="Email Sign-In" onPress={() => emailLogin()} />
       <Button
         title="Google Sign-In"
         onPress={() =>
@@ -50,6 +100,7 @@ function Login() {
           )
         }
       />
+      <Button title="Sign Up with Email" onPress={() => emailSignUp()} />
     </SafeAreaView>
   );
 }

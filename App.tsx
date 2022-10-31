@@ -21,7 +21,8 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {NavigationContainer} from '@react-navigation/native';
 import {navigationRef} from './src/utils/RouteNavigation';
 import AuthStack from './src/stacks/Auth/AuthStack';
-import {View, Text, SafeAreaView} from 'react-native';
+import {Text, SafeAreaView} from 'react-native';
+import HomeStack from './src/stacks/Home/HomeStack';
 
 GoogleSignin.configure({
   webClientId:
@@ -50,18 +51,13 @@ const App = () => {
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <NavigationContainer ref={navigationRef}>
       {/* <SafeAreaView style={backgroundStyle}> */}
-      {!user ? (
-        <AuthStack />
-      ) : (
-        <SafeAreaView>
-          <Text>YOOO</Text>
-        </SafeAreaView>
-      )}
+      {!user ? <AuthStack /> : <HomeStack />}
       {/* </SafeAreaView> */}
     </NavigationContainer>
   );
