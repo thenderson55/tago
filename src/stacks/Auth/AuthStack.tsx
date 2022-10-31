@@ -17,9 +17,9 @@ function AuthStack() {
       initialRouteName="Login">
       <Stack.Screen
         name="Login"
-        options={{
-          header: () => null,
-        }}
+        // options={{
+        //   header: () => null,
+        // }}
         component={Login}
       />
       <Stack.Screen
