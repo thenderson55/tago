@@ -15,8 +15,13 @@ import {
   // launchImageLibrary,
 } from 'react-native-image-picker';
 import Geolocation from 'react-native-geolocation-service';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeParamList} from '../../stacks/Home/HomeParamList';
 
 function Home() {
+  const navigation: NativeStackNavigationProp<HomeParamList, 'Graph'> =
+    useNavigation();
   const [location, setLocation] = useState<string[]>();
 
   async function requestLocationPermission() {
@@ -127,6 +132,7 @@ function Home() {
       </View>
       <Text>Latitude: </Text>
       <Text>Longitude: </Text>
+      <Button title="Graph" onPress={() => navigation.navigate('Graph')} />
     </SafeAreaView>
   );
 }

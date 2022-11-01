@@ -2,10 +2,8 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {HomeParamList} from './HomeParamList';
 
-// import theme from "../../theme";
-import Login from '../../screens/Auth/Login';
-import SignUp from '../../screens/Auth/SignUp';
 import Home from '../../screens/Home';
+import Graph from '../../screens/Home/Graph';
 
 const Stack = createNativeStackNavigator<HomeParamList>();
 
@@ -22,6 +20,13 @@ function HomeStack() {
           header: () => null,
         }}
         component={Home}
+      />
+      <Stack.Screen
+        name="Graph"
+        options={{
+          header: () => null,
+        }}
+        component={Graph}
       />
     </Stack.Navigator>
   );

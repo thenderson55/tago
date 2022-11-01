@@ -9,6 +9,7 @@ import * as Yup from 'yup';
 import {Formik} from 'formik';
 import FormInput from '../../../components/AuthInputs/FormInput';
 import FormError from '../../../components/Erorrs/FormError';
+import theme from '../../../theme';
 
 GoogleSignin.configure({
   webClientId:
@@ -105,7 +106,7 @@ function Login() {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{padding: theme.margins.screen}}>
       <Formik
         initialValues={{
           email: '',

@@ -1,8 +1,6 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {AuthParamList} from './AuthParamList';
-
-// import theme from "../../theme";
 import Login from '../../screens/Auth/Login';
 import SignUp from '../../screens/Auth/SignUp';
 
@@ -10,16 +8,12 @@ const Stack = createNativeStackNavigator<AuthParamList>();
 
 function AuthStack() {
   return (
-    <Stack.Navigator
-      // screenOptions={{
-      //   header:() => null
-      // }}
-      initialRouteName="Login">
+    <Stack.Navigator initialRouteName="Login">
       <Stack.Screen
         name="Login"
-        // options={{
-        //   header: () => null,
-        // }}
+        options={{
+          header: () => null,
+        }}
         component={Login}
       />
       <Stack.Screen

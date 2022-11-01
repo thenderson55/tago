@@ -33,10 +33,10 @@ interface ThemeStyles {
     heading: number;
   };
   margins: {
-    page: number;
+    screen: number;
   };
   padding: {
-    screen: number;
+    input: number;
   };
   boxShadows: {
     light: BoxShadow;
@@ -68,7 +68,10 @@ const theme: ThemeStyles = {
     black: '#000',
   },
   margins: {
-    page: 20,
+    screen: 20,
+  },
+  padding: {
+    input: 20,
   },
   sizes: {
     formHeight: 50,
@@ -86,9 +89,6 @@ const theme: ThemeStyles = {
   lineHeights: {
     body: 1.5,
     heading: 1.125,
-  },
-  padding: {
-    screen: 20,
   },
   boxShadows: {
     light: {
