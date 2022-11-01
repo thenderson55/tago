@@ -21,7 +21,7 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {NavigationContainer} from '@react-navigation/native';
 import {navigationRef} from './src/utils/RouteNavigation';
 import AuthStack from './src/stacks/Auth/AuthStack';
-import {Text, SafeAreaView} from 'react-native';
+// import {Text, SafeAreaView} from 'react-native';
 import HomeStack from './src/stacks/Home/HomeStack';
 
 GoogleSignin.configure({

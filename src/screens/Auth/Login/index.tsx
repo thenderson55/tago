@@ -1,10 +1,14 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import {Button, SafeAreaView} from 'react-native';
+import {Button, SafeAreaView, View} from 'react-native';
 import auth from '@react-native-firebase/auth';
+import * as Yup from 'yup';
+import {Formik} from 'formik';
+import FormInput from '../../../components/AuthInputs/FormInput';
+import FormError from '../../../components/Erorrs/FormError';
 
 GoogleSignin.configure({
   webClientId:
@@ -13,7 +17,20 @@ GoogleSignin.configure({
   //   '969588173065-69otq7c42vr68uor6eqfjaj607nke2i6.apps.googleusercontent.com',
 });
 
+const validationSchema = Yup.object().shape({
+  email: Yup.string()
+    .email('Please enter email')
+    .required('Valid email address is required'),
+  password: Yup.string()
+    .min(6, 'Minimum 6')
+    .max(30, 'Maximun 30')
+    .required('Password is required'),
+});
+
 function Login() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [hidePassword, setHidePassword] = useState<boolean>(true);
+
   const emailSignUp = async () => {
     try {
       await auth().createUserWithEmailAndPassword(
@@ -39,13 +56,11 @@ function Login() {
     }
   };
 
-  const emailLogin = async () => {
+  const emailLogin = async (email: string, password: string) => {
     try {
-      await auth().signInWithEmailAndPassword(
-        'jane.doe@example.com',
-        '12345qwerty',
-      );
+      await auth().signInWithEmailAndPassword(email, password);
       console.log('User account signed in!');
+      setIsLoading(false);
     } catch (error: any) {
       if (error.code === 'auth/user-not-found') {
         console.log(
@@ -91,7 +106,61 @@ function Login() {
 
   return (
     <SafeAreaView>
-      <Button title="Email Sign-In" onPress={() => emailLogin()} />
+      <Formik
+        initialValues={{
+          email: '',
+          password: '',
+        }}
+        validationSchema={validationSchema}
+        onSubmit={values => {
+          const trimmedValues = {
+            email: values.email.trim(),
+            password: values.password.trim(),
+          };
+          setIsLoading(true);
+          emailLogin(trimmedValues.email, trimmedValues.password);
+        }}>
+        {({
+          values,
+          errors,
+          // touched,
+          handleChange,
+          handleBlur,
+          handleSubmit,
+        }) => (
+          <View>
+            <FormInput
+              onChangeText={handleChange('email')}
+              onBlur={handleBlur('email')}
+              value={values.email}
+              placeholder="例：tago@tago.com"
+              label="Email"
+            />
+            <FormError message={errors.email} />
+            <FormInput
+              hidePassword={hidePassword}
+              setHidePassword={setHidePassword}
+              password={true}
+              secureTextEntry={hidePassword}
+              onChangeText={handleChange('password')}
+              onBlur={handleBlur('password')}
+              value={values.password}
+              placeholder="例：1245678"
+              label="Password"
+            />
+            <FormError message={errors.password} />
+            <Button
+              onPress={() => handleSubmit()}
+              disabled={isLoading}
+              // spinner={isLoading}
+              title="Login"
+            />
+            {/* {isLoading ? <ActivityIndicator color={theme.black} /> : <>ログイン</>} */}
+          </View>
+        )}
+      </Formik>
+
+      {/* <Button title="Email Sign-In" onPress={() => emailLogin()} /> */}
       <Button
         title="Google Sign-In"
         onPress={() =>

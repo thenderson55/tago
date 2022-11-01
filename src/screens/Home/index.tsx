@@ -14,93 +14,60 @@ import {
   launchCamera,
   // launchImageLibrary,
 } from 'react-native-image-picker';
-import Geolocation, {
-  requestAuthorization,
-} from 'react-native-geolocation-service';
+import Geolocation from 'react-native-geolocation-service';
 
 function Home() {
-  const [location, setLocation] = useState(false);
-  async function requestLocationPermissionA() {
+  const [location, setLocation] = useState<string[]>();
+
+  async function requestLocationPermission() {
     if (Platform.OS === 'ios') {
       const res = await Geolocation.requestAuthorization('whenInUse');
       console.log('Res', res);
       // Geolocation.requestAuthorization();
       // IOS permission request does not offer a callback :/
-      // return null;
+      return null;
     } else if (Platform.OS === 'android') {
       try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Geolocation Permission',
+            message: 'Can we access your location?',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
         );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('granted', granted);
+        if (granted === 'granted') {
+          console.log('You can use Geolocation');
           return true;
         } else {
+          console.log('You cannot use Geolocation');
           return false;
         }
       } catch (err) {
-        console.warn(err.message);
+        console.warn(err);
         return false;
       }
     }
   }
-  const requestLocationPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Geolocation Permission',
-          message: 'Can we access your location?',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      console.log('granted', granted);
-      if (granted === 'granted') {
-        console.log('You can use Geolocation');
-        return true;
-      } else {
-        console.log('You cannot use Geolocation');
-        return false;
-      }
-    } catch (err) {
-      return false;
-    }
-  };
 
-  const getLocation = () => {
+  const getLocation = async () => {
+    await requestLocationPermission();
     Geolocation.getCurrentPosition(
-      position => {
-        console.log(position);
-        setLocation(position);
+      (position: any) => {
+        console.log({position});
+        setLocation([position.latitude, position.longitude]);
       },
       error => {
         // See error code charts below.
         console.log(error.code, error.message);
-        setLocation(false);
+        setLocation([]);
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
-
-    // const result = requestLocationPermissionA();
-    // result.then(res => {
-    //   console.log('res is:', res);
-    //   if (res) {
-    //     Geolocation.getCurrentPosition(
-    //       position => {
-    //         console.log(position);
-    //         setLocation(position);
-    //       },
-    //       error => {
-    //         // See error code charts below.
-    //         console.log(error.code, error.message);
-    //         setLocation(false);
-    //       },
-    //       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    //     );
-    //   }
-    // });
-    console.log(location);
+    console.log({location});
   };
 
   const handleSelectPicture = async () => {
@@ -133,7 +100,9 @@ function Home() {
         // dispatch(setPickerOpen(false));
       } else {
         console.log('Response:', response);
+
         console.log('Response Assets:', response.assets);
+        getLocation();
         // setImageResponse(response);
         // setModal(true);
       }
