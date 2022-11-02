@@ -8,8 +8,9 @@ import {
   Line,
   vec,
   Path,
+  useComputedValue,
 } from '@shopify/react-native-skia';
-import {DataPoint, originalData} from './data';
+import {animatedData, DataPoint, originalData} from './data';
 import {scaleLinear, scaleTime, curveBasis, line} from 'd3';
 import {Pressable, StyleSheet, Text, View, Easing} from 'react-native';
 import theme from '../../theme';
@@ -54,8 +55,6 @@ function Graph() {
     };
   };
 
-  const graphData = makeGraph(originalData);
-
   const transitionStart = (end: number) => {
     state.current = {
       current: end,
@@ -63,10 +62,19 @@ function Graph() {
     };
     transition.current = 0;
     runTiming(transition, 1, {
-      duration: 750,
+      duration: 500,
       easing: Easing.inOut(Easing.cubic),
     });
   };
+
+  const graphData = [makeGraph(originalData), makeGraph(animatedData)];
+
+  const path = useComputedValue(() => {
+    const start = graphData[state.current.current].curve;
+    const end = graphData[state.current.next].curve;
+    const result = start.interpolate(end, transition.current);
+    return result?.toSVGString() ?? '0';
+  }, [state, transition]);
 
   return (
     <View style={styles.container}>
@@ -89,12 +97,7 @@ function Graph() {
           p1={vec(10, 370)}
           p2={vec(400, 370)}
         />
-        <Path
-          style="stroke"
-          path={graphData.curve}
-          strokeWidth={4}
-          color="#6231ff"
-        />
+        <Path style="stroke" path={path} strokeWidth={4} color="#6231ff" />
       </Canvas>
       <View style={styles.buttonContainer}>
         <Pressable
