@@ -23,7 +23,6 @@ import {navigationRef} from './src/utils/RouteNavigation';
 import AuthStack from './src/stacks/Auth/AuthStack';
 // import {Text, SafeAreaView} from 'react-native';
 import HomeStack from './src/stacks/Home/HomeStack';
-import {SafeAreaView} from 'react-native';
 
 GoogleSignin.configure({
   webClientId:

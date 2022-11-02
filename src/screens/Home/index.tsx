@@ -63,7 +63,7 @@ function Home() {
     Geolocation.getCurrentPosition(
       (position: any) => {
         console.log({position});
-        setLocation([position.latitude, position.longitude]);
+        setLocation([position.coords.latitude, position.coords.longitude]);
       },
       error => {
         // See error code charts below.
@@ -72,7 +72,6 @@ function Home() {
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
-    console.log({location});
   };
 
   const handleSelectPicture = async () => {
@@ -130,8 +129,12 @@ function Home() {
         style={{marginTop: 10, padding: 10, borderRadius: 10, width: '40%'}}>
         <Button title="Get Location" onPress={getLocation} />
       </View>
-      <Text>Latitude: </Text>
-      <Text>Longitude: </Text>
+      {location && (
+        <>
+          <Text>Latitude: {location[0]} </Text>
+          <Text>Longitude: {location[1]} </Text>
+        </>
+      )}
       <Button title="Graph" onPress={() => navigation.navigate('Graph')} />
     </SafeAreaView>
   );

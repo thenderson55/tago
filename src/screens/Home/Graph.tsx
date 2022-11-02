@@ -1,8 +1,18 @@
 import React from 'react';
-import {runTiming, Skia, SkPath, useValue} from '@shopify/react-native-skia';
-import {DataPoint} from './data';
-import {scaleLinear, scaleTime, line, curveBasis} from 'd3';
+import {
+  Canvas,
+  runTiming,
+  Skia,
+  SkPath,
+  useValue,
+  Line,
+  vec,
+  Path,
+} from '@shopify/react-native-skia';
+import {DataPoint, originalData} from './data';
+import {scaleLinear, scaleTime, curveBasis, line} from 'd3';
 import {Pressable, StyleSheet, Text, View, Easing} from 'react-native';
+import theme from '../../theme';
 
 interface GraphData {
   min: number;
@@ -44,6 +54,8 @@ function Graph() {
     };
   };
 
+  const graphData = makeGraph(originalData);
+
   const transitionStart = (end: number) => {
     state.current = {
       current: end,
@@ -57,13 +69,45 @@ function Graph() {
   };
 
   return (
-    <View style={styles.buttonContainer}>
-      <Pressable onPress={() => transitionStart(0)} style={styles.buttonStyle}>
-        <Text style={styles.textStyle}>Graph 1</Text>
-      </Pressable>
-      <Pressable onPress={() => transitionStart(1)} style={styles.buttonStyle}>
-        <Text style={styles.textStyle}>Graph 2</Text>
-      </Pressable>
+    <View style={styles.container}>
+      <Canvas style={{height: GRAPH_HEIGHT, width: GRAPH_WIDTH}}>
+        <Line
+          strokeWidth={1}
+          color={theme.colors.lightGrey}
+          p1={vec(10, 130)}
+          p2={vec(400, 130)}
+        />
+        <Line
+          strokeWidth={1}
+          color={theme.colors.lightGrey}
+          p1={vec(10, 250)}
+          p2={vec(400, 250)}
+        />
+        <Line
+          strokeWidth={1}
+          color={theme.colors.lightGrey}
+          p1={vec(10, 370)}
+          p2={vec(400, 370)}
+        />
+        <Path
+          style="stroke"
+          path={graphData.curve}
+          strokeWidth={4}
+          color="#6231ff"
+        />
+      </Canvas>
+      <View style={styles.buttonContainer}>
+        <Pressable
+          onPress={() => transitionStart(0)}
+          style={styles.buttonStyle}>
+          <Text style={styles.textStyle}>Graph 1</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => transitionStart(1)}
+          style={styles.buttonStyle}>
+          <Text style={styles.textStyle}>Graph 2</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
