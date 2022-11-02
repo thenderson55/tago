@@ -18,6 +18,7 @@ import Geolocation from 'react-native-geolocation-service';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeParamList} from '../../stacks/Home/HomeParamList';
+import Blob from './Blob';
 
 function Home() {
   const navigation: NativeStackNavigationProp<HomeParamList, 'Graph'> =
@@ -122,20 +123,23 @@ function Home() {
     }
   };
   return (
-    <SafeAreaView>
-      <Button title="Log out" onPress={logOut} />
-      <Button title="Take phot" onPress={() => handleSelectPicture()} />
-      <View
-        style={{marginTop: 10, padding: 10, borderRadius: 10, width: '40%'}}>
-        <Button title="Get Location" onPress={getLocation} />
+    <SafeAreaView style={{flex: 1}}>
+      <View>
+        <Button title="Log out" onPress={logOut} />
+        <Button title="Take phot" onPress={() => handleSelectPicture()} />
+        <View
+          style={{marginTop: 10, padding: 10, borderRadius: 10, width: '40%'}}>
+          <Button title="Get Location" onPress={getLocation} />
+        </View>
+        {location && (
+          <>
+            <Text>Latitude: {location[0]} </Text>
+            <Text>Longitude: {location[1]} </Text>
+          </>
+        )}
+        <Button title="Graph" onPress={() => navigation.navigate('Graph')} />
       </View>
-      {location && (
-        <>
-          <Text>Latitude: {location[0]} </Text>
-          <Text>Longitude: {location[1]} </Text>
-        </>
-      )}
-      <Button title="Graph" onPress={() => navigation.navigate('Graph')} />
+      <Blob />
     </SafeAreaView>
   );
 }
