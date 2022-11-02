@@ -1,9 +1,11 @@
 import {
   Canvas,
+  LinearGradient,
   Path,
   useClockValue,
   useComputedValue,
   useValue,
+  vec,
 } from '@shopify/react-native-skia';
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
@@ -35,7 +37,7 @@ function createPoints() {
        for when we modulate the values later */
       originX: x,
       originY: y,
-      // more on this in a moment!
+
       noiseOffsetX: Math.random() * 1000,
       noiseOffsetY: Math.random() * 1000,
     });
@@ -93,10 +95,23 @@ function Blob() {
     return spline(points.current, 1, true);
   }, [clock]);
 
+  const colorNoise = useComputedValue(() => {
+    hueNoiseOffset.current += noiseStep / 2;
+    const hueNoise = noise(hueNoiseOffset.current, hueNoiseOffset.current);
+    const newValue = map(hueNoise, -1, 1, 0, 360);
+    return vec(256, newValue);
+  }, [clock]);
+
   return (
     <View style={styles.container}>
       <Canvas style={styles.canvas}>
-        <Path path={path} color={theme.colors.primary} />
+        <Path path={path} color={theme.colors.primary}>
+          <LinearGradient
+            start={vec(0, 0)}
+            end={colorNoise}
+            colors={['blue', 'pink']}
+          />
+        </Path>
       </Canvas>
     </View>
   );
