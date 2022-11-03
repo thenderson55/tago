@@ -10,7 +10,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import theme from '../../theme';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+// import Ionicons from 'react-native-vector-icons/Ionicons';
 
 type Props = {
   onChangeText: (text: string) => void;
@@ -54,7 +54,7 @@ const FormInput = (props: Props) => {
           placeholderTextColor={theme.colors.lightGrey}
           keyboardType={keyboardType || 'default'}
         />
-        {password && setHidePassword && (
+        {/* {password && setHidePassword && (
           <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
             <Ionicons
               style={styles.icon}
@@ -63,7 +63,7 @@ const FormInput = (props: Props) => {
               color={theme.colors.grey}
             />
           </TouchableOpacity>
-        )}
+        )} */}
       </View>
     </>
   );

@@ -19,11 +19,27 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeParamList} from '../../stacks/Home/HomeParamList';
 import Blob from './Blob';
+import firestore from '@react-native-firebase/firestore';
 
 function Home() {
   const navigation: NativeStackNavigationProp<HomeParamList, 'Graph'> =
     useNavigation();
   const [location, setLocation] = useState<string[]>();
+  // const usersCollection2 = firestore()
+  //   .collection('photos')
+  //   .doc('VpQxGZqBvdupc7vkhRzg');
+  // console.log('LOGIN COLLECTION', usersCollection.doc('VpQxGZqBvdupc7vkhRzg'));
+  // console.log('AUTH COLLECTION', usersCollection2);
+  const getData = async () => {
+    try {
+      const usersCollection = await firestore().collection('photos').get();
+      console.log('COLLECTION AUTH', usersCollection.docs[0].data());
+      console.log('COLLECTION AUTH 2', usersCollection.docs[1].data());
+    } catch (err) {
+      console.log('ERROR', err);
+    }
+  };
+  getData();
 
   async function requestLocationPermission() {
     if (Platform.OS === 'ios') {

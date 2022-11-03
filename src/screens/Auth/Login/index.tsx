@@ -7,9 +7,10 @@ import {Button, SafeAreaView, View} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import * as Yup from 'yup';
 import {Formik} from 'formik';
-import FormInput from '../../../components/AuthInputs/FormInput';
+import FormInput from '../../../components/Inputs/FormInput';
 import FormError from '../../../components/Erorrs/FormError';
 import theme from '../../../theme';
+import firestore from '@react-native-firebase/firestore';
 
 GoogleSignin.configure({
   webClientId:
@@ -31,6 +32,11 @@ const validationSchema = Yup.object().shape({
 function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [hidePassword, setHidePassword] = useState<boolean>(true);
+  const usersCollection = firestore()
+    .collection('photos')
+    .doc('VpQxGZqBvdupc7vkhRzg');
+  // console.log('LOGIN COLLECTION', usersCollection.doc('VpQxGZqBvdupc7vkhRzg'));
+  console.log('LOGIN COLLECTION', usersCollection);
 
   const emailSignUp = async () => {
     try {
