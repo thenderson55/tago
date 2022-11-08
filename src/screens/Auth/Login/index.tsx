@@ -11,6 +11,7 @@ import FormInput from '../../../components/Inputs/FormInput';
 import FormError from '../../../components/Erorrs/FormError';
 import theme from '../../../theme';
 import firestore from '@react-native-firebase/firestore';
+import useUserFacade from '../../../facades/useUserFacade';
 
 GoogleSignin.configure({
   webClientId:
@@ -30,6 +31,7 @@ const validationSchema = Yup.object().shape({
 });
 
 function Login() {
+  const {emailLogin} = useUserFacade();
   const [isLoading, setIsLoading] = useState(false);
   const [hidePassword, setHidePassword] = useState<boolean>(true);
   const usersCollection = firestore()
@@ -63,28 +65,28 @@ function Login() {
     }
   };
 
-  const emailLogin = async (email: string, password: string) => {
-    try {
-      await auth().signInWithEmailAndPassword(email, password);
-      console.log('User account signed in!');
-      setIsLoading(false);
-    } catch (error: any) {
-      if (error.code === 'auth/user-not-found') {
-        console.log(
-          'There is no user record corresponding to this identifier. The user may have been deleted.',
-        );
-      }
-      if (error.code === 'auth/email-already-in-use') {
-        console.log('That email address is already in use!');
-      }
+  // const emailLogin = async (email: string, password: string) => {
+  //   try {
+  //     await auth().signInWithEmailAndPassword(email, password);
+  //     console.log('User account signed in!');
+  //     setIsLoading(false);
+  //   } catch (error: any) {
+  //     if (error.code === 'auth/user-not-found') {
+  //       console.log(
+  //         'There is no user record corresponding to this identifier. The user may have been deleted.',
+  //       );
+  //     }
+  //     if (error.code === 'auth/email-already-in-use') {
+  //       console.log('That email address is already in use!');
+  //     }
 
-      if (error.code === 'auth/invalid-email') {
-        console.log('That email address is invalid!');
-      }
+  //     if (error.code === 'auth/invalid-email') {
+  //       console.log('That email address is invalid!');
+  //     }
 
-      console.error(error);
-    }
-  };
+  //     console.error(error);
+  //   }
+  // };
 
   const onGoogleButtonPress = async () => {
     try {
