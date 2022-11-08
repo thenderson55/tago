@@ -1,6 +1,18 @@
 import create from 'zustand';
 import auth from '@react-native-firebase/auth';
 
+export interface UserType {
+  id: number;
+  name: string;
+}
+export interface UserState {
+  user: UserType;
+  loading: boolean;
+  error: string;
+  fetchUser: Function;
+  emailLogin: Function;
+}
+
 const initialState = {
   user: {},
   loading: false,
@@ -13,18 +25,18 @@ const useUserStore = create(set => ({
   error: initialState.error,
 
   fetchUser: async () => {
-    set(state => ({...state, loading: true}));
+    set((state: UserState) => ({...state, loading: true}));
     try {
       const res = await fetch('https://jsonplaceholder.typicode.com/users');
       const users = await res.json();
-      set(state => ({...state, error: '', users}));
-    } catch (error) {
-      set(state => ({
+      set((state: UserState) => ({...state, error: '', users}));
+    } catch (error: any) {
+      set((state: UserState) => ({
         ...state,
         error: error.message,
       }));
     } finally {
-      set(state => ({
+      set((state: UserState) => ({
         ...state,
         loading: false,
       }));
@@ -34,7 +46,7 @@ const useUserStore = create(set => ({
   // In our example we only need to fetch the users, but you'd probably want to define other methods here
   // login: async user => {},
   emailLogin: async (email: string, password: string) => {
-    set(state => ({...state, loading: true}));
+    set((state: UserState) => ({...state, loading: true}));
     try {
       const res = await auth().signInWithEmailAndPassword(email, password);
       console.log('Zustand user account signed in!', res);
@@ -53,12 +65,12 @@ const useUserStore = create(set => ({
         errorMessage = 'That email address is invalid!';
         console.log(errorMessage);
       }
-      set(state => ({
+      set((state: UserState) => ({
         ...state,
         error: errorMessage,
       }));
     } finally {
-      set(state => ({
+      set((state: UserState) => ({
         ...state,
         loading: false,
       }));
