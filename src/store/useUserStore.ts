@@ -1,10 +1,10 @@
 import create from 'zustand';
 import auth from '@react-native-firebase/auth';
 
-export interface UserType {
+export type UserType = {
   id: number;
   name: string;
-}
+};
 export interface UserState {
   user: UserType;
   loading: boolean;
