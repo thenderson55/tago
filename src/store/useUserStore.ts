@@ -9,44 +9,42 @@ export interface UserState {
   user: UserType;
   loading: boolean;
   error: string;
-  fetchUser: Function;
-  emailLogin: Function;
+  fetchUser: () => void;
+  emailLogin: (email: string, password: string) => void;
 }
 
 const initialState = {
-  user: {},
+  user: {id: 0, name: ''},
   loading: false,
   error: '',
 };
 
-const useUserStore = create(set => ({
+const useUserStore = create<UserState>(set => ({
   user: initialState.user,
   loading: initialState.loading,
   error: initialState.error,
 
   fetchUser: async () => {
-    set((state: UserState) => ({...state, loading: true}));
+    set(state => ({...state, loading: true}));
     try {
       const res = await fetch('https://jsonplaceholder.typicode.com/users');
       const users = await res.json();
-      set((state: UserState) => ({...state, error: '', users}));
+      set(state => ({...state, error: '', users}));
     } catch (error: any) {
-      set((state: UserState) => ({
+      set(state => ({
         ...state,
         error: error.message,
       }));
     } finally {
-      set((state: UserState) => ({
+      set(state => ({
         ...state,
         loading: false,
       }));
     }
   },
 
-  // In our example we only need to fetch the users, but you'd probably want to define other methods here
-  // login: async user => {},
-  emailLogin: async (email: string, password: string) => {
-    set((state: UserState) => ({...state, loading: true}));
+  emailLogin: async (email, password) => {
+    set(state => ({...state, loading: true}));
     try {
       const res = await auth().signInWithEmailAndPassword(email, password);
       console.log('Zustand user account signed in!', res);
@@ -65,20 +63,23 @@ const useUserStore = create(set => ({
         errorMessage = 'That email address is invalid!';
         console.log(errorMessage);
       }
-      set((state: UserState) => ({
+      set(state => ({
         ...state,
         error: errorMessage,
       }));
     } finally {
-      set((state: UserState) => ({
+      set(state => ({
         ...state,
         loading: false,
       }));
     }
   },
-  addUser: async user => {},
-  updateUser: async user => {},
-  deleteUser: async id => {},
+
+  // In our example we only need to fetch the users, but you'd probably want to define other methods here
+  // login: async user => {},
+  // addUser: async user => {},
+  // updateUser: async user => {},
+  // deleteUser: async id => {},
 }));
 
 export default useUserStore;
