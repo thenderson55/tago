@@ -30,6 +30,43 @@ function Home() {
   //   .doc('VpQxGZqBvdupc7vkhRzg');
   // console.log('LOGIN COLLECTION', usersCollection.doc('VpQxGZqBvdupc7vkhRzg'));
   // console.log('AUTH COLLECTION', usersCollection2);
+  const addDoc = async () => {
+    try {
+      const res = await firestore().collection('Users').add({
+        name: 'Ada Trump',
+        age: 30,
+      });
+      console.log('Add doc res ID: ', res.id);
+      const doc = await firestore().collection('Users').doc(res.id).get();
+      console.log('Fetch new doc: ', doc.data());
+    } catch (error) {
+      console.log('Add error: ', error);
+    }
+  };
+
+  // const Create = () => {
+  //   // MARK: Creating New Doc in Firebase
+  //   // Before that enable Firebase in Firebase Console
+  //   const myDoc = doc(db, 'MyCollection', 'MyDocument');
+
+  //   // Your Document Goes Here
+  //   const docData = {
+  //     name: 'iJustine',
+  //     bio: 'YouTuber',
+  //   };
+
+  //   setDoc(myDoc, docData)
+  //     // Handling Promises
+  //     .then(() => {
+  //       // MARK: Success
+  //       alert('Document Created!');
+  //     })
+  //     .catch(error => {
+  //       // MARK: Failure
+  //       alert(error.message);
+  //     });
+  // };
+
   const getData = async () => {
     try {
       const usersCollection = await firestore().collection('photos').get();
@@ -154,6 +191,7 @@ function Home() {
           </>
         )}
         <Button title="Graph" onPress={() => navigation.navigate('Graph')} />
+        <Button title="Add" onPress={addDoc} />
       </View>
       <Blob />
     </SafeAreaView>

@@ -12,7 +12,7 @@ export type PhotoType = {
 };
 
 export interface PhotoState {
-  photo: PhotoType;
+  photos: PhotoType[];
   loading: boolean;
   error: string;
   fetchPhotos: () => void;
@@ -23,20 +23,22 @@ export interface PhotoState {
 }
 
 const initialState = {
-  photo: {
-    id: 0,
-    title: '',
-    location: [1, 2],
-    description: '',
-    category: '',
-    date: new Date(),
-  },
+  photos: [
+    {
+      id: 0,
+      title: '',
+      location: [1, 2],
+      description: '',
+      category: '',
+      date: new Date(),
+    },
+  ],
   loading: false,
   error: '',
 };
 
 const usePhotosStore = create<PhotoState>(set => ({
-  photo: initialState.photo,
+  photos: initialState.photos,
   loading: initialState.loading,
   error: initialState.error,
 
@@ -44,8 +46,7 @@ const usePhotosStore = create<PhotoState>(set => ({
     set(state => ({...state, loading: true}));
     try {
       const res = await fetch('https://jsonplaceholder.typicode.com/users');
-      const users = await res.json();
-      set(state => ({...state, error: '', users}));
+      set(state => ({...state, photos: [...state.photos, res]}));
     } catch (error: any) {
       set(state => ({
         ...state,
@@ -62,9 +63,9 @@ const usePhotosStore = create<PhotoState>(set => ({
   fetchPhoto: async id => {
     set(state => ({...state, loading: true}));
     try {
-      const res = await fetch('https://jsonplaceholder.typicode.com/users');
+      const res = await fetch(`https://jsonplaceholder.typicode.com/${id}`);
       const users = await res.json();
-      set(state => ({...state, error: '', users}));
+      set((state: PhotoState) => ({...state, error: '', users}));
     } catch (error: any) {
       set(state => ({
         ...state,
@@ -81,9 +82,13 @@ const usePhotosStore = create<PhotoState>(set => ({
   addPhoto: async input => {
     set(state => ({...state, loading: true}));
     try {
-      const res = await fetch('https://jsonplaceholder.typicode.com/users');
+      const res = await fetch(`https://jsonplaceholder.typicode.com/${input}`);
       const users = await res.json();
-      set(state => ({...state, error: '', users}));
+      set(state => ({
+        ...state,
+        error: '',
+        photos: [...state.photos, users],
+      }));
     } catch (error: any) {
       set(state => ({
         ...state,
@@ -100,7 +105,7 @@ const usePhotosStore = create<PhotoState>(set => ({
   editPhoto: async input => {
     set(state => ({...state, loading: true}));
     try {
-      const res = await fetch('https://jsonplaceholder.typicode.com/users');
+      const res = await fetch(`https://jsonplaceholder.typicode.com/${input}`);
       const users = await res.json();
       set(state => ({...state, error: '', users}));
     } catch (error: any) {
@@ -119,7 +124,7 @@ const usePhotosStore = create<PhotoState>(set => ({
   deletePhoto: async id => {
     set(state => ({...state, loading: true}));
     try {
-      const res = await fetch('https://jsonplaceholder.typicode.com/users');
+      const res = await fetch(`https://jsonplaceholder.typicode.com/${id}`);
       const users = await res.json();
       set(state => ({...state, error: '', users}));
     } catch (error: any) {
