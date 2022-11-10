@@ -1,35 +1,74 @@
-import React from 'react';
-import {Button, SafeAreaView} from 'react-native';
-import auth from '@react-native-firebase/auth';
+import React, {useState} from 'react';
+import {Button, SafeAreaView, View} from 'react-native';
+import {Formik} from 'formik';
+import FormError from '../../../components/Erorrs/FormError';
+import FormInput from '../../../components/Inputs/FormInput';
+import theme from '../../../theme';
+import {loginSignupValidationSchema} from '../../../utils/validations';
+import useUserFacade from '../../../facades/useUserFacade';
+import useAuthFacade from '../../../facades/useAuthFacade';
 
 function SignUp() {
-  const emailSignUp = async () => {
-    try {
-      await auth().createUserWithEmailAndPassword(
-        'jane.doe@example.com',
-        '12345qwerty',
-      );
-      console.log('User account created & signed in!');
-    } catch (error: any) {
-      if (error.code === 'auth/user-not-found') {
-        console.log(
-          'There is no user record corresponding to this identifier. The user may have been deleted.',
-        );
-      }
-      if (error.code === 'auth/email-already-in-use') {
-        console.log('That email address is already in use!');
-      }
+  const {addUser} = useUserFacade();
+  const {emailSignUp} = useAuthFacade();
+  const [isLoading, setIsLoading] = useState(false);
+  const [hidePassword, setHidePassword] = useState<boolean>(true);
 
-      if (error.code === 'auth/invalid-email') {
-        console.log('That email address is invalid!');
-      }
-
-      console.error(error);
-    }
-  };
   return (
-    <SafeAreaView>
-      <Button title="Sign Up with Email" onPress={() => emailSignUp()} />
+    <SafeAreaView style={{padding: theme.margins.screen}}>
+      <Formik
+        initialValues={{
+          email: '',
+          password: '',
+        }}
+        validationSchema={loginSignupValidationSchema}
+        onSubmit={values => {
+          const trimmedValues = {
+            email: values.email.trim(),
+            password: values.password.trim(),
+          };
+          setIsLoading(true);
+          emailSignUp(trimmedValues.email, trimmedValues.password, addUser);
+        }}>
+        {({
+          values,
+          errors,
+          // touched,
+          handleChange,
+          handleBlur,
+          handleSubmit,
+        }) => (
+          <View>
+            <FormInput
+              onChangeText={handleChange('email')}
+              onBlur={handleBlur('email')}
+              value={values.email}
+              placeholder="例：tago@tago.com"
+              label="Email"
+            />
+            <FormError message={errors.email} />
+            <FormInput
+              hidePassword={hidePassword}
+              setHidePassword={setHidePassword}
+              password={true}
+              secureTextEntry={hidePassword}
+              onChangeText={handleChange('password')}
+              onBlur={handleBlur('password')}
+              value={values.password}
+              placeholder="例：1245678"
+              label="Password"
+            />
+            <FormError message={errors.password} />
+            <Button
+              onPress={() => handleSubmit()}
+              disabled={isLoading}
+              // spinner={isLoading}
+              title="Sign Up"
+            />
+            {/* {isLoading ? <ActivityIndicator color={theme.black} /> : <>ログイン</>} */}
+          </View>
+        )}
+      </Formik>
     </SafeAreaView>
   );
 }

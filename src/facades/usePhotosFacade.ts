@@ -13,7 +13,7 @@ const usePhotosFacade = () => {
     deletePhoto,
   } = usePhotosStore(
     (state: PhotoState) => ({
-      photo: state.photo,
+      photo: state.photos,
       loading: state.loading,
       error: state.error,
       fetchPhotos: state.fetchPhotos,

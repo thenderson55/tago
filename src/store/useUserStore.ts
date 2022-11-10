@@ -1,5 +1,5 @@
 import create from 'zustand';
-import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 export type UserType = {
   id: number;
@@ -9,8 +9,8 @@ export interface UserState {
   user: UserType;
   loading: boolean;
   error: string;
+  addUser: (id: string) => void;
   fetchUser: () => void;
-  emailLogin: (email: string, password: string) => void;
 }
 
 const initialState = {
@@ -43,41 +43,21 @@ const useUserStore = create<UserState>(set => ({
     }
   },
 
-  emailLogin: async (email, password) => {
-    set(state => ({...state, loading: true}));
-    try {
-      const res = await auth().signInWithEmailAndPassword(email, password);
-      console.log('Zustand user account signed in!', res);
-    } catch (error: any) {
-      let errorMessage = '';
-      if (error.code === 'auth/user-not-found') {
-        errorMessage =
-          'There is no user record corresponding to this identifier. The user may have been deleted.';
-        console.log(errorMessage);
-      }
-      if (error.code === 'auth/email-already-in-use') {
-        errorMessage = 'That email address is already in use!';
-        console.log(errorMessage);
-      }
-      if (error.code === 'auth/invalid-email') {
-        errorMessage = 'That email address is invalid!';
-        console.log(errorMessage);
-      }
-      set(state => ({
-        ...state,
-        error: errorMessage,
-      }));
-    } finally {
-      set(state => ({
-        ...state,
-        loading: false,
-      }));
-    }
-  },
-
   // In our example we only need to fetch the users, but you'd probably want to define other methods here
   // login: async user => {},
-  // addUser: async user => {},
+  addUser: async id => {
+    try {
+      const res = await firestore().collection('Users').doc(id).set({
+        name: 'Shlomo',
+        age: 14,
+      });
+      console.log('Add doc res ID: ', res);
+      const doc = await firestore().collection('Users').doc(id).get();
+      console.log('Fetch new doc: ', doc.data());
+    } catch (error) {
+      console.log('Add error: ', error);
+    }
+  },
   // updateUser: async user => {},
   // deleteUser: async id => {},
 }));
