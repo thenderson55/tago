@@ -34,8 +34,8 @@ GoogleSignin.configure({
 const App = () => {
   // const isDarkMode = useColorScheme() === 'dark';
   const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState();
-  console.log('USER', user);
+  const [user, setUser] = useState<{uid: string}>();
+  console.log('UserId: ', user?.uid);
   // const backgroundStyle = {
   //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   // };
