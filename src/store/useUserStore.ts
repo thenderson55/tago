@@ -1,4 +1,5 @@
 import create from 'zustand';
+import {timeStamp} from '../utils/settings';
 import firestore from '@react-native-firebase/firestore';
 
 export type UserType = {
@@ -48,8 +49,7 @@ const useUserStore = create<UserState>(set => ({
   addUser: async id => {
     try {
       const res = await firestore().collection('Users').doc(id).set({
-        name: 'Shlomo',
-        age: 14,
+        created: timeStamp,
       });
       console.log('Add doc res ID: ', res);
       const doc = await firestore().collection('Users').doc(id).get();

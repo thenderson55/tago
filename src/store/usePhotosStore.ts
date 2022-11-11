@@ -1,14 +1,15 @@
 import create from 'zustand';
+import firestore from '@react-native-firebase/firestore';
+import {timeStamp} from '../utils/settings';
 
 export type PhotoType = {
-  id: number;
   title: string;
   location: number[];
   // TODO: Why below won't work?
   // location: [number, number];
   description: string;
   category: string;
-  date: Date;
+  created?: Date;
 };
 
 export interface PhotoState {
@@ -17,7 +18,7 @@ export interface PhotoState {
   error: string;
   fetchPhotos: () => void;
   fetchPhoto: (id: number) => void;
-  addPhoto: (input: PhotoType) => void;
+  addPhoto: (userId: string, input: PhotoType) => void;
   editPhoto: (input: PhotoType) => void;
   deletePhoto: (id: number) => void;
 }
@@ -30,7 +31,7 @@ const initialState = {
       location: [1, 2],
       description: '',
       category: '',
-      date: new Date(),
+      created: new Date(),
     },
   ],
   loading: false,
@@ -79,21 +80,24 @@ const usePhotosStore = create<PhotoState>(set => ({
     }
   },
 
-  addPhoto: async input => {
+  addPhoto: async (userId, input) => {
     set(state => ({...state, loading: true}));
     try {
-      const res = await fetch(`https://jsonplaceholder.typicode.com/${input}`);
-      const users = await res.json();
-      set(state => ({
-        ...state,
-        error: '',
-        photos: [...state.photos, users],
-      }));
-    } catch (error: any) {
-      set(state => ({
-        ...state,
-        error: error.message,
-      }));
+      const res = await firestore()
+        .collection('Users')
+        .doc(userId)
+        .collection('Photos')
+        .add({...input, created: timeStamp});
+      console.log('Add doc res ID: ', res);
+
+      const doc = await firestore()
+        .collection('Users')
+        .doc(userId)
+        .collection('Photos')
+        .get();
+      console.log('Fetch new doc: ', doc.docs);
+    } catch (error) {
+      console.log('Add error: ', error);
     } finally {
       set(state => ({
         ...state,

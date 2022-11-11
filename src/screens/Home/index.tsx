@@ -7,65 +7,34 @@ import {
   Text,
   View,
 } from 'react-native';
-import auth from '@react-native-firebase/auth';
+import auth, {firebase} from '@react-native-firebase/auth';
 import {
   ImagePickerResponse,
   CameraOptions,
   launchCamera,
   // launchImageLibrary,
 } from 'react-native-image-picker';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeParamList} from '../../stacks/Home/HomeParamList';
 import Blob from './Blob';
 import firestore from '@react-native-firebase/firestore';
+import usePhotosFacade from '../../facades/usePhotosFacade';
+import {PhotoType} from '../../store/usePhotosStore';
 
 function Home() {
   const navigation: NativeStackNavigationProp<HomeParamList, 'Graph'> =
     useNavigation();
-  const [location, setLocation] = useState<string[]>();
+  const {uid} = firebase.auth().currentUser;
+  const {addPhoto} = usePhotosFacade();
+
+  const [location, setLocation] = useState<number[]>([0, 0]);
   // const usersCollection2 = firestore()
   //   .collection('photos')
   //   .doc('VpQxGZqBvdupc7vkhRzg');
   // console.log('LOGIN COLLECTION', usersCollection.doc('VpQxGZqBvdupc7vkhRzg'));
   // console.log('AUTH COLLECTION', usersCollection2);
-  const addDoc = async () => {
-    try {
-      const res = await firestore().collection('Users').add({
-        name: 'Ada Trump',
-        age: 30,
-      });
-      console.log('Add doc res ID: ', res.id);
-      const doc = await firestore().collection('Users').doc(res.id).get();
-      console.log('Fetch new doc: ', doc.data());
-    } catch (error) {
-      console.log('Add error: ', error);
-    }
-  };
-
-  // const Create = () => {
-  //   // MARK: Creating New Doc in Firebase
-  //   // Before that enable Firebase in Firebase Console
-  //   const myDoc = doc(db, 'MyCollection', 'MyDocument');
-
-  //   // Your Document Goes Here
-  //   const docData = {
-  //     name: 'iJustine',
-  //     bio: 'YouTuber',
-  //   };
-
-  //   setDoc(myDoc, docData)
-  //     // Handling Promises
-  //     .then(() => {
-  //       // MARK: Success
-  //       alert('Document Created!');
-  //     })
-  //     .catch(error => {
-  //       // MARK: Failure
-  //       alert(error.message);
-  //     });
-  // };
 
   const getData = async () => {
     try {
@@ -76,7 +45,6 @@ function Home() {
       console.log('ERROR', err);
     }
   };
-  getData();
 
   async function requestLocationPermission() {
     if (Platform.OS === 'ios') {
@@ -115,14 +83,16 @@ function Home() {
   const getLocation = async () => {
     await requestLocationPermission();
     Geolocation.getCurrentPosition(
-      (position: any) => {
+      (position: GeoPosition) => {
         console.log({position});
         setLocation([position.coords.latitude, position.coords.longitude]);
+        return [position.coords.latitude, position.coords.longitude];
       },
       error => {
         // See error code charts below.
         console.log(error.code, error.message);
         setLocation([]);
+        return;
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
@@ -161,6 +131,14 @@ function Home() {
 
         console.log('Response Assets:', response.assets);
         getLocation();
+        console.log('Location: ', location);
+        const input: PhotoType = {
+          title: 'My first photo',
+          description: 'Tasty ramen shop',
+          category: 'Bangkok',
+          location,
+        };
+        addPhoto(uid, input);
         // setImageResponse(response);
         // setModal(true);
       }
@@ -191,7 +169,6 @@ function Home() {
           </>
         )}
         <Button title="Graph" onPress={() => navigation.navigate('Graph')} />
-        <Button title="Add" onPress={addDoc} />
       </View>
       <Blob />
     </SafeAreaView>
