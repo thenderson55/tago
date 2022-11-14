@@ -1,12 +1,12 @@
-import {
-  Canvas,
-  LinearGradient,
-  Path,
-  useClockValue,
-  useComputedValue,
-  useValue,
-  vec,
-} from '@shopify/react-native-skia';
+// import {
+//   Canvas,
+//   LinearGradient,
+//   Path,
+//   useClockValue,
+//   useComputedValue,
+//   useValue,
+//   vec,
+// } from '@shopify/react-native-skia';
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import {createNoise2D} from 'simplex-noise';
@@ -57,54 +57,54 @@ function map(
 }
 
 function Blob() {
-  const points = useValue(createPoints());
-  const clock = useClockValue();
-  const hueNoiseOffset = useValue(0);
-  const noise = createNoise2D();
-  const noiseStep = 0.005;
+  // const points = useValue(createPoints());
+  // const clock = useClockValue();
+  // const hueNoiseOffset = useValue(0);
+  // const noise = createNoise2D();
+  // const noiseStep = 0.005;
 
-  const animate = () => {
-    const newPoints = [];
+  // const animate = () => {
+  //   const newPoints = [];
 
-    for (let i = 0; i < points.current.length; i++) {
-      const point = points.current[i];
+  //   for (let i = 0; i < points.current.length; i++) {
+  //     const point = points.current[i];
 
-      // return a pseudo random value between -1 / 1 based on this point's current x, y positions in "time"
-      const nX = noise(point.noiseOffsetX, point.noiseOffsetX);
-      const nY = noise(point.noiseOffsetY, point.noiseOffsetY);
-      // map this noise value to a new value, somewhere between it's original location -20 and it's original location + 20
-      const x = map(nX, -1, 1, point.originX - 20, point.originX + 20);
-      const y = map(nY, -1, 1, point.originY - 20, point.originY + 20);
+  //     // return a pseudo random value between -1 / 1 based on this point's current x, y positions in "time"
+  //     const nX = noise(point.noiseOffsetX, point.noiseOffsetX);
+  //     const nY = noise(point.noiseOffsetY, point.noiseOffsetY);
+  //     // map this noise value to a new value, somewhere between it's original location -20 and it's original location + 20
+  //     const x = map(nX, -1, 1, point.originX - 20, point.originX + 20);
+  //     const y = map(nY, -1, 1, point.originY - 20, point.originY + 20);
 
-      // update the point's current coordinates
-      point.x = x;
-      point.y = y;
+  //     // update the point's current coordinates
+  //     point.x = x;
+  //     point.y = y;
 
-      // progress the point's x, y values through "time"
-      point.noiseOffsetX += noiseStep;
-      point.noiseOffsetY += noiseStep;
+  //     // progress the point's x, y values through "time"
+  //     point.noiseOffsetX += noiseStep;
+  //     point.noiseOffsetY += noiseStep;
 
-      newPoints.push(point);
-    }
+  //     newPoints.push(point);
+  //   }
 
-    points.current = newPoints;
-  };
+  //   points.current = newPoints;
+  // };
 
-  const path = useComputedValue(() => {
-    animate();
-    return spline(points.current, 1, true);
-  }, [clock]);
+  // const path = useComputedValue(() => {
+  //   animate();
+  //   return spline(points.current, 1, true);
+  // }, [clock]);
 
-  const colorNoise = useComputedValue(() => {
-    hueNoiseOffset.current += noiseStep / 2;
-    const hueNoise = noise(hueNoiseOffset.current, hueNoiseOffset.current);
-    const newValue = map(hueNoise, -1, 1, 0, 360);
-    return vec(256, newValue);
-  }, [clock]);
+  // const colorNoise = useComputedValue(() => {
+  //   hueNoiseOffset.current += noiseStep / 2;
+  //   const hueNoise = noise(hueNoiseOffset.current, hueNoiseOffset.current);
+  //   const newValue = map(hueNoise, -1, 1, 0, 360);
+  //   return vec(256, newValue);
+  // }, [clock]);
 
   return (
     <View style={styles.container}>
-      <Canvas style={styles.canvas}>
+      {/* <Canvas style={styles.canvas}>
         <Path path={path} color={theme.colors.primary}>
           <LinearGradient
             start={vec(0, 0)}
@@ -112,7 +112,7 @@ function Blob() {
             colors={['blue', 'pink']}
           />
         </Path>
-      </Canvas>
+      </Canvas> */}
     </View>
   );
 }
