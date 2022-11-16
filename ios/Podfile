@@ -11,13 +11,16 @@ target 'tago' do
   flags = get_default_flags()
 
   # https://stackoverflow.com/questions/72289521/swift-pods-cannot-yet-be-integrated-as-static-libraries-firebasecoreinternal-lib
-  pod 'Firebase', :modular_headers => true
-  pod 'FirebaseCore', :modular_headers => true
-  pod 'GoogleUtilities', :modular_headers => true
-  pod 'FirebaseAppCheckInterop', :modular_headers => true
-  pod 'FirebaseAuthInterop', :modular_headers => true
-  pod 'FirebaseCoreExtension', :modular_headers => true
-  pod 'GTMSessionFetcher', :modular_headers => true
+  # pod 'Firebase', :modular_headers => true
+  # pod 'FirebaseCore', :modular_headers => true
+  # pod 'GoogleUtilities', :modular_headers => true
+
+  # Below was firebase storage but https://github.com/invertase/react-native-firebase/issues/6382
+  # So went back to version 14.11.1 and alos needed to comment out above 3 as well
+  # pod 'FirebaseAppCheckInterop', :modular_headers => true
+  # pod 'FirebaseAuthInterop', :modular_headers => true
+  # pod 'FirebaseCoreExtension', :modular_headers => true
+  # pod 'GTMSessionFetcher', :modular_headers => true
   $RNFirebaseAsStaticFramework = true
 
   use_react_native!(

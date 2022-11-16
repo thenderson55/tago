@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Button,
   PermissionsAndroid,
@@ -18,16 +18,27 @@ import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeParamList} from '../../stacks/Home/HomeParamList';
-import Blob from './Blob';
+// import Blob from './Blob';
 import firestore from '@react-native-firebase/firestore';
 import usePhotosFacade from '../../facades/usePhotosFacade';
 import {PhotoType} from '../../store/usePhotosStore';
+import {utils} from '@react-native-firebase/app';
+import storage from '@react-native-firebase/storage';
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  listAll,
+  list,
+} from 'firebase/storage';
+import {appStorage} from '../../../App';
+import FastImage from 'react-native-fast-image';
 
 function Home() {
-  const navigation: NativeStackNavigationProp<HomeParamList, 'Graph'> =
-    useNavigation();
-  const {uid} = firebase.auth().currentUser;
-  const {addPhoto} = usePhotosFacade();
+  // const navigation: NativeStackNavigationProp<HomeParamList, 'Graph'> =
+  //   useNavigation();
+  // const {uid} = firebase.auth().currentUser;
+  // const {addPhoto} = usePhotosFacade();
 
   const [location, setLocation] = useState<number[]>([0, 0]);
   // const usersCollection2 = firestore()
@@ -35,15 +46,84 @@ function Home() {
   //   .doc('VpQxGZqBvdupc7vkhRzg');
   // console.log('LOGIN COLLECTION', usersCollection.doc('VpQxGZqBvdupc7vkhRzg'));
   // console.log('AUTH COLLECTION', usersCollection2);
+  const [imageUrls, setImageUrls] = useState([]);
+  // console.log({imageUrls});
+  // const uploadFile = () => {
+  //   if (imageUpload == null) {
+  //     return;
+  //   }
+  //   const imageRef = ref(appStorage, `images/${imageUpload.name + v4()}`);
+  //   uploadBytes(imageRef, imageUpload).then(snapshot => {
+  //     getDownloadURL(snapshot.ref).then(url => {
+  //       setImageUrls(prev => [...prev, url]);
+  //     });
+  //   });
+  // };
+
+  useEffect(() => {
+    const imagesListRef = ref(appStorage);
+    const reference = ref(
+      appStorage,
+      '1E9B4F7C-6CF9-4A23-B6BF-66EAF7B4B415.jpg',
+    );
+
+    getDownloadURL(reference).then(url => {
+      console.log('Fetch on URL using ref:', url);
+    });
+    listAll(imagesListRef).then(response => {
+      response.items.forEach(item => {
+        getDownloadURL(item).then(url => {
+          setImageUrls(prev => [...prev, url]);
+        });
+      });
+    });
+  }, []);
 
   const getData = async () => {
-    try {
-      const usersCollection = await firestore().collection('photos').get();
-      console.log('COLLECTION AUTH', usersCollection.docs[0].data());
-      console.log('COLLECTION AUTH 2', usersCollection.docs[1].data());
-    } catch (err) {
-      console.log('ERROR', err);
-    }
+    // const reference = storage().ref();
+    // console.log('REF', reference);
+    // const url = await storage().ref('DuchessAgain.jpeg').getDownloadURL();
+    // console.log('URL', url);
+    // const url2 = await storage()
+    //   .ref('thomas-henderson-resume-2022c.docx')
+    //   .getDownloadURL();
+    // console.log('URL CV', url2);
+    // const list = async () => {
+    //   const listRes = await reference.list();
+    //   console.log('LIST', listRes.items);
+    //   listRes.items.forEach(listRess => {
+    //     // All the items under listRef.
+    //     console.log('Item', listRess.fullPath);
+    //   });
+    // };
+    // list();
+    // const appstorage = getStorage();
+    // Create a storage reference from our storage service
+    // const storageRef = ref(appstorage);
+    // const listRef = ref(storage, 'files/uid');
+    // Find all the prefixes and items.
+    // listAll(storageRef)
+    //   .then(res => {
+    //     console.log('RES: ', res);
+    //     // res.prefixes.forEach((folderRef) => {
+    //     //   // All the prefixes under listRef.
+    //     //   // You may call listAll() recursively on them.
+    //     // });
+    //     // res.items.forEach((itemRef) => {
+    //     //   // All the items under listRef.
+    //     // });
+    //   })
+    //   .catch(error => {
+    //     console.log('LIST ERROR: ', error);
+    //     // Uh-oh, an error occurred!
+    //   });
+    // try {
+    //   const usersCollection = await firestore().collection('photos').get();
+    //   console.log('COLLECTION AUTH', usersCollection.docs[0].data());
+    //   console.log('COLLECTION AUTH 2', usersCollection.docs[1].data());
+    // } catch (err) {
+    //   console.log('ERROR', err);
+    // }
   };
 
   async function requestLocationPermission() {
@@ -81,6 +161,8 @@ function Home() {
   }
 
   const getLocation = async () => {
+    // appStorage();
+
     await requestLocationPermission();
     Geolocation.getCurrentPosition(
       (position: GeoPosition) => {
@@ -103,6 +185,7 @@ function Home() {
     const options: CameraOptions = {
       // includeExtra: true,
       mediaType: 'photo',
+      saveToPhotos: true,
       // title: '',
       // takePhotoButtonTitle: '写真を撮る',
       // chooseFromLibraryButtonTitle: 'ギャラリーから写真を選択する',
@@ -119,26 +202,68 @@ function Home() {
     await launchCamera(options, (response: ImagePickerResponse) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
-        // dispatch(setPickerOpen(false));
       } else if (response.errorCode) {
         console.log('ImagePicker Error Code: ', response.errorCode);
-        // dispatch(setPickerOpen(false));
       } else if (response.errorMessage) {
         console.log('ImagePicker Error Message: ', response.errorMessage);
-        // dispatch(setPickerOpen(false));
       } else {
-        console.log('Response:', response);
+        //stackoverflow.com/questions/68854533/image-wont-upload-to-firebase-storage-bucket-in-react-native
+        // storage().ref(response.assets[0].fileName);
+        // const list = async () => {
+        //   const listRes = await reference.list();
+        //   console.log('LIST', listRes);
+        // };
+        // list();
+        // const pathToFile = `${utils.FilePath.PICTURES_DIRECTORY}/${response.assets[0].fileName}`;
 
-        console.log('Response Assets:', response.assets);
-        getLocation();
-        console.log('Location: ', location);
+        const upload = async () => {
+          // try {
+          // path to existing file on filesystem
+          // const pathToFile = `${utils.FilePath.PICTURES_DIRECTORY}/${response.assets[0].fileName}`;
+          const img = await fetch(response.assets[0].uri);
+          const blob = await img.blob();
+          // const filename = response.assets[0].uri?.substring(
+          //   response.assets[0].uri.lastIndexOf('/') + 1,
+          // );
+          const reference = await ref(appStorage, response.assets[0].fileName);
+
+          // const reference = storage().ref(response.assets[0].fileName);
+          // await reference.putFile(pathToFile);
+          // const bytes = response.assets[0].uri.blob();
+          // await uploadBytes(imgRef, bytes);
+          await uploadBytes(reference, blob)
+            .then(snapshot => {
+              console.log('uploaded');
+              getDownloadURL(snapshot.ref).then(url =>
+                console.log('DLDLDLDL', url),
+              );
+            })
+            .catch(error => console.log('ERRRRRR', error));
+
+          // const downloadUrl = getDownloadURL(yo.metadata);
+          // console.log('DD', downloadUrl);
+          // const reference = await storage().ref(
+          //   '37AA37BA-4DA0-4035-8435-6058A474B988/tmp/39B1EA44-089C-40F7-B603-A4245933957E.jpg',
+          // );
+          // const b = await reference.putFile(
+          //   'file:///var/mobile/Containers/Data/Application/37AA37BA-4DA0-4035-8435-6058A474B988/tmp/39B1EA44-089C-40F7-B603-A4245933957E.jpg',
+          // );
+          // console.log('OOOOOJJ');
+          // console.log('YOO', b);
+          // } catch (error) {
+          //   console.log('UPLOAD ERROR: ', error);
+          // }
+        };
+        upload();
+        // getLocation();
+        // console.log('Location: ', location);
         const input: PhotoType = {
           title: 'My first photo',
           description: 'Tasty ramen shop',
           category: 'Bangkok',
           location,
         };
-        addPhoto(uid, input);
+        // addPhoto(uid, input);
         // setImageResponse(response);
         // setModal(true);
       }
@@ -168,9 +293,36 @@ function Home() {
             <Text>Longitude: {location[1]} </Text>
           </>
         )}
-        <Button title="Graph" onPress={() => navigation.navigate('Graph')} />
+        {/* <Button title="Graph" onPress={() => navigation.navigate('Graph')} /> */}
+        <Button title="GET DATA" onPress={getData} />
+        <FastImage
+          style={{width: 200, height: 200}}
+          source={{
+            uri: 'https://firebasestorage.googleapis.com/v0/b/tago-d37a7.appspot.com/o/DuchessAgain.jpeg?alt=media&token=239ed376-3e18-4b0a-92ca-44c825f06b06',
+            // headers: {Authorization: 'someAuthToken'},
+            priority: FastImage.priority.normal,
+          }}
+          resizeMode={FastImage.resizeMode.contain}
+        />
+        <FastImage
+          style={{width: 200, height: 200}}
+          source={{
+            uri: 'https://firebasestorage.googleapis.com/v0/b/tago-d37a7.appspot.com/o/rn_image_picker_lib_temp_61f4d80f-4de6-4deb-88ff-9b0801eabaf7.jpg?alt=media&token=9d174cc4-2825-4496-8d78-ffbb281f8894',
+            // headers: {Authorization: 'someAuthToken'},
+            priority: FastImage.priority.normal,
+          }}
+          resizeMode={FastImage.resizeMode.contain}
+        />
+        {/* <FastImage
+            style={listCardStyles.image}
+            source={{
+              uri: transformFunc(item.otherPerson.profilePic!, policy, signature),
+              priority: FastImage.priority.normal,
+            }}
+            // resizeMode={FastImage.resizeMode.contain}
+          /> */}
       </View>
-      <Blob />
+      {/* <Blob /> */}
     </SafeAreaView>
   );
 }

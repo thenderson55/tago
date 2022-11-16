@@ -9,6 +9,9 @@
  */
 
 import React, {useEffect, useState} from 'react';
+import {firebaseConfig} from './src/firebaseConfig';
+import {initializeApp} from 'firebase/app';
+import {getStorage} from 'firebase/storage';
 // import {
 //   Colors,
 //   DebugInstructions,
@@ -17,6 +20,7 @@ import React, {useEffect, useState} from 'react';
 //   ReloadInstructions,
 // } from 'react-native/Libraries/NewAppScreen';
 import auth from '@react-native-firebase/auth';
+import {GOOGLE_SIGN_IN_WED_CLIENT_ID} from '@env';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {NavigationContainer} from '@react-navigation/native';
 import {navigationRef} from './src/utils/RouteNavigation';
@@ -24,9 +28,11 @@ import AuthStack from './src/stacks/Auth/AuthStack';
 // import {Text, SafeAreaView} from 'react-native';
 import HomeStack from './src/stacks/Home/HomeStack';
 
+const app = initializeApp(firebaseConfig);
+export const appStorage = getStorage(app);
+
 GoogleSignin.configure({
-  webClientId:
-    '969588173065-g4qjpcnmftjr01jlvsu9u0uicdiem8b8.apps.googleusercontent.com',
+  webClientId: GOOGLE_SIGN_IN_WED_CLIENT_ID,
   // iosClientId:
   //   '969588173065-69otq7c42vr68uor6eqfjaj607nke2i6.apps.googleusercontent.com',
 });
