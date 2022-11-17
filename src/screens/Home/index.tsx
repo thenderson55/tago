@@ -214,23 +214,20 @@ function Home() {
         //   console.log('LIST', listRes);
         // };
         // list();
-        // const pathToFile = `${utils.FilePath.PICTURES_DIRECTORY}/${response.assets[0].fileName}`;
 
         const upload = async () => {
           // try {
           // path to existing file on filesystem
+          // RNFIREBASE FAILS
+          // const reference = storage().ref(response.assets[0].fileName);
           // const pathToFile = `${utils.FilePath.PICTURES_DIRECTORY}/${response.assets[0].fileName}`;
+          // await reference.putFile(pathToFile);
+
+          // WEB VERSION BUT CRASHES FOR IOS BUT STILL UPLOADS
+          // https://github.com/invertase/react-native-firebase/issues/4271
+          const reference = await ref(appStorage, response.assets[0].fileName);
           const img = await fetch(response.assets[0].uri);
           const blob = await img.blob();
-          // const filename = response.assets[0].uri?.substring(
-          //   response.assets[0].uri.lastIndexOf('/') + 1,
-          // );
-          const reference = await ref(appStorage, response.assets[0].fileName);
-
-          // const reference = storage().ref(response.assets[0].fileName);
-          // await reference.putFile(pathToFile);
-          // const bytes = response.assets[0].uri.blob();
-          // await uploadBytes(imgRef, bytes);
           await uploadBytes(reference, blob)
             .then(snapshot => {
               console.log('uploaded');
@@ -240,16 +237,6 @@ function Home() {
             })
             .catch(error => console.log('ERRRRRR', error));
 
-          // const downloadUrl = getDownloadURL(yo.metadata);
-          // console.log('DD', downloadUrl);
-          // const reference = await storage().ref(
-          //   '37AA37BA-4DA0-4035-8435-6058A474B988/tmp/39B1EA44-089C-40F7-B603-A4245933957E.jpg',
-          // );
-          // const b = await reference.putFile(
-          //   'file:///var/mobile/Containers/Data/Application/37AA37BA-4DA0-4035-8435-6058A474B988/tmp/39B1EA44-089C-40F7-B603-A4245933957E.jpg',
-          // );
-          // console.log('OOOOOJJ');
-          // console.log('YOO', b);
           // } catch (error) {
           //   console.log('UPLOAD ERROR: ', error);
           // }
