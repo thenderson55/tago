@@ -12,7 +12,7 @@ import {
   ImagePickerResponse,
   CameraOptions,
   launchCamera,
-  // launchImageLibrary,
+  launchImageLibrary,
 } from 'react-native-image-picker';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 import {useNavigation} from '@react-navigation/native';
@@ -23,14 +23,14 @@ import firestore from '@react-native-firebase/firestore';
 import usePhotosFacade from '../../facades/usePhotosFacade';
 import {PhotoType} from '../../store/usePhotosStore';
 import {utils} from '@react-native-firebase/app';
-import storage from '@react-native-firebase/storage';
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  listAll,
-  list,
-} from 'firebase/storage';
+import storage, {FirebaseStorageTypes} from '@react-native-firebase/storage';
+// import {
+//   ref,
+//   uploadBytes,
+//   getDownloadURL,
+//   listAll,
+//   list,
+// } from 'firebase/storage';
 import {appStorage} from '../../../App';
 import FastImage from 'react-native-fast-image';
 
@@ -41,11 +41,9 @@ function Home() {
   // const {addPhoto} = usePhotosFacade();
 
   const [location, setLocation] = useState<number[]>([0, 0]);
-  // const usersCollection2 = firestore()
-  //   .collection('photos')
-  //   .doc('VpQxGZqBvdupc7vkhRzg');
-  // console.log('LOGIN COLLECTION', usersCollection.doc('VpQxGZqBvdupc7vkhRzg'));
-  // console.log('AUTH COLLECTION', usersCollection2);
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [imageUrl, setImageUrl] = useState<string>();
+
   const [imageUrls, setImageUrls] = useState([]);
   // console.log({imageUrls});
   // const uploadFile = () => {
@@ -59,24 +57,51 @@ function Home() {
   //     });
   //   });
   // };
+  const listFilesAndDirectories = (
+    reference: FirebaseStorageTypes.Reference,
+    pageToken: string,
+  ): any => {
+    return reference.list({pageToken}).then(result => {
+      // Loop over each item
+      result.items.forEach(ref => {
+        console.log(ref.fullPath);
+      });
+
+      if (result.nextPageToken) {
+        return listFilesAndDirectories(reference, result.nextPageToken);
+      }
+
+      return Promise.resolve();
+    });
+  };
 
   useEffect(() => {
-    const imagesListRef = ref(appStorage);
-    const reference = ref(
-      appStorage,
-      '1E9B4F7C-6CF9-4A23-B6BF-66EAF7B4B415.jpg',
-    );
+    // RNFB VERSION
+    const reference = storage().ref();
+    listFilesAndDirectories(reference, '').then(() => {
+      console.log('Finished listing');
+    });
+    // reference.list().then(res => {
+    //   console.log('LIST', res);
+    // });
 
-    getDownloadURL(reference).then(url => {
-      console.log('Fetch on URL using ref:', url);
-    });
-    listAll(imagesListRef).then(response => {
-      response.items.forEach(item => {
-        getDownloadURL(item).then(url => {
-          setImageUrls(prev => [...prev, url]);
-        });
-      });
-    });
+    // WEB VERSION
+    // const imagesListRef = ref(appStorage);
+    // const reference = ref(
+    //   appStorage,
+    //   '1E9B4F7C-6CF9-4A23-B6BF-66EAF7B4B415.jpg',
+    // );
+
+    // getDownloadURL(reference).then(url => {
+    //   console.log('Fetch on URL using ref:', url);
+    // });
+    // listAll(imagesListRef).then(response => {
+    //   response.items.forEach(item => {
+    //     getDownloadURL(item).then(url => {
+    //       setImageUrls(prev => [...prev, url]);
+    //     });
+    //   });
+    // });
   }, []);
 
   const getData = async () => {
@@ -185,7 +210,7 @@ function Home() {
     const options: CameraOptions = {
       // includeExtra: true,
       mediaType: 'photo',
-      saveToPhotos: true,
+      // saveToPhotos: true,
       // title: '',
       // takePhotoButtonTitle: '写真を撮る',
       // chooseFromLibraryButtonTitle: 'ギャラリーから写真を選択する',
@@ -199,7 +224,7 @@ function Home() {
       // allowsEditing: true,
       // noData: true,
     };
-    await launchCamera(options, (response: ImagePickerResponse) => {
+    await launchImageLibrary(options, (response: ImagePickerResponse) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.errorCode) {
@@ -215,33 +240,64 @@ function Home() {
         // };
         // list();
 
-        const upload = async () => {
-          // try {
-          // path to existing file on filesystem
-          // RNFIREBASE FAILS
-          // const reference = storage().ref(response.assets[0].fileName);
-          // const pathToFile = `${utils.FilePath.PICTURES_DIRECTORY}/${response.assets[0].fileName}`;
-          // await reference.putFile(pathToFile);
+        const uploadImage = async () => {
+          const uri = response.assets[0].uri;
+          let task;
 
-          // WEB VERSION BUT CRASHES FOR IOS BUT STILL UPLOADS
-          // https://github.com/invertase/react-native-firebase/issues/4271
-          const reference = await ref(appStorage, response.assets[0].fileName);
-          const img = await fetch(response.assets[0].uri);
-          const blob = await img.blob();
-          await uploadBytes(reference, blob)
-            .then(snapshot => {
-              console.log('uploaded');
-              getDownloadURL(snapshot.ref).then(url =>
-                console.log('DLDLDLDL', url),
+          if (uri) {
+            const filename = uri.substring(uri.lastIndexOf('/') + 1);
+            const uploadUri = uri;
+            setUploading(true);
+            // setTransferred(0);
+            task = storage().ref(filename).putFile(uploadUri);
+            // set progress state
+            task.on('state_changed', taskSnapshot => {
+              console.log(
+                `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
               );
-            })
-            .catch(error => console.log('ERRRRRR', error));
 
-          // } catch (error) {
-          //   console.log('UPLOAD ERROR: ', error);
-          // }
+              // console.log(
+              //   Math.round(snapshot.bytesTransferred / snapshot.totalBytes) *
+              //     10000,
+              // );
+            });
+            task.then(async () => {
+              console.log('Image uploaded to bucket');
+              const url = await storage().ref(filename).getDownloadURL();
+              console.log('Image download URL: ', url);
+              setImageUrl(url);
+            });
+          }
+          try {
+            await task;
+          } catch (error) {
+            console.error('Upload Error:', error);
+          }
+          setUploading(false);
+          // Alert.alert(
+          //   'Photo uploaded!',
+          //   'Your photo has been uploaded to Firebase Cloud Storage!',
+          // );
+          // setImage('');
         };
-        upload();
+        uploadImage();
+
+        // const upload = async () => {
+        //   // WEB VERSION BUT CRASHES FOR IOS BUT STILL UPLOADS
+        //   // https://github.com/invertase/react-native-firebase/issues/4271
+        //   const reference = await ref(appStorage, response.assets[0].fileName);
+        //   const img = await fetch(response.assets[0].uri);
+        //   const blob = await img.blob();
+        //   await uploadBytes(reference, blob)
+        //     .then(snapshot => {
+        //       console.log('uploaded');
+        //       getDownloadURL(snapshot.ref).then(url =>
+        //         console.log('DLDLDLDL', url),
+        //       );
+        //     })
+        //     .catch(error => console.log('ERRRRRR', error));
+        // };
+
         // getLocation();
         // console.log('Location: ', location);
         const input: PhotoType = {
