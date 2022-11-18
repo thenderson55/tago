@@ -3,19 +3,20 @@ import {timeStamp} from '../utils/settings';
 import firestore from '@react-native-firebase/firestore';
 
 export type UserType = {
-  id: number;
+  uid: string;
   name: string;
 };
 export interface UserState {
   user: UserType;
   loading: boolean;
   error: string;
+  setUser: (user: UserType) => void;
   addUser: (id: string) => void;
   fetchUser: () => void;
 }
 
 const initialState = {
-  user: {id: 0, name: ''},
+  user: {uid: 0, name: ''},
   loading: false,
   error: '',
 };
@@ -24,6 +25,10 @@ const useUserStore = create<UserState>(set => ({
   user: initialState.user,
   loading: initialState.loading,
   error: initialState.error,
+
+  setUser: async (user: UserType) => {
+    set(state => ({...state, user}));
+  },
 
   fetchUser: async () => {
     set(state => ({...state, loading: true}));
@@ -49,7 +54,7 @@ const useUserStore = create<UserState>(set => ({
   addUser: async id => {
     try {
       const res = await firestore().collection('Users').doc(id).set({
-        created: timeStamp,
+        created: timeStamp(),
       });
       console.log('Add doc res ID: ', res);
       const doc = await firestore().collection('Users').doc(id).get();

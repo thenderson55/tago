@@ -27,6 +27,8 @@ import {navigationRef} from './src/utils/RouteNavigation';
 import AuthStack from './src/stacks/Auth/AuthStack';
 // import {Text, SafeAreaView} from 'react-native';
 import HomeStack from './src/stacks/Home/HomeStack';
+import useUserFacade from './src/facades/useUserFacade';
+import firebase from './database/firebaseDb';
 
 const app = initializeApp(firebaseConfig);
 export const appStorage = getStorage(app);
@@ -39,8 +41,8 @@ GoogleSignin.configure({
 
 const App = () => {
   // const isDarkMode = useColorScheme() === 'dark';
+  const {setUser, user} = useUserFacade();
   const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState<{uid: string}>();
   console.log('UserId: ', user?.uid);
   // const backgroundStyle = {
   //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,

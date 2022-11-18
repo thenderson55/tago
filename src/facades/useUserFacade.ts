@@ -17,18 +17,19 @@ import shallow from 'zustand/shallow';
 // const treats = useStore((state) => Object.keys(state.treats), shallow)
 
 const useUserFacade = () => {
-  const {user, loading, error, fetchUser, addUser} = useUsersStore(
+  const {user, loading, error, setUser, fetchUser, addUser} = useUsersStore(
     (state: UserState) => ({
       user: state.user,
       loading: state.loading,
       error: state.error,
+      setUser: state.setUser,
       fetchUser: state.fetchUser,
       addUser: state.addUser,
     }),
     shallow,
   );
 
-  return {user, loading, error, fetchUser, addUser};
+  return {user, loading, error, setUser, fetchUser, addUser};
 };
 
 export default useUserFacade;
