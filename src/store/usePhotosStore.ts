@@ -1,24 +1,34 @@
 import create from 'zustand';
 import firestore from '@react-native-firebase/firestore';
 import {timeStamp} from '../utils/settings';
+import storage from '@react-native-firebase/storage';
+import {ImagePickerResponse} from 'react-native-image-picker';
+import {Platform} from 'react-native';
+import {UserType} from './useUserStore';
 
 export type PhotoType = {
+  ref: string;
   title: string;
-  location: number[];
   // TODO: Why below won't work?
   // location: [number, number];
   description: string;
   category: string;
+  location?: number[];
   created?: Date;
 };
 
 export interface PhotoState {
   photos: PhotoType[];
   loading: boolean;
+  upLoading: boolean;
   error: string;
   fetchPhotos: () => void;
   fetchPhoto: (id: number) => void;
-  addPhoto: (userId: string, input: PhotoType) => void;
+  addPhoto: (
+    user: UserType,
+    response: ImagePickerResponse,
+    input: PhotoType,
+  ) => void;
   editPhoto: (input: PhotoType) => void;
   deletePhoto: (id: number) => void;
 }
@@ -26,7 +36,7 @@ export interface PhotoState {
 const initialState = {
   photos: [
     {
-      id: 0,
+      ref: '',
       title: '',
       location: [1, 2],
       description: '',
@@ -35,12 +45,14 @@ const initialState = {
     },
   ],
   loading: false,
+  upLoading: false,
   error: '',
 };
 
 const usePhotosStore = create<PhotoState>(set => ({
   photos: initialState.photos,
   loading: initialState.loading,
+  upLoading: initialState.upLoading,
   error: initialState.error,
 
   fetchPhotos: async () => {
@@ -80,19 +92,49 @@ const usePhotosStore = create<PhotoState>(set => ({
     }
   },
 
-  addPhoto: async (userId, input) => {
+  addPhoto: async (user, response, input) => {
     set(state => ({...state, loading: true}));
+
     try {
+      // https://stackoverflow.com/questions/68643842/react-native-photo-wont-upload-to-firebase
+
+      const uri = response!.assets![0].uri!;
+      let task;
+      if (uri) {
+        // refName = uri.substring(uri.lastIndexOf('/') + 1);
+        const uploadUri = uri;
+        set(state => ({...state, upLoading: true}));
+
+        task = storage().ref(input.ref).putFile(uploadUri);
+        task.on('state_changed', taskSnapshot => {
+          console.log(
+            `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
+          );
+          // console.log(
+          //   Math.round(snapshot.bytesTransferred / snapshot.totalBytes) *
+          //     10000,
+          // );
+        });
+        task.then(async () => {
+          console.log('Image uploaded to bucket');
+          const url = await storage().ref(input.ref).getDownloadURL();
+          console.log('Image download URL: ', url);
+          return url;
+        });
+      }
+
+      await task;
+
       const res = await firestore()
         .collection('Users')
-        .doc(userId)
+        .doc(user.uid)
         .collection('Photos')
-        .add({...input, created: timeStamp});
+        .add({...input, ref: input.ref, created: timeStamp()});
       console.log('Add doc res ID: ', res);
 
       const doc = await firestore()
         .collection('Users')
-        .doc(userId)
+        .doc(user.uid)
         .collection('Photos')
         .get();
       console.log('Fetch new doc: ', doc.docs);

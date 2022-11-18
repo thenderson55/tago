@@ -33,12 +33,14 @@ import storage, {FirebaseStorageTypes} from '@react-native-firebase/storage';
 // } from 'firebase/storage';
 import {appStorage} from '../../../App';
 import FastImage from 'react-native-fast-image';
+import useUserFacade from '../../facades/useUserFacade';
 
 function Home() {
   // const navigation: NativeStackNavigationProp<HomeParamList, 'Graph'> =
   //   useNavigation();
   // const {uid} = firebase.auth().currentUser;
-  // const {addPhoto} = usePhotosFacade();
+  const {addPhoto} = usePhotosFacade();
+  const {user} = useUserFacade();
 
   const [location, setLocation] = useState<number[]>([0, 0]);
   const [uploading, setUploading] = useState<boolean>(false);
@@ -184,25 +186,8 @@ function Home() {
       }
     }
   }
-
   const getLocation = async () => {
-    // appStorage();
-
-    await requestLocationPermission();
-    Geolocation.getCurrentPosition(
-      (position: GeoPosition) => {
-        console.log({position});
-        setLocation([position.coords.latitude, position.coords.longitude]);
-        return [position.coords.latitude, position.coords.longitude];
-      },
-      error => {
-        // See error code charts below.
-        console.log(error.code, error.message);
-        setLocation([]);
-        return;
-      },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    );
+    return 'HOI';
   };
 
   const handleSelectPicture = async () => {
@@ -224,7 +209,7 @@ function Home() {
       // allowsEditing: true,
       // noData: true,
     };
-    await launchImageLibrary(options, (response: ImagePickerResponse) => {
+    await launchImageLibrary(options, async (response: ImagePickerResponse) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.errorCode) {
@@ -232,55 +217,42 @@ function Home() {
       } else if (response.errorMessage) {
         console.log('ImagePicker Error Message: ', response.errorMessage);
       } else {
-        //stackoverflow.com/questions/68854533/image-wont-upload-to-firebase-storage-bucket-in-react-native
-        // storage().ref(response.assets[0].fileName);
-        // const list = async () => {
-        //   const listRes = await reference.list();
-        //   console.log('LIST', listRes);
-        // };
-        // list();
-
-        const uploadImage = async () => {
-          const uri = response.assets[0].uri;
-          let task;
-
-          if (uri) {
-            const filename = uri.substring(uri.lastIndexOf('/') + 1);
-            const uploadUri = uri;
-            setUploading(true);
-            // setTransferred(0);
-            task = storage().ref(filename).putFile(uploadUri);
-            // set progress state
-            task.on('state_changed', taskSnapshot => {
-              console.log(
-                `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
-              );
-
-              // console.log(
-              //   Math.round(snapshot.bytesTransferred / snapshot.totalBytes) *
-              //     10000,
-              // );
-            });
-            task.then(async () => {
-              console.log('Image uploaded to bucket');
-              const url = await storage().ref(filename).getDownloadURL();
-              console.log('Image download URL: ', url);
-              setImageUrl(url);
-            });
-          }
-          try {
-            await task;
-          } catch (error) {
-            console.error('Upload Error:', error);
-          }
-          setUploading(false);
-          // Alert.alert(
-          //   'Photo uploaded!',
-          //   'Your photo has been uploaded to Firebase Cloud Storage!',
-          // );
-          // setImage('');
-        };
-        uploadImage();
+        try {
+          await requestLocationPermission();
+          Geolocation.getCurrentPosition(
+            (position: GeoPosition) => {
+              console.log({position});
+              setLocation([
+                position.coords.latitude,
+                position.coords.longitude,
+              ]);
+              const input: PhotoType = {
+                ref:
+                  Platform.OS === 'ios'
+                    ? response!.assets![0].fileName!
+                    : response!.assets![0].fileName!.replace(
+                        'rn_image_picker_lib_temp_',
+                        '',
+                      ),
+                title: 'Yay',
+                description: 'First photo',
+                category: 'Favourites',
+                location: [position.coords.latitude, position.coords.longitude],
+              };
+              addPhoto(user, response, input);
+              return [position.coords.latitude, position.coords.longitude];
+            },
+            error => {
+              // See error code charts below.
+              console.log(error.code, error.message);
+              setLocation([]);
+              return;
+            },
+            {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+          );
+        } catch (error) {
+          console.log('Location Error', error);
+        }
 
         // const upload = async () => {
         //   // WEB VERSION BUT CRASHES FOR IOS BUT STILL UPLOADS
@@ -297,18 +269,6 @@ function Home() {
         //     })
         //     .catch(error => console.log('ERRRRRR', error));
         // };
-
-        // getLocation();
-        // console.log('Location: ', location);
-        const input: PhotoType = {
-          title: 'My first photo',
-          description: 'Tasty ramen shop',
-          category: 'Bangkok',
-          location,
-        };
-        // addPhoto(uid, input);
-        // setImageResponse(response);
-        // setModal(true);
       }
     });
   };

@@ -5,6 +5,7 @@ const usePhotosFacade = () => {
   const {
     photo,
     loading,
+    upLoading,
     error,
     fetchPhotos,
     fetchPhoto,
@@ -15,6 +16,7 @@ const usePhotosFacade = () => {
     (state: PhotoState) => ({
       photo: state.photos,
       loading: state.loading,
+      upLoading: state.upLoading,
       error: state.error,
       fetchPhotos: state.fetchPhotos,
       fetchPhoto: state.fetchPhoto,
@@ -28,6 +30,7 @@ const usePhotosFacade = () => {
   return {
     photo,
     loading,
+    upLoading,
     error,
     fetchPhotos,
     fetchPhoto,
