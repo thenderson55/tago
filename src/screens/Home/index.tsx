@@ -22,43 +22,30 @@ import {HomeParamList} from '../../stacks/Home/HomeParamList';
 import firestore from '@react-native-firebase/firestore';
 import usePhotosFacade from '../../facades/usePhotosFacade';
 import {PhotoType} from '../../store/usePhotosStore';
-import {utils} from '@react-native-firebase/app';
 import storage, {FirebaseStorageTypes} from '@react-native-firebase/storage';
-// import {
-//   ref,
-//   uploadBytes,
-//   getDownloadURL,
-//   listAll,
-//   list,
-// } from 'firebase/storage';
-import {appStorage} from '../../../App';
 import FastImage from 'react-native-fast-image';
 import useUserFacade from '../../facades/useUserFacade';
+import InfoModal from '../../components/Modals/InfoModal';
 
 function Home() {
   // const navigation: NativeStackNavigationProp<HomeParamList, 'Graph'> =
   //   useNavigation();
-  // const {uid} = firebase.auth().currentUser;
-  const {addPhoto} = usePhotosFacade();
+  const {addPhoto, upLoading, loading} = usePhotosFacade();
   const {user} = useUserFacade();
-
   const [location, setLocation] = useState<number[]>([0, 0]);
-  const [uploading, setUploading] = useState<boolean>(false);
-  const [imageUrl, setImageUrl] = useState<string>();
 
-  const [imageUrls, setImageUrls] = useState([]);
-  // console.log({imageUrls});
-  // const uploadFile = () => {
-  //   if (imageUpload == null) {
-  //     return;
-  //   }
-  //   const imageRef = ref(appStorage, `images/${imageUpload.name + v4()}`);
-  //   uploadBytes(imageRef, imageUpload).then(snapshot => {
-  //     getDownloadURL(snapshot.ref).then(url => {
-  //       setImageUrls(prev => [...prev, url]);
-  //     });
-  //   });
-  // };
+  const [title, setTitle] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+
+  const [infoModal, setInfoModal] = useState(false);
+  const infoModalClose = () => {
+    setInfoModal(false);
+  };
+  const infoModalOpen = () => {
+    setInfoModal(true);
+  };
+
   const listFilesAndDirectories = (
     reference: FirebaseStorageTypes.Reference,
     pageToken: string,
@@ -226,6 +213,8 @@ function Home() {
                 position.coords.latitude,
                 position.coords.longitude,
               ]);
+              infoModalOpen();
+              // TODO: Open modal to get inputs
               const input: PhotoType = {
                 ref:
                   Platform.OS === 'ios'
@@ -239,7 +228,8 @@ function Home() {
                 category: 'Favourites',
                 location: [position.coords.latitude, position.coords.longitude],
               };
-              addPhoto(user, response, input);
+              // TODO: Close modal
+              // addPhoto(user, response, input);
               return [position.coords.latitude, position.coords.longitude];
             },
             error => {
@@ -283,6 +273,13 @@ function Home() {
   };
   return (
     <SafeAreaView style={{flex: 1}}>
+      <InfoModal
+        modalBool={infoModal}
+        modalClose={infoModalClose}
+        setTitle={setTitle}
+        setCategory={setCategory}
+        setDescription={setDescription}
+      />
       <View>
         <Button title="Log out" onPress={logOut} />
         <Button title="Take phot" onPress={() => handleSelectPicture()} />
