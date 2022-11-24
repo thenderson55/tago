@@ -12,17 +12,22 @@ import {
 import {Formik} from 'formik';
 import theme from '../../theme';
 import FormInput from '../Inputs/FormInput';
+import {ImagePickerResponse} from 'react-native-image-picker';
+import usePhotosFacade from '../../facades/usePhotosFacade';
+import useUserFacade from '../../facades/useUserFacade';
+import {PhotoType} from '../../store/usePhotosStore';
 
 interface Props {
   modalBool: boolean;
   modalClose: () => void;
-  setTitle: React.Dispatch<React.SetStateAction<string>>;
-  setCategory: React.Dispatch<React.SetStateAction<string>>;
-  setDescription: React.Dispatch<React.SetStateAction<string>>;
+  imageResponse: ImagePickerResponse;
+  location: number[];
 }
 
 function InfoModal(props: Props) {
-  const {modalBool, modalClose, setTitle, setCategory, setDescription} = props;
+  const {modalBool, modalClose, imageResponse, location} = props;
+  const {addPhoto, upLoading} = usePhotosFacade();
+  const {user} = useUserFacade();
 
   return (
     <>
@@ -38,10 +43,22 @@ function InfoModal(props: Props) {
               }}
               // validationSchema={validationSchema}
               onSubmit={values => {
-                setTitle(values.title);
-                setCategory(values.category);
-                setDescription(values.description);
-                modalClose();
+                const input: PhotoType = {
+                  ref:
+                    Platform.OS === 'ios'
+                      ? imageResponse!.assets![0].fileName!
+                      : imageResponse!.assets![0].fileName!.replace(
+                          'rn_image_picker_lib_temp_',
+                          '',
+                        ),
+                  title: values.title,
+                  description: values.description,
+                  category: values.category,
+                  location,
+                };
+                console.log('INPUT:', input);
+                // TODO: Close modal
+                addPhoto(user, imageResponse, input, modalClose);
               }}>
               {({
                 values,

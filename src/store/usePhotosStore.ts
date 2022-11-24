@@ -28,6 +28,7 @@ export interface PhotoState {
     user: UserType,
     response: ImagePickerResponse,
     input: PhotoType,
+    modalClose: () => void,
   ) => void;
   editPhoto: (input: PhotoType) => void;
   deletePhoto: (id: number) => void;
@@ -92,7 +93,7 @@ const usePhotosStore = create<PhotoState>(set => ({
     }
   },
 
-  addPhoto: async (user, response, input) => {
+  addPhoto: async (user, response, input, modalClose) => {
     set(state => ({...state, loading: true}));
 
     try {
@@ -101,7 +102,6 @@ const usePhotosStore = create<PhotoState>(set => ({
       const uri = response!.assets![0].uri!;
       let task;
       if (uri) {
-        // refName = uri.substring(uri.lastIndexOf('/') + 1);
         const uploadUri = uri;
         set(state => ({...state, upLoading: true}));
 
@@ -119,6 +119,7 @@ const usePhotosStore = create<PhotoState>(set => ({
           console.log('Image uploaded to bucket');
           const url = await storage().ref(input.ref).getDownloadURL();
           console.log('Image download URL: ', url);
+          modalClose();
           return url;
         });
       }

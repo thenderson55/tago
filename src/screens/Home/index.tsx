@@ -30,13 +30,8 @@ import InfoModal from '../../components/Modals/InfoModal';
 function Home() {
   // const navigation: NativeStackNavigationProp<HomeParamList, 'Graph'> =
   //   useNavigation();
-  const {addPhoto, upLoading, loading} = usePhotosFacade();
-  const {user} = useUserFacade();
   const [location, setLocation] = useState<number[]>([0, 0]);
-
-  const [title, setTitle] = useState<string>('');
-  const [category, setCategory] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
+  const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
 
   const [infoModal, setInfoModal] = useState(false);
   const infoModalClose = () => {
@@ -197,6 +192,7 @@ function Home() {
       // noData: true,
     };
     await launchImageLibrary(options, async (response: ImagePickerResponse) => {
+      setImageResponse(response);
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.errorCode) {
@@ -209,28 +205,13 @@ function Home() {
           Geolocation.getCurrentPosition(
             (position: GeoPosition) => {
               console.log({position});
+              console.log({response});
               setLocation([
                 position.coords.latitude,
                 position.coords.longitude,
               ]);
               infoModalOpen();
-              // TODO: Open modal to get inputs
-              const input: PhotoType = {
-                ref:
-                  Platform.OS === 'ios'
-                    ? response!.assets![0].fileName!
-                    : response!.assets![0].fileName!.replace(
-                        'rn_image_picker_lib_temp_',
-                        '',
-                      ),
-                title: 'Yay',
-                description: 'First photo',
-                category: 'Favourites',
-                location: [position.coords.latitude, position.coords.longitude],
-              };
-              // TODO: Close modal
-              // addPhoto(user, response, input);
-              return [position.coords.latitude, position.coords.longitude];
+              return;
             },
             error => {
               // See error code charts below.
@@ -276,9 +257,8 @@ function Home() {
       <InfoModal
         modalBool={infoModal}
         modalClose={infoModalClose}
-        setTitle={setTitle}
-        setCategory={setCategory}
-        setDescription={setDescription}
+        imageResponse={imageResponse!}
+        location={location}
       />
       <View>
         <Button title="Log out" onPress={logOut} />
