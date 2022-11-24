@@ -136,6 +136,22 @@ const usePhotosStore = create<PhotoState>(set => ({
 
       await task;
 
+      // const upload = async () => {
+      //   // WEB VERSION BUT CRASHES FOR IOS BUT STILL UPLOADS
+      //   // https://github.com/invertase/react-native-firebase/issues/4271
+      //   const reference = await ref(appStorage, response.assets[0].fileName);
+      //   const img = await fetch(response.assets[0].uri);
+      //   const blob = await img.blob();
+      //   await uploadBytes(reference, blob)
+      //     .then(snapshot => {
+      //       console.log('uploaded');
+      //       getDownloadURL(snapshot.ref).then(url =>
+      //         console.log('URL', url),
+      //       );
+      //     })
+      //     .catch(error => console.log('ERRRRRR', error));
+      // };
+
       const res = await firestore()
         .collection('Users')
         .doc(user.uid)

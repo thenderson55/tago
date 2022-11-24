@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {
-  Button,
   PermissionsAndroid,
   Platform,
   SafeAreaView,
+  StyleSheet,
   Text,
   View,
 } from 'react-native';
@@ -26,6 +26,8 @@ import storage, {FirebaseStorageTypes} from '@react-native-firebase/storage';
 import FastImage from 'react-native-fast-image';
 import useUserFacade from '../../facades/useUserFacade';
 import InfoModal from '../../components/Modals/InfoModal';
+import MainButton from '../../components/Buttons/MainButton';
+import theme from '../../theme';
 
 function Home() {
   // const navigation: NativeStackNavigationProp<HomeParamList, 'Graph'> =
@@ -169,7 +171,24 @@ function Home() {
     }
   }
   const getLocation = async () => {
-    return 'HOI';
+    try {
+      await requestLocationPermission();
+      Geolocation.getCurrentPosition(
+        (position: GeoPosition) => {
+          setLocation([position.coords.latitude, position.coords.longitude]);
+          return;
+        },
+        error => {
+          // See error code charts below.
+          console.log(error.code, error.message);
+          setLocation([]);
+          return;
+        },
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      );
+    } catch (error) {
+      console.log('Location Error', error);
+    }
   };
 
   const handleSelectPicture = async () => {
@@ -202,45 +221,7 @@ function Home() {
       } else if (response.errorMessage) {
         console.log('ImagePicker Error Message: ', response.errorMessage);
       } else {
-        try {
-          await requestLocationPermission();
-          Geolocation.getCurrentPosition(
-            (position: GeoPosition) => {
-              console.log({position});
-              console.log({response});
-              setLocation([
-                position.coords.latitude,
-                position.coords.longitude,
-              ]);
-              return;
-            },
-            error => {
-              // See error code charts below.
-              console.log(error.code, error.message);
-              setLocation([]);
-              return;
-            },
-            {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-          );
-        } catch (error) {
-          console.log('Location Error', error);
-        }
-
-        // const upload = async () => {
-        //   // WEB VERSION BUT CRASHES FOR IOS BUT STILL UPLOADS
-        //   // https://github.com/invertase/react-native-firebase/issues/4271
-        //   const reference = await ref(appStorage, response.assets[0].fileName);
-        //   const img = await fetch(response.assets[0].uri);
-        //   const blob = await img.blob();
-        //   await uploadBytes(reference, blob)
-        //     .then(snapshot => {
-        //       console.log('uploaded');
-        //       getDownloadURL(snapshot.ref).then(url =>
-        //         console.log('DLDLDLDL', url),
-        //       );
-        //     })
-        //     .catch(error => console.log('ERRRRRR', error));
-        // };
+        getLocation();
       }
     });
   };
@@ -254,7 +235,7 @@ function Home() {
     }
   };
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={styles.safeView}>
       <InfoModal
         modalBool={infoModal}
         modalClose={infoModalClose}
@@ -262,12 +243,17 @@ function Home() {
         location={location}
       />
       <View>
-        <Button title="Log out" onPress={logOut} />
-        <Button title="Take phot" onPress={() => handleSelectPicture()} />
+        <MainButton style={{marginTop: 30}} onPress={logOut} text="Log out" />
+        <MainButton text="Take photo" onPress={() => handleSelectPicture()} />
+        <MainButton text="Get Location" onPress={getLocation} />
         <View
-          style={{marginTop: 10, padding: 10, borderRadius: 10, width: '40%'}}>
-          <Button title="Get Location" onPress={getLocation} />
-        </View>
+          style={{
+            marginTop: 10,
+            padding: 10,
+            borderRadius: 10,
+            width: '40%',
+          }}
+        />
         {location && (
           <>
             <Text>Latitude: {location[0]} </Text>
@@ -275,37 +261,29 @@ function Home() {
           </>
         )}
         {/* <Button title="Graph" onPress={() => navigation.navigate('Graph')} /> */}
-        <Button title="GET DATA" onPress={getData} />
+        <MainButton text="GET DATA" onPress={getData} />
+
         <FastImage
-          style={{width: 200, height: 200}}
+          style={{height: 300, marginTop: 50}}
           source={{
-            uri: 'https://firebasestorage.googleapis.com/v0/b/tago-d37a7.appspot.com/o/DuchessAgain.jpeg?alt=media&token=239ed376-3e18-4b0a-92ca-44c825f06b06',
-            // headers: {Authorization: 'someAuthToken'},
-            priority: FastImage.priority.normal,
-          }}
-          resizeMode={FastImage.resizeMode.contain}
-        />
-        <FastImage
-          style={{width: 200, height: 200}}
-          source={{
+            // uri: 'https://firebasestorage.googleapis.com/v0/b/tago-d37a7.appspot.com/o/DuchessAgain.jpeg?alt=media&token=239ed376-3e18-4b0a-92ca-44c825f06b06',
+
             uri: 'https://firebasestorage.googleapis.com/v0/b/tago-d37a7.appspot.com/o/rn_image_picker_lib_temp_61f4d80f-4de6-4deb-88ff-9b0801eabaf7.jpg?alt=media&token=9d174cc4-2825-4496-8d78-ffbb281f8894',
             // headers: {Authorization: 'someAuthToken'},
             priority: FastImage.priority.normal,
           }}
           resizeMode={FastImage.resizeMode.contain}
         />
-        {/* <FastImage
-            style={listCardStyles.image}
-            source={{
-              uri: transformFunc(item.otherPerson.profilePic!, policy, signature),
-              priority: FastImage.priority.normal,
-            }}
-            // resizeMode={FastImage.resizeMode.contain}
-          /> */}
       </View>
       {/* <Blob /> */}
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  safeView: {
+    margin: theme.margins.screen,
+  },
+});
 
 export default Home;
