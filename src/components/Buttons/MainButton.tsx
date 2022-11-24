@@ -52,7 +52,7 @@ const styles: Styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 15,
-    marginTop: theme.margins.buttonTop,
+    marginTop: theme.margins.mediumTop,
   },
   buttonText: {
     color: 'white',

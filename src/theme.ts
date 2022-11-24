@@ -34,7 +34,7 @@ interface ThemeStyles {
   };
   margins: {
     screen: number;
-    buttonTop: number;
+    mediumTop: number;
   };
   padding: {
     input: number;
@@ -70,7 +70,7 @@ const theme: ThemeStyles = {
   },
   margins: {
     screen: 20,
-    buttonTop: 20,
+    mediumTop: 20,
   },
   padding: {
     input: 20,

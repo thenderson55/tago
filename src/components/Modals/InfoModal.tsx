@@ -73,31 +73,36 @@ function InfoModal(props: Props) {
               }) => (
                 <ScrollView>
                   <FormInput
+                    label="Title"
                     value={values.title}
-                    placeholder="Title"
+                    placeholder="Sushi"
                     onChangeText={handleChange('title')}
                     onBlur={handleBlur('title')}
                   />
                   <FormInput
+                    label="Category"
                     value={values.category}
-                    placeholder="Category"
+                    placeholder="Tokyo"
                     onChangeText={handleChange('category')}
                     onBlur={handleBlur('category')}
                   />
                   <FormInput
+                    label="Description"
                     value={values.description}
-                    placeholder="Description"
+                    placeholder="Cheap Otoro"
                     onChangeText={handleChange('description')}
                     onBlur={handleBlur('description')}
                   />
 
                   <MainButton
+                    style={{marginTop: 30}}
                     onPress={() => {
                       handleSubmit();
                     }}
                     text="Add info"
                   />
                   <MainButton
+                    style={{marginTop: 10}}
                     onPress={() => {
                       handleReset();
                       modalClose();

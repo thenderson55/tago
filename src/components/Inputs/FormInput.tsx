@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     color: theme.colors.black,
     marginBottom: 9,
     fontSize: theme.fontSizes.small,
+    marginTop: theme.margins.mediumTop,
   },
   icon: {
     right: 40,
