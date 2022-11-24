@@ -13,6 +13,7 @@ import {Formik} from 'formik';
 import theme from '../../theme';
 import FormInput from '../Inputs/FormInput';
 import {ImagePickerResponse} from 'react-native-image-picker';
+import ProgressBar from 'react-native-progress/Bar';
 import usePhotosFacade from '../../facades/usePhotosFacade';
 import useUserFacade from '../../facades/useUserFacade';
 import {PhotoType} from '../../store/usePhotosStore';
@@ -26,9 +27,9 @@ interface Props {
 
 function InfoModal(props: Props) {
   const {modalBool, modalClose, imageResponse, location} = props;
-  const {addPhoto, upLoading} = usePhotosFacade();
+  const {addPhoto, transferProgress} = usePhotosFacade();
   const {user} = useUserFacade();
-
+  console.log({transferProgress});
   return (
     <>
       <Modal visible={modalBool} animationType="fade" transparent={true}>
@@ -93,13 +94,13 @@ function InfoModal(props: Props) {
                     style={styles.reset}
                     onPress={() => {
                       handleSubmit();
-                      modalClose();
                     }}>
                     <Text style={styles.resetText}>Add Info</Text>
                   </TouchableOpacity>
                 </ScrollView>
               )}
             </Formik>
+            <ProgressBar progress={transferProgress} width={200} />
           </View>
         </SafeAreaView>
       </Modal>

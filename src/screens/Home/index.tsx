@@ -193,6 +193,8 @@ function Home() {
     };
     await launchImageLibrary(options, async (response: ImagePickerResponse) => {
       setImageResponse(response);
+      infoModalOpen();
+
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.errorCode) {
@@ -210,7 +212,6 @@ function Home() {
                 position.coords.latitude,
                 position.coords.longitude,
               ]);
-              infoModalOpen();
               return;
             },
             error => {

@@ -21,6 +21,7 @@ export interface PhotoState {
   photos: PhotoType[];
   loading: boolean;
   upLoading: boolean;
+  transferProgress: number;
   error: string;
   fetchPhotos: () => void;
   fetchPhoto: (id: number) => void;
@@ -48,6 +49,7 @@ const initialState = {
   loading: false,
   upLoading: false,
   error: '',
+  transferProgress: 0,
 };
 
 const usePhotosStore = create<PhotoState>(set => ({
@@ -55,6 +57,8 @@ const usePhotosStore = create<PhotoState>(set => ({
   loading: initialState.loading,
   upLoading: initialState.upLoading,
   error: initialState.error,
+  transferProgress: initialState.transferProgress,
+  transferFinished: initialState.transferFinished,
 
   fetchPhotos: async () => {
     set(state => ({...state, loading: true}));
@@ -110,6 +114,12 @@ const usePhotosStore = create<PhotoState>(set => ({
           console.log(
             `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
           );
+          set((state: PhotoState) => ({
+            ...state,
+            transferProgress:
+              taskSnapshot.bytesTransferred / taskSnapshot.totalBytes - 0.05,
+          }));
+
           // console.log(
           //   Math.round(snapshot.bytesTransferred / snapshot.totalBytes) *
           //     10000,
@@ -132,6 +142,10 @@ const usePhotosStore = create<PhotoState>(set => ({
         .collection('Photos')
         .add({...input, ref: input.ref, created: timeStamp()});
       console.log('Add doc res ID: ', res);
+      set((state: PhotoState) => ({
+        ...state,
+        transferProgress: 1,
+      }));
 
       const doc = await firestore()
         .collection('Users')
@@ -145,6 +159,7 @@ const usePhotosStore = create<PhotoState>(set => ({
       set(state => ({
         ...state,
         loading: false,
+        transferProgress: 0,
       }));
     }
   },
