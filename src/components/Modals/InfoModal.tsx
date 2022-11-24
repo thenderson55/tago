@@ -17,6 +17,7 @@ import ProgressBar from 'react-native-progress/Bar';
 import usePhotosFacade from '../../facades/usePhotosFacade';
 import useUserFacade from '../../facades/useUserFacade';
 import {PhotoType} from '../../store/usePhotosStore';
+import MainButton from '../Buttons/MainButton';
 
 interface Props {
   modalBool: boolean;
@@ -59,7 +60,7 @@ function InfoModal(props: Props) {
                 };
                 console.log('INPUT:', input);
                 // TODO: Close modal
-                addPhoto(user, imageResponse, input, modalClose);
+                // addPhoto(user, imageResponse, input, modalClose);
               }}>
               {({
                 values,
@@ -90,13 +91,19 @@ function InfoModal(props: Props) {
                     onBlur={handleBlur('description')}
                   />
 
-                  <TouchableOpacity
-                    style={styles.reset}
+                  <MainButton
                     onPress={() => {
                       handleSubmit();
-                    }}>
-                    <Text style={styles.resetText}>Add Info</Text>
-                  </TouchableOpacity>
+                    }}
+                    text="Add info"
+                  />
+                  <MainButton
+                    onPress={() => {
+                      handleReset();
+                      modalClose();
+                    }}
+                    text="Cancel"
+                  />
                 </ScrollView>
               )}
             </Formik>
@@ -139,8 +146,9 @@ const styles: Styles = StyleSheet.create({
     // fontFamily: Rounded mc+1
   },
   modalView: {
-    backgroundColor: 'white',
-    alignItems: 'center',
+    backgroundColor: 'pink',
+    // alignItems: 'center',
+    paddingHorizontal: theme.margins.screen,
     width: '100%',
     height: '100%',
     // padding: theme.screenPadding,
