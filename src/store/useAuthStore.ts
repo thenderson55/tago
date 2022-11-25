@@ -99,6 +99,7 @@ const useAuthStore = create<AuthState>(set => ({
       set(state => ({
         ...state,
         error: errorMessage,
+        loading: false,
       }));
     } finally {
       set(state => ({

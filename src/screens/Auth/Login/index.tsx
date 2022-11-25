@@ -14,15 +14,8 @@ import {AuthParamList} from '../../../stacks/Auth/AuthParamList';
 function Login() {
   const navigation: NativeStackNavigationProp<AuthParamList, 'SignUp'> =
     useNavigation();
-  const {emailLogin, onGoogleButtonPress} = useAuthFacade();
-
-  const [isLoading, setIsLoading] = useState(false);
+  const {emailLogin, onGoogleButtonPress, loading} = useAuthFacade();
   const [hidePassword, setHidePassword] = useState<boolean>(true);
-  const usersCollection = firestore()
-    .collection('photos')
-    .doc('VpQxGZqBvdupc7vkhRzg');
-  // console.log('LOGIN COLLECTION', usersCollection.doc('VpQxGZqBvdupc7vkhRzg'));
-  // console.log('LOGIN COLLECTION', usersCollection);
 
   return (
     <SafeAreaView>
@@ -38,13 +31,12 @@ function Login() {
               email: values.email.trim(),
               password: values.password.trim(),
             };
-            setIsLoading(true);
             emailLogin(trimmedValues.email, trimmedValues.password);
           }}>
           {({
             values,
             errors,
-            // touched,
+            touched,
             handleChange,
             handleBlur,
             handleSubmit,
@@ -57,7 +49,8 @@ function Login() {
                 placeholder="例：tago@tago.com"
                 label="Email"
               />
-              <FormError message={errors.email} />
+              <FormError touched={touched.email} message={errors.email} />
+
               <FormInput
                 hidePassword={hidePassword}
                 setHidePassword={setHidePassword}
@@ -69,14 +62,14 @@ function Login() {
                 placeholder="例：1245678"
                 label="Password"
               />
-              <FormError message={errors.password} />
+              <FormError touched={touched.password} message={errors.password} />
               <Button
                 onPress={() => handleSubmit()}
-                disabled={isLoading}
-                // spinner={isLoading}
+                disabled={loading}
+                // spinner={loading}
                 title="Login"
               />
-              {/* {isLoading ? <ActivityIndicator color={theme.black} /> : <>ログイン</>} */}
+              {/* {loading ? <ActivityIndicator color={theme.black} /> : <>ログイン</>} */}
             </View>
           )}
         </Formik>
