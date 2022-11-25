@@ -28,7 +28,6 @@ import AuthStack from './src/stacks/Auth/AuthStack';
 // import {Text, SafeAreaView} from 'react-native';
 import HomeStack from './src/stacks/Home/HomeStack';
 import useUserFacade from './src/facades/useUserFacade';
-import firebase from './database/firebaseDb';
 
 const app = initializeApp(firebaseConfig);
 export const appStorage = getStorage(app);

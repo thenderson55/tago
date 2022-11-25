@@ -4,14 +4,13 @@ import {Formik} from 'formik';
 import FormError from '../../../components/Erorrs/FormError';
 import FormInput from '../../../components/Inputs/FormInput';
 import theme from '../../../theme';
-import {loginSignupValidationSchema} from '../../../utils/validations';
+import {signupValidationSchema} from '../../../utils/validations';
 import useUserFacade from '../../../facades/useUserFacade';
 import useAuthFacade from '../../../facades/useAuthFacade';
 
 function SignUp() {
-  const {addUser} = useUserFacade();
+  const {addUser, loading} = useUserFacade();
   const {emailSignUp} = useAuthFacade();
-  const [isLoading, setIsLoading] = useState(false);
   const [hidePassword, setHidePassword] = useState<boolean>(true);
 
   return (
@@ -19,35 +18,50 @@ function SignUp() {
       <View style={{margin: theme.margins.screen}}>
         <Formik
           initialValues={{
+            username: '',
             email: '',
             password: '',
           }}
-          validationSchema={loginSignupValidationSchema}
+          validationSchema={signupValidationSchema}
           onSubmit={values => {
             const trimmedValues = {
+              username: values.username.trim(),
               email: values.email.trim(),
               password: values.password.trim(),
             };
-            setIsLoading(true);
-            emailSignUp(trimmedValues.email, trimmedValues.password, addUser);
+            emailSignUp(trimmedValues, addUser);
           }}>
           {({
             values,
             errors,
-            // touched,
+            touched,
             handleChange,
             handleBlur,
             handleSubmit,
           }) => (
             <View>
               <FormInput
+                onChangeText={handleChange('username')}
+                onBlur={handleBlur('username')}
+                value={values.username}
+                placeholder="e.g tago12345"
+                label="Username"
+              />
+              <FormError
+                touched={touched.username}
+                message={errors.username}
+                // message={
+                //   isTaken ? 'Username is already taken' : errors.username
+                // }
+              />
+              <FormInput
                 onChangeText={handleChange('email')}
                 onBlur={handleBlur('email')}
                 value={values.email}
-                placeholder="例：tago@tago.com"
+                placeholder="e.g tago@tago.com"
                 label="Email"
               />
-              <FormError message={errors.email} />
+              <FormError touched={touched.email} message={errors.email} />
               <FormInput
                 hidePassword={hidePassword}
                 setHidePassword={setHidePassword}
@@ -56,13 +70,13 @@ function SignUp() {
                 onChangeText={handleChange('password')}
                 onBlur={handleBlur('password')}
                 value={values.password}
-                placeholder="例：1245678"
+                placeholder="e.g 1245678"
                 label="Password"
               />
-              <FormError message={errors.password} />
+              <FormError touched={touched.password} message={errors.password} />
               <Button
                 onPress={() => handleSubmit()}
-                disabled={isLoading}
+                disabled={loading}
                 // spinner={isLoading}
                 title="Sign Up"
               />

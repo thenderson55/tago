@@ -50,7 +50,7 @@ function Home() {
     return reference.list({pageToken}).then(result => {
       // Loop over each item
       result.items.forEach(ref => {
-        console.log(ref.fullPath);
+        // console.log(ref.fullPath);
       });
 
       if (result.nextPageToken) {

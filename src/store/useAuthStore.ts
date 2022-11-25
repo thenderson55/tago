@@ -15,7 +15,10 @@ export interface AuthState {
   loading: boolean;
   error: string;
   emailLogin: (email: string, password: string) => void;
-  emailSignUp: (email: string, password: string, addUser: Function) => void;
+  emailSignUp: (
+    values: {username: string; email: string; password: string},
+    addUser: Function,
+  ) => void;
   onGoogleButtonPress: () => Promise<FirebaseAuthTypes.UserCredential>;
 }
 
@@ -28,12 +31,19 @@ const useAuthStore = create<AuthState>(set => ({
   loading: initialState.loading,
   error: initialState.error,
 
-  emailSignUp: async (email, password, addUser) => {
+  emailSignUp: async (values, addUser) => {
     set(state => ({...state, loading: true}));
     try {
-      const res = await auth().createUserWithEmailAndPassword(email, password);
+      const res = await auth().createUserWithEmailAndPassword(
+        values.email,
+        values.password,
+      );
       console.log('User account created & signed in!');
       console.log('New ID: ', res.user.uid);
+      await res.user.updateProfile({
+        displayName: values.username,
+      });
+
       addUser(res.user.uid);
     } catch (error: any) {
       let errorMessage = '';
@@ -55,6 +65,7 @@ const useAuthStore = create<AuthState>(set => ({
       set(state => ({
         ...state,
         error: errorMessage,
+        loading: false,
       }));
       console.error(error);
     } finally {

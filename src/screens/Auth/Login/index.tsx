@@ -6,7 +6,7 @@ import FormError from '../../../components/Erorrs/FormError';
 import theme from '../../../theme';
 import firestore from '@react-native-firebase/firestore';
 import useAuthFacade from '../../../facades/useAuthFacade';
-import {loginSignupValidationSchema} from '../../../utils/validations';
+import {loginValidationSchema} from '../../../utils/validations';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthParamList} from '../../../stacks/Auth/AuthParamList';
@@ -32,7 +32,7 @@ function Login() {
             email: '',
             password: '',
           }}
-          validationSchema={loginSignupValidationSchema}
+          validationSchema={loginValidationSchema}
           onSubmit={values => {
             const trimmedValues = {
               email: values.email.trim(),
