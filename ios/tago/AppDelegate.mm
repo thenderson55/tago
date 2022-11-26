@@ -1,5 +1,6 @@
 #import "AppDelegate.h"
 
+#import <GoogleMaps/GoogleMaps.h>
 // @import UIKit;
 // @import FirebaseCore;
 #import <UIKit/UIKit.h>
@@ -35,6 +36,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [GMSServices provideAPIKey:@"AIzaSyBvvWe_Bi642Ab57PspSe0YbL_ZNM8RBIc"];
   [FIRApp configure];
   RCTAppSetupPrepareApp(application);
 

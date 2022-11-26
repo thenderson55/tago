@@ -1,7 +1,7 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '12.4'
+platform :ios, '13.0'
 install! 'cocoapods', :deterministic_uuids => false
 
 target 'tago' do
@@ -9,6 +9,9 @@ target 'tago' do
 
   # Flags change depending on the env values.
   flags = get_default_flags()
+
+  rn_maps_path = '../node_modules/react-native-maps'
+  pod 'react-native-google-maps', :path => rn_maps_path
 
   # https://stackoverflow.com/questions/72289521/swift-pods-cannot-yet-be-integrated-as-static-libraries-firebasecoreinternal-lib
   # pod 'Firebase', :modular_headers => true
