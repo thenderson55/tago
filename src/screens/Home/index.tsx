@@ -27,8 +27,7 @@ import MainButton from '../../components/Buttons/MainButton';
 import theme from '../../theme';
 
 function Home() {
-  // const navigation: NativeStackNavigationProp<HomeParamList, 'Graph'> =
-  //   useNavigation();
+  const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
   const [location, setLocation] = useState<number[]>([0, 0]);
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
 
@@ -258,6 +257,7 @@ function Home() {
           </>
         )}
         {/* <Button title="Graph" onPress={() => navigation.navigate('Graph')} /> */}
+        <MainButton text="MAP" onPress={() => navigation.navigate('Map')} />
         <MainButton text="GET DATA" onPress={getData} />
 
         <FastImage

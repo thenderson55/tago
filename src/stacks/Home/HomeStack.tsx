@@ -4,6 +4,7 @@ import {HomeParamList} from './HomeParamList';
 
 import Home from '../../screens/Home';
 import Graph from '../../screens/Home/Graph';
+import Map from '../../screens/Home/Map';
 
 const Stack = createNativeStackNavigator<HomeParamList>();
 
@@ -20,6 +21,13 @@ function HomeStack() {
           header: () => null,
         }}
         component={Home}
+      />
+      <Stack.Screen
+        name="Map"
+        options={{
+          header: () => null,
+        }}
+        component={Map}
       />
       <Stack.Screen
         name="Graph"
