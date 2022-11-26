@@ -5,12 +5,12 @@ import FormError from '../../../components/Erorrs/FormError';
 import FormInput from '../../../components/Inputs/FormInput';
 import theme from '../../../theme';
 import {signupValidationSchema} from '../../../utils/validations';
-import useUserFacade from '../../../facades/useUserFacade';
-import useAuthFacade from '../../../facades/useAuthFacade';
+import useAuthStore from '../../../store/useAuthStore';
+import useUserStore from '../../../store/useUserStore';
 
 function SignUp() {
-  const {addUser, loading} = useUserFacade();
-  const {emailSignUp} = useAuthFacade();
+  const {addUser, loading} = useUserStore();
+  const {emailSignUp} = useAuthStore();
   const [hidePassword, setHidePassword] = useState<boolean>(true);
 
   return (

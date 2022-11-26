@@ -2,22 +2,20 @@ import React from 'react';
 import {
   View,
   Modal,
-  Text,
   ScrollView,
   SafeAreaView,
   Platform,
-  TouchableOpacity,
   StyleSheet,
 } from 'react-native';
 import {Formik} from 'formik';
 import theme from '../../theme';
 import FormInput from '../Inputs/FormInput';
 import {ImagePickerResponse} from 'react-native-image-picker';
+//@ts-ignore
 import ProgressBar from 'react-native-progress/Bar';
-import usePhotosFacade from '../../facades/usePhotosFacade';
-import useUserFacade from '../../facades/useUserFacade';
-import {PhotoType} from '../../store/usePhotosStore';
+import usePhotosStore, {PhotoType} from '../../store/usePhotosStore';
 import MainButton from '../Buttons/MainButton';
+import useUserStore from '../../store/useUserStore';
 
 interface Props {
   modalBool: boolean;
@@ -28,8 +26,8 @@ interface Props {
 
 function InfoModal(props: Props) {
   const {modalBool, modalClose, imageResponse, location} = props;
-  const {addPhoto, transferProgress} = usePhotosFacade();
-  const {user} = useUserFacade();
+  const {addPhoto, transferProgress} = usePhotosStore();
+  const {user} = useUserStore();
   console.log({transferProgress});
   return (
     <>

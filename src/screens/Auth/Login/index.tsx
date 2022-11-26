@@ -4,17 +4,16 @@ import {Formik} from 'formik';
 import FormInput from '../../../components/Inputs/FormInput';
 import FormError from '../../../components/Erorrs/FormError';
 import theme from '../../../theme';
-import firestore from '@react-native-firebase/firestore';
-import useAuthFacade from '../../../facades/useAuthFacade';
 import {loginValidationSchema} from '../../../utils/validations';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthParamList} from '../../../stacks/Auth/AuthParamList';
+import useAuthStore from '../../../store/useAuthStore';
 
 function Login() {
   const navigation: NativeStackNavigationProp<AuthParamList, 'SignUp'> =
     useNavigation();
-  const {emailLogin, onGoogleButtonPress, loading} = useAuthFacade();
+  const {emailLogin, onGoogleButtonPress, loading} = useAuthStore();
   const [hidePassword, setHidePassword] = useState<boolean>(true);
 
   return (
