@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, SafeAreaView} from 'react-native';
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, {PROVIDER_GOOGLE, Marker, MapMarker} from 'react-native-maps';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 
 // https://www.youtube.com/watch?v=jvIQQ4ID2JY
@@ -46,8 +46,17 @@ const Map = () => {
             longitude: location[1],
             latitudeDelta: 0.015,
             longitudeDelta: 0.0121,
-          }}
-        />
+          }}>
+          <Marker
+            key={1}
+            coordinate={{
+              latitude: location[0],
+              longitude: location[1],
+            }}
+            title={'YO'}
+            description={'Tasty looking Sushi'}
+          />
+        </MapView>
       )}
     </SafeAreaView>
   );
