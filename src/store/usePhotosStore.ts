@@ -34,6 +34,7 @@ export interface PhotoState {
     response: ImagePickerResponse,
     input: PhotoType,
     modalClose: () => void,
+    addCategory: (user: UserType, category: string) => void,
   ) => void;
   editPhoto: (input: PhotoType) => void;
   deletePhoto: (id: number) => void;
@@ -149,6 +150,7 @@ const usePhotosStore = create<PhotoState>(set => ({
             ...state,
             categories: [...categories, category],
           }));
+        console.log('DOCID', doc.id);
       } else {
         return;
       }
@@ -166,16 +168,17 @@ const usePhotosStore = create<PhotoState>(set => ({
     }
   },
 
-  addPhoto: async (user, response, input, modalClose) => {
+  addPhoto: async (user, response, input, modalClose, addCategory) => {
     set(state => ({...state, loading: true}));
 
     try {
       // https://stackoverflow.com/questions/68643842/react-native-photo-wont-upload-to-firebase
-
+      await addCategory(user, input.category);
       const uri = response!.assets![0].uri!;
       let task;
       if (uri) {
         const uploadUri = uri;
+        console.log({uploadUri});
         set(state => ({...state, upLoading: true}));
 
         task = storage().ref(input.ref).putFile(uploadUri);

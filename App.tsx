@@ -27,6 +27,7 @@ import {navigationRef} from './src/utils/RouteNavigation';
 import AuthStack from './src/stacks/Auth/AuthStack';
 import HomeStack from './src/stacks/Home/HomeStack';
 import useUserStore from './src/store/useUserStore';
+import usePhotosStore from './src/store/usePhotosStore';
 
 const app = initializeApp(firebaseConfig);
 export const appStorage = getStorage(app);
@@ -40,8 +41,8 @@ GoogleSignin.configure({
 const App = () => {
   // const isDarkMode = useColorScheme() === 'dark';
   const {setUser, user} = useUserStore();
+  const {fetchCategories} = usePhotosStore();
   const [initializing, setInitializing] = useState(true);
-  console.log('UserId: ', user?.uid);
   // const backgroundStyle = {
   //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   // };
@@ -49,6 +50,7 @@ const App = () => {
   // Handle user state changes
   function onAuthStateChanged(currentUser: any) {
     setUser(currentUser);
+    console.log('UserId: ', currentUser.uid);
     if (initializing) {
       setInitializing(false);
     }
@@ -59,6 +61,10 @@ const App = () => {
     return subscriber; // unsubscribe on unmount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    user.uid && fetchCategories(user);
+  }, [user, fetchCategories]);
 
   return (
     <NavigationContainer ref={navigationRef}>
