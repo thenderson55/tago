@@ -107,19 +107,20 @@ function InfoModal(props: Props) {
                 handleReset,
               }) => (
                 <ScrollView>
-                  {/* <Picker
+                  <Picker
                     selectedValue={values.category}
                     onValueChange={handleChange('category')}>
                     {categories.map(item => (
                       <Picker.Item
-                        label={item.name.toString()}
-                        value={item.name.toString()}
-                        key={item.id.toString()}
+                        label={item.value.toString()}
+                        value={item.value.toString()}
+                        key={item.value.toString()}
                       />
                     ))}
-                  </Picker> */}
+                  </Picker>
                   <Text style={styles.label}>Category</Text>
                   <DropDownPicker
+                    listMode="SCROLLVIEW"
                     open={open}
                     value={categoryValue}
                     items={categories}
