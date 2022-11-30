@@ -16,9 +16,13 @@ export type PhotoType = {
   location?: number[];
   created?: Date;
 };
+export type CategoryType = {
+  name: string;
+};
 
 export interface PhotoState {
   photos: PhotoType[];
+  categories: string[];
   loading: boolean;
   upLoading: boolean;
   transferProgress: number;
@@ -33,6 +37,8 @@ export interface PhotoState {
   ) => void;
   editPhoto: (input: PhotoType) => void;
   deletePhoto: (id: number) => void;
+  fetchCategories: (user: UserType) => void;
+  addCategory: (user: UserType, category: string) => void;
 }
 
 const initialState = {
@@ -46,6 +52,7 @@ const initialState = {
       created: new Date(),
     },
   ],
+  categories: [''],
   loading: false,
   upLoading: false,
   error: '',
@@ -54,11 +61,12 @@ const initialState = {
 
 const usePhotosStore = create<PhotoState>(set => ({
   photos: initialState.photos,
+  categories: initialState.categories,
   loading: initialState.loading,
   upLoading: initialState.upLoading,
   error: initialState.error,
   transferProgress: initialState.transferProgress,
-  transferFinished: initialState.transferFinished,
+  // transferFinished: initialState.transferFinished,
 
   fetchPhotos: async () => {
     set(state => ({...state, loading: true}));
@@ -88,6 +96,67 @@ const usePhotosStore = create<PhotoState>(set => ({
       set(state => ({
         ...state,
         error: error.message,
+      }));
+    } finally {
+      set(state => ({
+        ...state,
+        loading: false,
+      }));
+    }
+  },
+
+  fetchCategories: async (user: UserType) => {
+    set(state => ({...state, loading: true}));
+    try {
+      const categoriesCollection = await firestore()
+        .collection('Users')
+        .doc(user.uid)
+        .collection('Categories')
+        .get();
+      const categories = categoriesCollection.docs.map(item => item.id);
+      set(state => ({...state, categories}));
+    } catch (error) {
+      console.log('Fetch cat error: ', error);
+      set(state => ({...state, loading: false}));
+    } finally {
+      set(state => ({
+        ...state,
+        loading: false,
+      }));
+    }
+  },
+
+  addCategory: async (user: UserType, category: string) => {
+    set(state => ({...state, loading: true}));
+    try {
+      const categories = usePhotosStore.getState().categories;
+      if (!categories.includes(category)) {
+        firestore()
+          .collection('Users')
+          .doc(user.uid)
+          .collection('Categories')
+          .doc(category)
+          .set({[category]: category});
+
+        const doc = await firestore()
+          .collection('Users')
+          .doc(user.uid)
+          .collection('Categories')
+          .doc(category)
+          .get();
+        doc.id === category &&
+          set(state => ({
+            ...state,
+            categories: [...categories, category],
+          }));
+      } else {
+        return;
+      }
+    } catch (error) {
+      console.log('Add cat error: ', error);
+      set(state => ({
+        ...state,
+        loading: false,
       }));
     } finally {
       set(state => ({
