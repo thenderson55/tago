@@ -1,7 +1,9 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {StyleSheet, SafeAreaView} from 'react-native';
+import {StyleSheet, SafeAreaView, View} from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker, MapMarker} from 'react-native-maps';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
+import theme from '../../theme';
+import BackButton from '../../components/Buttons/BackButton';
 
 // https://www.youtube.com/watch?v=jvIQQ4ID2JY
 
@@ -55,9 +57,13 @@ const Map = () => {
             }}
             title={'YO'}
             description={'Tasty looking Sushi'}
+            pinColor={theme.colors.magenta}
           />
         </MapView>
       )}
+      <View style={styles.backButton}>
+        <BackButton map={true} />
+      </View>
     </SafeAreaView>
   );
 };
@@ -67,7 +73,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   mapView: {
+    flex: 1,
     ...StyleSheet.absoluteFillObject,
+  },
+  backButton: {
+    position: 'absolute',
+    // top: '5%',
+    // left: '5%',
+    // alignSelf: 'flex-start',
+    bottom: '5%',
+    right: '7%',
+    alignSelf: 'flex-end',
   },
 });
 

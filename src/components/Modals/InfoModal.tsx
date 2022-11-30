@@ -16,6 +16,7 @@ import ProgressBar from 'react-native-progress/Bar';
 import usePhotosStore, {PhotoType} from '../../store/usePhotosStore';
 import MainButton from '../Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
+import {Picker} from '@react-native-picker/picker';
 
 interface Props {
   modalBool: boolean;
@@ -23,10 +24,42 @@ interface Props {
   imageResponse: ImagePickerResponse;
   location: number[];
 }
+const categories = [
+  {name: 'Want to go', id: 1},
+  {name: 'Favorites', id: 2},
+  {name: 'Chicago', id: 3},
+  {name: 'Washington DC', id: 4},
+  {name: 'New York', id: 5},
+  {name: 'San Diego', id: 6},
+  {name: 'Fort Worth', id: 7},
+  {name: 'Houston', id: 8},
+  {name: 'Cleveland', id: 9},
+  {name: 'Pittsburg', id: 10},
+  {name: 'Detroit', id: 11},
+  {name: 'Jacksonville', id: 12},
+  {name: 'Denver', id: 13},
+  {name: 'Columbus', id: 14},
+  {name: 'El Paso', id: 15},
+  {name: 'New Orleans', id: 16},
+  {name: 'Cincinnati', id: 17},
+  {name: 'Nashville', id: 18},
+  {name: 'Miami', id: 19},
+  {name: 'Tampa', id: 20},
+  {name: 'Bakersfield', id: 22},
+  {name: 'Tuscon', id: 23},
+  {name: 'Baltimore', id: 25},
+  {name: 'St Louis', id: 26},
+  {name: 'Las Vegas', id: 27},
+  {name: 'Memphis', id: 28},
+  {name: 'Seatle', id: 29},
+  {name: 'San Fransisco', id: 30},
+];
 
 function InfoModal(props: Props) {
   const {modalBool, modalClose, imageResponse, location} = props;
   const {addPhoto, transferProgress} = usePhotosStore();
+  // const [selectedLanguage, setSelectedLanguage] = useState();
+
   const {user} = useUserStore();
   console.log({transferProgress});
   return (
@@ -37,8 +70,8 @@ function InfoModal(props: Props) {
             <Formik
               enableReinitialize={true}
               initialValues={{
+                category: categories[0].name,
                 title: '',
-                category: '',
                 description: '',
               }}
               // validationSchema={validationSchema}
@@ -70,19 +103,23 @@ function InfoModal(props: Props) {
                 handleReset,
               }) => (
                 <ScrollView>
+                  <Picker
+                    selectedValue={values.category}
+                    onValueChange={handleChange('category')}>
+                    {categories.map(item => (
+                      <Picker.Item
+                        label={item.name.toString()}
+                        value={item.name.toString()}
+                        key={item.id.toString()}
+                      />
+                    ))}
+                  </Picker>
                   <FormInput
                     label="Title"
                     value={values.title}
                     placeholder="Sushi"
                     onChangeText={handleChange('title')}
                     onBlur={handleBlur('title')}
-                  />
-                  <FormInput
-                    label="Category"
-                    value={values.category}
-                    placeholder="Tokyo"
-                    onChangeText={handleChange('category')}
-                    onBlur={handleBlur('category')}
                   />
                   <FormInput
                     label="Description"

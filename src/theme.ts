@@ -17,6 +17,7 @@ interface ThemeStyles {
     lightGrey: string;
     darkGrey: string;
     black: string;
+    magenta: string;
   };
   fontSizes: {
     small: number;
@@ -67,6 +68,7 @@ const theme: ThemeStyles = {
     lightGrey: '#dadada',
     darkGrey: '#9b9b9b',
     black: '#000',
+    magenta: '#ff00ff',
   },
   margins: {
     screen: 20,
