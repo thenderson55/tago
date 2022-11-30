@@ -1,9 +1,10 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {StyleSheet, SafeAreaView, View} from 'react-native';
+import {StyleSheet, SafeAreaView, View, Dimensions} from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker, MapMarker} from 'react-native-maps';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 import theme from '../../theme';
 import BackButton from '../../components/Buttons/BackButton';
+import LoadingDots from '../../components/Animations/LoadingDots';
 
 // https://www.youtube.com/watch?v=jvIQQ4ID2JY
 
@@ -39,7 +40,7 @@ const Map = () => {
   //   Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE;
   return (
     <SafeAreaView style={styles.safeView}>
-      {location?.length && (
+      {location?.length ? (
         <MapView
           provider={PROVIDER_GOOGLE}
           style={styles.mapView}
@@ -60,6 +61,16 @@ const Map = () => {
             pinColor={theme.colors.magenta}
           />
         </MapView>
+      ) : (
+        <View style={styles.loadingDots}>
+          <LoadingDots
+            numberOfDots={3}
+            animationDelay={200}
+            style={{
+              color: theme.colors.primary,
+            }}
+          />
+        </View>
       )}
       <View style={styles.backButton}>
         <BackButton map={true} />
@@ -84,6 +95,12 @@ const styles = StyleSheet.create({
     bottom: '5%',
     right: '7%',
     alignSelf: 'flex-end',
+  },
+  loadingDots: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: (Dimensions.get('window').height / 10) * 2,
   },
 });
 

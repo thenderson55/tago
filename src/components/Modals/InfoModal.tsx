@@ -27,8 +27,9 @@ interface Props {
   location: number[];
 }
 const categories = [
-  {label: 'Want to go', value: 'Want to go'},
+  {label: 'Want To Go', value: 'Want To Go'},
   {label: 'Favorites', value: 'Favorites'},
+  {label: '+ Add New Category', value: '+ Add New Category'},
   // {name: 'Chicago', id: 3},
   // {name: 'Washington DC', id: 4},
   // {name: 'New York', id: 5},
@@ -62,7 +63,8 @@ function InfoModal(props: Props) {
   const {addPhoto, transferProgress} = usePhotosStore();
   // const [selectedLanguage, setSelectedLanguage] = useState();
   const [open, setOpen] = useState(false);
-  const [categoryValue, setCategoryValue] = useState(null);
+  const [categoryValue, setCategoryValue] = useState('Want To Go');
+  console.log('Cat: ', categoryValue);
   const {user} = useUserStore();
   console.log({transferProgress});
 
@@ -74,7 +76,7 @@ function InfoModal(props: Props) {
             <Formik
               enableReinitialize={true}
               initialValues={{
-                category: categoryValue || 'Want to go',
+                // category: categoryValue || 'Want to go',
                 title: '',
                 description: '',
               }}
@@ -90,7 +92,7 @@ function InfoModal(props: Props) {
                         ),
                   title: values.title,
                   description: values.description,
-                  category: categoryValue || 'Want to go',
+                  category: categoryValue || 'Want To Go',
                   location,
                 };
                 console.log('INPUT:', input);
@@ -107,7 +109,7 @@ function InfoModal(props: Props) {
                 handleReset,
               }) => (
                 <ScrollView>
-                  <Picker
+                  {/* <Picker
                     selectedValue={values.category}
                     onValueChange={handleChange('category')}>
                     {categories.map(item => (
@@ -117,12 +119,14 @@ function InfoModal(props: Props) {
                         key={item.value.toString()}
                       />
                     ))}
-                  </Picker>
+                  </Picker> */}
                   <Text style={styles.label}>Category</Text>
                   <DropDownPicker
+                    style={styles.dropDown}
                     listMode="SCROLLVIEW"
+                    placeholder="Select a Category"
                     open={open}
-                    value={categoryValue}
+                    value={categoryValue || 'Want To Go'}
                     items={categories}
                     setOpen={setOpen}
                     setValue={setCategoryValue}
@@ -169,7 +173,7 @@ function InfoModal(props: Props) {
   );
 }
 
-const styles: Styles = StyleSheet.create({
+const styles = StyleSheet.create({
   safeView: {
     flex: 1,
     paddingTop: Platform.OS === 'ios' ? 15 : 0,
@@ -192,6 +196,14 @@ const styles: Styles = StyleSheet.create({
     marginBottom: 9,
     fontSize: theme.fontSizes.small,
     marginTop: theme.margins.mediumTop,
+  },
+  dropDown: {
+    backgroundColor: 'white',
+    color: theme.colors.black,
+    borderColor: theme.colors.black,
+    borderWidth: 2,
+    borderRadius: 15,
+    height: theme.sizes.formHeight + 4,
   },
   modalView: {
     backgroundColor: 'pink',
