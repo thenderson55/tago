@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Modal,
@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   Platform,
   StyleSheet,
+  Text,
 } from 'react-native';
 import {Formik} from 'formik';
 import theme from '../../theme';
@@ -17,6 +18,7 @@ import usePhotosStore, {PhotoType} from '../../store/usePhotosStore';
 import MainButton from '../Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
 import {Picker} from '@react-native-picker/picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 interface Props {
   modalBool: boolean;
@@ -25,43 +27,45 @@ interface Props {
   location: number[];
 }
 const categories = [
-  {name: 'Want to go', id: 1},
-  {name: 'Favorites', id: 2},
-  {name: 'Chicago', id: 3},
-  {name: 'Washington DC', id: 4},
-  {name: 'New York', id: 5},
-  {name: 'San Diego', id: 6},
-  {name: 'Fort Worth', id: 7},
-  {name: 'Houston', id: 8},
-  {name: 'Cleveland', id: 9},
-  {name: 'Pittsburg', id: 10},
-  {name: 'Detroit', id: 11},
-  {name: 'Jacksonville', id: 12},
-  {name: 'Denver', id: 13},
-  {name: 'Columbus', id: 14},
-  {name: 'El Paso', id: 15},
-  {name: 'New Orleans', id: 16},
-  {name: 'Cincinnati', id: 17},
-  {name: 'Nashville', id: 18},
-  {name: 'Miami', id: 19},
-  {name: 'Tampa', id: 20},
-  {name: 'Bakersfield', id: 22},
-  {name: 'Tuscon', id: 23},
-  {name: 'Baltimore', id: 25},
-  {name: 'St Louis', id: 26},
-  {name: 'Las Vegas', id: 27},
-  {name: 'Memphis', id: 28},
-  {name: 'Seatle', id: 29},
-  {name: 'San Fransisco', id: 30},
+  {label: 'Want to go', value: 'Want to go'},
+  {label: 'Favorites', value: 'Favorites'},
+  // {name: 'Chicago', id: 3},
+  // {name: 'Washington DC', id: 4},
+  // {name: 'New York', id: 5},
+  // {name: 'San Diego', id: 6},
+  // {name: 'Fort Worth', id: 7},
+  // {name: 'Houston', id: 8},
+  // {name: 'Cleveland', id: 9},
+  // {name: 'Pittsburg', id: 10},
+  // {name: 'Detroit', id: 11},
+  // {name: 'Jacksonville', id: 12},
+  // {name: 'Denver', id: 13},
+  // {name: 'Columbus', id: 14},
+  // {name: 'El Paso', id: 15},
+  // {name: 'New Orleans', id: 16},
+  // {name: 'Cincinnati', id: 17},
+  // {name: 'Nashville', id: 18},
+  // {name: 'Miami', id: 19},
+  // {name: 'Tampa', id: 20},
+  // {name: 'Bakersfield', id: 22},
+  // {name: 'Tuscon', id: 23},
+  // {name: 'Baltimore', id: 25},
+  // {name: 'St Louis', id: 26},
+  // {name: 'Las Vegas', id: 27},
+  // {name: 'Memphis', id: 28},
+  // {name: 'Seatle', id: 29},
+  // {name: 'San Fransisco', id: 30},
 ];
 
 function InfoModal(props: Props) {
   const {modalBool, modalClose, imageResponse, location} = props;
   const {addPhoto, transferProgress} = usePhotosStore();
   // const [selectedLanguage, setSelectedLanguage] = useState();
-
+  const [open, setOpen] = useState(false);
+  const [categoryValue, setCategoryValue] = useState(null);
   const {user} = useUserStore();
   console.log({transferProgress});
+
   return (
     <>
       <Modal visible={modalBool} animationType="fade" transparent={true}>
@@ -70,7 +74,7 @@ function InfoModal(props: Props) {
             <Formik
               enableReinitialize={true}
               initialValues={{
-                category: categories[0].name,
+                category: categoryValue || 'Want to go',
                 title: '',
                 description: '',
               }}
@@ -86,7 +90,7 @@ function InfoModal(props: Props) {
                         ),
                   title: values.title,
                   description: values.description,
-                  category: values.category,
+                  category: categoryValue || 'Want to go',
                   location,
                 };
                 console.log('INPUT:', input);
@@ -103,7 +107,7 @@ function InfoModal(props: Props) {
                 handleReset,
               }) => (
                 <ScrollView>
-                  <Picker
+                  {/* <Picker
                     selectedValue={values.category}
                     onValueChange={handleChange('category')}>
                     {categories.map(item => (
@@ -113,7 +117,16 @@ function InfoModal(props: Props) {
                         key={item.id.toString()}
                       />
                     ))}
-                  </Picker>
+                  </Picker> */}
+                  <Text style={styles.label}>Category</Text>
+                  <DropDownPicker
+                    open={open}
+                    value={categoryValue}
+                    items={categories}
+                    setOpen={setOpen}
+                    setValue={setCategoryValue}
+                    // setItems={handleChange('category')}
+                  />
                   <FormInput
                     label="Title"
                     value={values.title}
@@ -155,18 +168,6 @@ function InfoModal(props: Props) {
   );
 }
 
-interface Styles {
-  header: {};
-  modalView: {};
-  close: {};
-  textContainer: {};
-  text: {};
-  safeView: {};
-  reset: {};
-  resetText: {};
-  resetWrapper: {};
-}
-
 const styles: Styles = StyleSheet.create({
   safeView: {
     flex: 1,
@@ -184,6 +185,12 @@ const styles: Styles = StyleSheet.create({
     // marginVertical: 20,
     // alignSelf: "center",
     // fontFamily: Rounded mc+1
+  },
+  label: {
+    color: theme.colors.black,
+    marginBottom: 9,
+    fontSize: theme.fontSizes.small,
+    marginTop: theme.margins.mediumTop,
   },
   modalView: {
     backgroundColor: 'pink',
