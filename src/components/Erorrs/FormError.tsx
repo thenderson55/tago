@@ -1,13 +1,13 @@
 import React from 'react';
 import {View, Text} from 'react-native';
-
-function FormError({
-  touched,
-  message,
-}: {
+interface Props {
   touched: boolean | undefined;
   message: string | undefined;
-}) {
+  spaceFiller?: boolean;
+}
+
+function FormError(props: Props) {
+  const {touched, message, spaceFiller} = props;
   if (touched && message) {
     return (
       <View>
@@ -17,7 +17,11 @@ function FormError({
       </View>
     );
   }
-  return <View style={{height: 20}} />;
+  if (spaceFiller) {
+    return <View style={{height: 20}} />;
+  } else {
+    return <View />;
+  }
 }
 
 export default FormError;

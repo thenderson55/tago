@@ -9,6 +9,7 @@ import {
   Text,
 } from 'react-native';
 import {Formik} from 'formik';
+import * as Yup from 'yup';
 import theme from '../../theme';
 import FormInput from '../Inputs/FormInput';
 import {ImagePickerResponse} from 'react-native-image-picker';
@@ -20,6 +21,7 @@ import useUserStore from '../../store/useUserStore';
 // import {Picker} from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {categoryValues} from '../../utils/settings';
+import FormError from '../Erorrs/FormError';
 
 interface Props {
   modalBool: boolean;
@@ -65,6 +67,34 @@ function InfoModal(props: Props) {
     categoryValue === categoryValues.addNew && setAddNewCategory(true);
   }, [categoryValue]);
 
+  const addInfoValidationSchema = Yup.object().shape({
+    title: Yup.string().max(30, 'Maximun 30 characters'),
+    description: Yup.string().max(30, 'Maximun 250 characters'),
+    newCategory: Yup.string().test({
+      message: 'Category already exists',
+      test: value => {
+        // Check if new category input matches the two default ones
+        // or any ones from the db
+        const categoresToLowercase = categories.map(item => {
+          return item.toLowerCase();
+        });
+        if (value) {
+          if (
+            value.toLowerCase() === categoryValues.addNew.toLowerCase() ||
+            value.toLowerCase() === categoryValues.default.toLowerCase() ||
+            categoresToLowercase.includes(value.toLowerCase())
+          ) {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          return true;
+        }
+      },
+    }),
+  });
+
   return (
     <>
       <Modal visible={modalBool} animationType="fade" transparent={true}>
@@ -77,7 +107,7 @@ function InfoModal(props: Props) {
                 description: '',
                 newCategory: '',
               }}
-              // validationSchema={validationSchema}
+              validationSchema={addInfoValidationSchema}
               onSubmit={values => {
                 const input: PhotoType = {
                   ref:
@@ -94,34 +124,14 @@ function InfoModal(props: Props) {
                 };
                 console.log('INPUT:', input);
 
-                // Check if new category input matches the two default ones
-                // or any ones from the db
-                const categoresToLowercase = categories.map(item => {
-                  return item.toLowerCase();
-                });
-                console.log({categoresToLowercase});
-                if (
-                  values.newCategory.toLowerCase() ===
-                    categoryValues.addNew.toLowerCase() ||
-                  values.newCategory.toLowerCase() ===
-                    categoryValues.default.toLowerCase() ||
-                  categoresToLowercase.includes(
-                    values.newCategory.toLowerCase(),
-                  )
-                ) {
-                  setCategoryAlreadyExists(true);
-                  console.log('Already exists!');
-                  return;
-                } else {
-                  addPhoto(
-                    user,
-                    imageResponse,
-                    input,
-                    modalClose,
-                    addCategory,
-                    setCategoryAlreadyExists,
-                  );
-                }
+                addPhoto(
+                  user,
+                  imageResponse,
+                  input,
+                  modalClose,
+                  addCategory,
+                  setCategoryAlreadyExists,
+                );
               }}>
               {({
                 values,
@@ -165,6 +175,19 @@ function InfoModal(props: Props) {
                       onBlur={handleBlur('newCategory')}
                     />
                   )}
+                  <FormError
+                    touched={touched.newCategory}
+                    message={errors.newCategory}
+                    spaceFiller={false}
+                  />
+
+                  {/* From the double check in store */}
+                  {categoryAlreadyExists && (
+                    <View>
+                      <Text style={styles.error}>Category already exists</Text>
+                    </View>
+                  )}
+
                   <FormInput
                     label="Title"
                     value={values.title}
@@ -172,12 +195,23 @@ function InfoModal(props: Props) {
                     onChangeText={handleChange('title')}
                     onBlur={handleBlur('title')}
                   />
+                  <FormError
+                    touched={touched.title}
+                    message={errors.title}
+                    spaceFiller={false}
+                  />
+
                   <FormInput
                     label="Description"
                     value={values.description}
                     placeholder="Cheap Otoro"
                     onChangeText={handleChange('description')}
                     onBlur={handleBlur('description')}
+                  />
+                  <FormError
+                    touched={touched.description}
+                    message={errors.description}
+                    spaceFiller={false}
                   />
 
                   <MainButton
@@ -191,6 +225,9 @@ function InfoModal(props: Props) {
                     style={{marginTop: 10}}
                     onPress={() => {
                       handleReset();
+                      setCategoryAlreadyExists(false);
+                      setAddNewCategory(false);
+                      setCategoryValue(categoryValues.default);
                       modalClose();
                     }}
                     text="Cancel"
@@ -229,6 +266,12 @@ const styles = StyleSheet.create({
     marginBottom: 9,
     fontSize: theme.fontSizes.small,
     marginTop: theme.margins.mediumTop,
+  },
+  error: {
+    color: 'red',
+    fontSize: 12,
+    height: 20,
+    marginTop: 5,
   },
   dropDown: {
     backgroundColor: 'white',
