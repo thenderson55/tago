@@ -144,7 +144,10 @@ const usePhotosStore = create<PhotoState>(set => ({
     set(state => ({...state, loading: true}));
     try {
       const categories = usePhotosStore.getState().categories;
-      if (!categories.includes(category)) {
+      const categoresToLowercase = categories.map(item => {
+        return item.toLowerCase();
+      });
+      if (!categoresToLowercase.includes(category.toLowerCase())) {
         firestore()
           .collection('Users')
           .doc(user.uid)

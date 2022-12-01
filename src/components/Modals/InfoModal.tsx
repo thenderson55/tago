@@ -43,18 +43,25 @@ function InfoModal(props: Props) {
   const {user} = useUserStore();
 
   useEffect(() => {
-    const categoryMap = categories.map(item => {
+    // Remove the default "Want To Go" since will add to the top
+    const filterd = categories.filter(item => {
+      return item !== categoryValues.default;
+    });
+
+    // Map to match package data structure
+    const categoryMap = filterd.map(item => {
       return {label: item, value: item};
     });
-    console.log('CM', categoryMap);
+
     setCategoryList([
-      {label: 'Want To Go', value: 'Want To Go'},
+      {label: 'Want To Go', value: categoryValues.default},
       ...categoryMap,
       {label: '+ Add New Category', value: '+ Add New Category'},
     ]);
   }, [categories]);
 
   useEffect(() => {
+    // Add the input fied for a new categiry if they select the addNew category
     categoryValue === categoryValues.addNew && setAddNewCategory(true);
   }, [categoryValue]);
 
@@ -86,10 +93,21 @@ function InfoModal(props: Props) {
                   location,
                 };
                 console.log('INPUT:', input);
+
+                // Check if new category input matches the two default ones
+                // or any ones from the db
+                const categoresToLowercase = categories.map(item => {
+                  return item.toLowerCase();
+                });
+                console.log({categoresToLowercase});
                 if (
-                  values.newCategory === categoryValues.addNew ||
-                  values.newCategory === categoryValues.default ||
-                  categories.includes(values.newCategory)
+                  values.newCategory.toLowerCase() ===
+                    categoryValues.addNew.toLowerCase() ||
+                  values.newCategory.toLowerCase() ===
+                    categoryValues.default.toLowerCase() ||
+                  categoresToLowercase.includes(
+                    values.newCategory.toLowerCase(),
+                  )
                 ) {
                   setCategoryAlreadyExists(true);
                   console.log('Already exists!');
