@@ -3,8 +3,8 @@ import firestore from '@react-native-firebase/firestore';
 import {timeStamp} from '../utils/settings';
 import storage from '@react-native-firebase/storage';
 import {ImagePickerResponse} from 'react-native-image-picker';
-import {Platform} from 'react-native';
 import {UserType} from './useUserStore';
+import {Dispatch, SetStateAction} from 'react';
 
 export type PhotoType = {
   ref: string;
@@ -34,12 +34,21 @@ export interface PhotoState {
     response: ImagePickerResponse,
     input: PhotoType,
     modalClose: () => void,
-    addCategory: (user: UserType, category: string) => void,
+    addCategory: (
+      user: UserType,
+      category: string,
+      setCategoryAlreadyExists: Dispatch<SetStateAction<boolean>>,
+    ) => void,
+    setCategoryAlreadyExists: Dispatch<SetStateAction<boolean>>,
   ) => void;
   editPhoto: (input: PhotoType) => void;
   deletePhoto: (id: number) => void;
   fetchCategories: (user: UserType) => void;
-  addCategory: (user: UserType, category: string) => void;
+  addCategory: (
+    user: UserType,
+    category: string,
+    setCategoryAlreadyExists: Dispatch<SetStateAction<boolean>>,
+  ) => void;
 }
 
 const initialState = {
@@ -127,7 +136,11 @@ const usePhotosStore = create<PhotoState>(set => ({
     }
   },
 
-  addCategory: async (user: UserType, category: string) => {
+  addCategory: async (
+    user: UserType,
+    category: string,
+    setCategoryAlreadyExists: Dispatch<SetStateAction<boolean>>,
+  ) => {
     set(state => ({...state, loading: true}));
     try {
       const categories = usePhotosStore.getState().categories;
@@ -152,6 +165,7 @@ const usePhotosStore = create<PhotoState>(set => ({
           }));
         console.log('DOCID', doc.id);
       } else {
+        setCategoryAlreadyExists(true);
         return;
       }
     } catch (error) {
@@ -168,12 +182,19 @@ const usePhotosStore = create<PhotoState>(set => ({
     }
   },
 
-  addPhoto: async (user, response, input, modalClose, addCategory) => {
+  addPhoto: async (
+    user,
+    response,
+    input,
+    modalClose,
+    addCategory,
+    setCategoryAlreadyExists,
+  ) => {
     set(state => ({...state, loading: true}));
 
     try {
       // https://stackoverflow.com/questions/68643842/react-native-photo-wont-upload-to-firebase
-      await addCategory(user, input.category);
+      await addCategory(user, input.category, setCategoryAlreadyExists);
       const uri = response!.assets![0].uri!;
       let task;
       if (uri) {

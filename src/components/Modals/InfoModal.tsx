@@ -34,6 +34,8 @@ function InfoModal(props: Props) {
     usePhotosStore();
   // const [selectedLanguage, setSelectedLanguage] = useState();
   const [open, setOpen] = useState(false);
+  const [categoryAlreadyExists, setCategoryAlreadyExists] =
+    useState<boolean>(false);
   const [categoryValue, setCategoryValue] = useState(categoryValues.default);
   const [addNewCategory, setAddNewCategory] = useState(false);
   const [categoryList, setCategoryList] =
@@ -44,6 +46,7 @@ function InfoModal(props: Props) {
     const categoryMap = categories.map(item => {
       return {label: item, value: item};
     });
+    console.log('CM', categoryMap);
     setCategoryList([
       {label: 'Want To Go', value: 'Want To Go'},
       ...categoryMap,
@@ -83,7 +86,24 @@ function InfoModal(props: Props) {
                   location,
                 };
                 console.log('INPUT:', input);
-                addPhoto(user, imageResponse, input, modalClose, addCategory);
+                if (
+                  values.newCategory === categoryValues.addNew ||
+                  values.newCategory === categoryValues.default ||
+                  categories.includes(values.newCategory)
+                ) {
+                  setCategoryAlreadyExists(true);
+                  console.log('Already exists!');
+                  return;
+                } else {
+                  addPhoto(
+                    user,
+                    imageResponse,
+                    input,
+                    modalClose,
+                    addCategory,
+                    setCategoryAlreadyExists,
+                  );
+                }
               }}>
               {({
                 values,
