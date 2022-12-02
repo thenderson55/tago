@@ -1,10 +1,12 @@
 import create from 'zustand';
 import firestore from '@react-native-firebase/firestore';
-import {timeStamp} from '../utils/settings';
+import {categoryValues, timeStamp} from '../utils/settings';
 import storage from '@react-native-firebase/storage';
 import {ImagePickerResponse} from 'react-native-image-picker';
 import {UserType} from './useUserStore';
 import {Dispatch, SetStateAction} from 'react';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeParamList} from '../stacks/Home/HomeParamList';
 
 export type PhotoType = {
   ref: string;
@@ -13,6 +15,7 @@ export type PhotoType = {
   // location: [number, number];
   description: string;
   category: string;
+  url?: string;
   location?: number[];
   created?: Date;
 };
@@ -40,6 +43,7 @@ export interface PhotoState {
       setCategoryAlreadyExists: Dispatch<SetStateAction<boolean>>,
     ) => void,
     setCategoryAlreadyExists: Dispatch<SetStateAction<boolean>>,
+    navigation: NativeStackNavigationProp<HomeParamList>,
   ) => void;
   editPhoto: (input: PhotoType) => void;
   deletePhoto: (id: number) => void;
@@ -144,16 +148,20 @@ const usePhotosStore = create<PhotoState>(set => ({
     set(state => ({...state, loading: true}));
     try {
       const categories = usePhotosStore.getState().categories;
-      const categoresToLowercase = categories.map(item => {
+      const filtered = categories.filter(item => {
+        return item !== categoryValues.default;
+      });
+      const categoresToLowercase = filtered.map(item => {
         return item.toLowerCase();
       });
+      console.log({categoresToLowercase});
       if (!categoresToLowercase.includes(category.toLowerCase())) {
         firestore()
           .collection('Users')
           .doc(user.uid)
           .collection('Categories')
           .doc(category)
-          .set({[category]: category});
+          .set({name: category});
 
         const doc = await firestore()
           .collection('Users')
@@ -192,6 +200,7 @@ const usePhotosStore = create<PhotoState>(set => ({
     modalClose,
     addCategory,
     setCategoryAlreadyExists,
+    navigation,
   ) => {
     set(state => ({...state, loading: true}));
 
@@ -200,7 +209,8 @@ const usePhotosStore = create<PhotoState>(set => ({
       await addCategory(user, input.category, setCategoryAlreadyExists);
       const uri = response!.assets![0].uri!;
       let task;
-      if (uri) {
+      let inputUpdate = input;
+      if (!uri) {
         const uploadUri = uri;
         console.log({uploadUri});
         set(state => ({...state, upLoading: true}));
@@ -225,8 +235,27 @@ const usePhotosStore = create<PhotoState>(set => ({
           console.log('Image uploaded to bucket');
           const url = await storage().ref(input.ref).getDownloadURL();
           console.log('Image download URL: ', url);
+          inputUpdate = {...input, url};
+          const res = await firestore()
+            .collection('Users')
+            .doc(user.uid)
+            .collection('Photos')
+            .add({...inputUpdate, ref: input.ref, created: timeStamp()});
+          console.log('Add doc res ID: ', res);
+          set((state: PhotoState) => ({
+            ...state,
+            transferProgress: 1,
+          }));
+
+          const doc = await firestore()
+            .collection('Users')
+            .doc(user.uid)
+            .collection('Photos')
+            .get();
+          console.log('Fetch new doc: ', doc.docs);
           modalClose();
-          return url;
+          navigation.navigate('Map');
+          // return url;
         });
       }
 
@@ -247,24 +276,6 @@ const usePhotosStore = create<PhotoState>(set => ({
       //     })
       //     .catch(error => console.log('ERRRRRR', error));
       // };
-
-      const res = await firestore()
-        .collection('Users')
-        .doc(user.uid)
-        .collection('Photos')
-        .add({...input, ref: input.ref, created: timeStamp()});
-      console.log('Add doc res ID: ', res);
-      set((state: PhotoState) => ({
-        ...state,
-        transferProgress: 1,
-      }));
-
-      const doc = await firestore()
-        .collection('Users')
-        .doc(user.uid)
-        .collection('Photos')
-        .get();
-      console.log('Fetch new doc: ', doc.docs);
     } catch (error) {
       console.log('Add error: ', error);
     } finally {

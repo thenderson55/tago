@@ -22,6 +22,9 @@ import useUserStore from '../../store/useUserStore';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {categoryValues} from '../../utils/settings';
 import FormError from '../Erorrs/FormError';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeParamList} from '../../stacks/Home/HomeParamList';
 
 interface Props {
   modalBool: boolean;
@@ -32,6 +35,8 @@ interface Props {
 
 function InfoModal(props: Props) {
   const {modalBool, modalClose, imageResponse, location} = props;
+  const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
+
   const {addCategory, addPhoto, transferProgress, categories} =
     usePhotosStore();
   // const [selectedLanguage, setSelectedLanguage] = useState();
@@ -130,14 +135,15 @@ function InfoModal(props: Props) {
                 };
                 console.log('INPUT:', input);
 
-                // addPhoto(
-                //   user,
-                //   imageResponse,
-                //   input,
-                //   modalClose,
-                //   addCategory,
-                //   setCategoryAlreadyExists,
-                // );
+                addPhoto(
+                  user,
+                  imageResponse,
+                  input,
+                  modalClose,
+                  addCategory,
+                  setCategoryAlreadyExists,
+                  navigation,
+                );
               }}>
               {({
                 values,
@@ -199,7 +205,7 @@ function InfoModal(props: Props) {
                   )}
 
                   <FormInput
-                    label="Title"
+                    label="Title (optional)"
                     value={values.title}
                     placeholder="Sushi"
                     onChangeText={handleChange('title')}
@@ -212,7 +218,7 @@ function InfoModal(props: Props) {
                   />
 
                   <FormInput
-                    label="Description"
+                    label="Description (optional)"
                     value={values.description}
                     placeholder="Cheap Otoro"
                     onChangeText={handleChange('description')}

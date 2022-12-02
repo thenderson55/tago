@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
+  Dimensions,
   PermissionsAndroid,
   Platform,
   SafeAreaView,
@@ -25,11 +26,16 @@ import FastImage from 'react-native-fast-image';
 import InfoModal from '../../components/Modals/InfoModal';
 import MainButton from '../../components/Buttons/MainButton';
 import theme from '../../theme';
+import usePhotosStore from '../../store/usePhotosStore';
+import useUserStore from '../../store/useUserStore';
+import LoadingDots from '../../components/Animations/LoadingDots';
 
 function Home() {
   const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
   const [location, setLocation] = useState<number[]>([0, 0]);
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
+  const {addCategory} = usePhotosStore();
+  const {user} = useUserStore();
 
   const [infoModal, setInfoModal] = useState(false);
   const infoModalClose = () => {
@@ -124,13 +130,25 @@ function Home() {
     //     console.log('LIST ERROR: ', error);
     //     // Uh-oh, an error occurred!
     //   });
-    // try {
-    //   const usersCollection = await firestore().collection('photos').get();
-    //   console.log('COLLECTION AUTH', usersCollection.docs[0].data());
-    //   console.log('COLLECTION AUTH 2', usersCollection.docs[1].data());
-    // } catch (err) {
-    //   console.log('ERROR', err);
-    // }
+    try {
+      const usersCollection = await firestore()
+        .collection('Users')
+        .doc('Xel0Qy1Y9aWn6o27xb0nbr9SdLF3')
+        .collection('Photos')
+        .get();
+      const usersCollectionCat = await firestore()
+        .collection('Users')
+        .doc('Xel0Qy1Y9aWn6o27xb0nbr9SdLF3')
+        .collection('Categories')
+        .get();
+      console.log('COLLECTION AUTH', usersCollection.docs);
+      console.log('COLLECTION CAT', usersCollectionCat.docs);
+      console.log('COLLECTION AUTH 2', usersCollection.docs[1].data());
+
+      addCategory(user, 'Minchester');
+    } catch (err) {
+      console.log('ERROR', err);
+    }
   };
 
   async function requestLocationPermission() {
@@ -207,9 +225,6 @@ function Home() {
       // noData: true,
     };
     await launchImageLibrary(options, async (response: ImagePickerResponse) => {
-      setImageResponse(response);
-      infoModalOpen();
-
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.errorCode) {
@@ -217,7 +232,9 @@ function Home() {
       } else if (response.errorMessage) {
         console.log('ImagePicker Error Message: ', response.errorMessage);
       } else {
+        setImageResponse(response);
         getLocation();
+        infoModalOpen();
       }
     });
   };
@@ -242,19 +259,19 @@ function Home() {
         <MainButton style={{marginTop: 30}} onPress={logOut} text="Log out" />
         <MainButton text="Take photo" onPress={() => handleSelectPicture()} />
         <MainButton text="Get Location" onPress={getLocation} />
-        <View
+        {/* <View
           style={{
             marginTop: 10,
             padding: 10,
             borderRadius: 10,
             width: '40%',
           }}
-        />
+        /> */}
         {location && (
-          <>
+          <View style={{marginTop: 20}}>
             <Text>Latitude: {location[0]} </Text>
             <Text>Longitude: {location[1]} </Text>
-          </>
+          </View>
         )}
         {/* <Button title="Graph" onPress={() => navigation.navigate('Graph')} /> */}
         <MainButton text="MAP" onPress={() => navigation.navigate('Map')} />
@@ -280,6 +297,12 @@ function Home() {
 const styles = StyleSheet.create({
   safeView: {
     margin: theme.margins.screen,
+  },
+  loadingDots: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: (Dimensions.get('window').height / 10) * 2,
   },
 });
 
