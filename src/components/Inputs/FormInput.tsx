@@ -28,6 +28,7 @@ type Props = {
   cancel?: boolean;
   cancelClose?: React.Dispatch<React.SetStateAction<boolean>>;
   setCategoryValue?: React.Dispatch<React.SetStateAction<string>>;
+  handleReset?: (e?: React.SyntheticEvent<any, Event> | undefined) => void;
 };
 
 const FormInput = (props: Props) => {
@@ -46,6 +47,7 @@ const FormInput = (props: Props) => {
     cancel,
     cancelClose,
     setCategoryValue,
+    handleReset,
   } = props;
   return (
     <>
@@ -71,11 +73,12 @@ const FormInput = (props: Props) => {
             />
           </TouchableOpacity>
         )}
-        {cancel && cancelClose && setCategoryValue && (
+        {cancel && cancelClose && setCategoryValue && handleReset && (
           <TouchableOpacity
             onPress={() => {
               cancelClose(false);
               setCategoryValue(categoryValues.default);
+              handleReset();
             }}>
             <Ionicons
               style={styles.icon}

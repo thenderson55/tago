@@ -67,6 +67,12 @@ function InfoModal(props: Props) {
     categoryValue === categoryValues.addNew && setAddNewCategory(true);
   }, [categoryValue]);
 
+  useEffect(() => {
+    if (!addNewCategory) {
+      setCategoryValue(categoryValues.default);
+    }
+  }, [addNewCategory]);
+
   const addInfoValidationSchema = Yup.object().shape({
     title: Yup.string().max(30, 'Maximun 30 characters'),
     description: Yup.string().max(30, 'Maximun 250 characters'),
@@ -176,6 +182,7 @@ function InfoModal(props: Props) {
                       cancel={true}
                       cancelClose={setAddNewCategory}
                       setCategoryValue={setCategoryValue}
+                      handleReset={handleReset}
                     />
                   )}
                   <FormError
