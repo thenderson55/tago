@@ -30,7 +30,7 @@ export interface PhotoState {
   upLoading: boolean;
   transferProgress: number;
   error: string;
-  fetchPhotos: () => void;
+  fetchPhotos: (userId: string) => void;
   fetchPhoto: (id: number) => void;
   addPhoto: (
     user: UserType,
@@ -47,7 +47,7 @@ export interface PhotoState {
   ) => void;
   editPhoto: (input: PhotoType) => void;
   deletePhoto: (id: number) => void;
-  fetchCategories: (user: UserType) => void;
+  fetchCategories: (userId: string) => void;
   addCategory: (
     user: UserType,
     category: string,
@@ -62,6 +62,7 @@ const initialState = {
       title: '',
       location: [1, 2],
       description: '',
+      url: '',
       category: '',
       created: new Date(),
     },
@@ -82,20 +83,20 @@ const usePhotosStore = create<PhotoState>(set => ({
   transferProgress: initialState.transferProgress,
   // transferFinished: initialState.transferFinished,
 
-  fetchPhotos: async () => {
-    set(state => ({...state, loading: true}));
+  fetchPhotos: async userId => {
     try {
-      const res = await fetch('https://jsonplaceholder.typicode.com/users');
-      set(state => ({...state, photos: [...state.photos, res]}));
+      const res = await firestore()
+        .collection('Users')
+        .doc(userId)
+        .collection('Photos')
+        .get();
+      const photos = res.docs.map(item => item.data() as PhotoType);
+      console.log('Fetch photos: ', photos);
+      set(state => ({...state, photos}));
     } catch (error: any) {
       set(state => ({
         ...state,
-        error: error.message,
-      }));
-    } finally {
-      set(state => ({
-        ...state,
-        loading: false,
+        error: error,
       }));
     }
   },
@@ -109,7 +110,7 @@ const usePhotosStore = create<PhotoState>(set => ({
     } catch (error: any) {
       set(state => ({
         ...state,
-        error: error.message,
+        error: error,
       }));
     } finally {
       set(state => ({
@@ -119,24 +120,18 @@ const usePhotosStore = create<PhotoState>(set => ({
     }
   },
 
-  fetchCategories: async (user: UserType) => {
-    set(state => ({...state, loading: true}));
+  fetchCategories: async userId => {
     try {
       const categoriesCollection = await firestore()
         .collection('Users')
-        .doc(user.uid)
+        .doc(userId)
         .collection('Categories')
         .get();
       const categories = categoriesCollection.docs.map(item => item.id);
       set(state => ({...state, categories}));
-    } catch (error) {
+    } catch (error: any) {
       console.log('Fetch cat error: ', error);
-      set(state => ({...state, loading: false}));
-    } finally {
-      set(state => ({
-        ...state,
-        loading: false,
-      }));
+      set(state => ({...state, error: error}));
     }
   },
 

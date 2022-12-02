@@ -41,7 +41,7 @@ GoogleSignin.configure({
 const App = () => {
   // const isDarkMode = useColorScheme() === 'dark';
   const {setUser, user} = useUserStore();
-  const {fetchCategories} = usePhotosStore();
+  const {fetchCategories, fetchPhotos} = usePhotosStore();
   const [initializing, setInitializing] = useState(true);
   // const backgroundStyle = {
   //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -63,8 +63,11 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    user.uid && fetchCategories(user);
-  }, [user, fetchCategories]);
+    if (user.uid) {
+      fetchCategories(user.uid);
+      fetchPhotos(user.uid);
+    }
+  }, [user.uid, fetchCategories, fetchPhotos]);
 
   return (
     <NavigationContainer ref={navigationRef}>
