@@ -37,22 +37,13 @@ export interface PhotoState {
     response: ImagePickerResponse,
     input: PhotoType,
     modalClose: () => void,
-    addCategory: (
-      user: UserType,
-      category: string,
-      setCategoryAlreadyExists: Dispatch<SetStateAction<boolean>>,
-    ) => void,
-    setCategoryAlreadyExists: Dispatch<SetStateAction<boolean>>,
+    addCategory: (user: UserType, category: string) => void,
     navigation: NativeStackNavigationProp<HomeParamList>,
   ) => void;
   editPhoto: (input: PhotoType) => void;
   deletePhoto: (id: number) => void;
   fetchCategories: (userId: string) => void;
-  addCategory: (
-    user: UserType,
-    category: string,
-    setCategoryAlreadyExists: Dispatch<SetStateAction<boolean>>,
-  ) => void;
+  addCategory: (user: UserType, category: string) => void;
 }
 
 const initialState = {
@@ -91,7 +82,6 @@ const usePhotosStore = create<PhotoState>(set => ({
         .collection('Photos')
         .get();
       const photos = res.docs.map(item => item.data() as PhotoType);
-      console.log('Fetch photos: ', photos);
       set(state => ({...state, photos}));
     } catch (error: any) {
       set(state => ({
@@ -135,11 +125,7 @@ const usePhotosStore = create<PhotoState>(set => ({
     }
   },
 
-  addCategory: async (
-    user: UserType,
-    category: string,
-    setCategoryAlreadyExists: Dispatch<SetStateAction<boolean>>,
-  ) => {
+  addCategory: async (user: UserType, category: string) => {
     set(state => ({...state, loading: true}));
     try {
       const categories = usePhotosStore.getState().categories;
@@ -169,9 +155,7 @@ const usePhotosStore = create<PhotoState>(set => ({
             ...state,
             categories: [...categories, category],
           }));
-        console.log('DOCID', doc.id);
       } else {
-        setCategoryAlreadyExists(true);
         return;
       }
     } catch (error) {
@@ -194,18 +178,17 @@ const usePhotosStore = create<PhotoState>(set => ({
     input,
     modalClose,
     addCategory,
-    setCategoryAlreadyExists,
     navigation,
   ) => {
     set(state => ({...state, loading: true}));
 
     try {
       // https://stackoverflow.com/questions/68643842/react-native-photo-wont-upload-to-firebase
-      await addCategory(user, input.category, setCategoryAlreadyExists);
+      await addCategory(user, input.category);
       const uri = response!.assets![0].uri!;
       let task;
       let inputUpdate = input;
-      if (!uri) {
+      if (uri) {
         const uploadUri = uri;
         console.log({uploadUri});
         set(state => ({...state, upLoading: true}));
@@ -236,7 +219,6 @@ const usePhotosStore = create<PhotoState>(set => ({
             .doc(user.uid)
             .collection('Photos')
             .add({...inputUpdate, ref: input.ref, created: timeStamp()});
-          console.log('Add doc res ID: ', res);
           set((state: PhotoState) => ({
             ...state,
             transferProgress: 1,
@@ -246,8 +228,12 @@ const usePhotosStore = create<PhotoState>(set => ({
             .collection('Users')
             .doc(user.uid)
             .collection('Photos')
+            .doc(res.id)
             .get();
-          console.log('Fetch new doc: ', doc.docs);
+          set((state: PhotoState) => ({
+            ...state,
+            photos: [...(state.photos as PhotoType[]), doc.data() as PhotoType],
+          }));
           modalClose();
           navigation.navigate('Map');
           // return url;

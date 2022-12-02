@@ -141,7 +141,6 @@ function InfoModal(props: Props) {
                   input,
                   modalClose,
                   addCategory,
-                  setCategoryAlreadyExists,
                   navigation,
                 );
               }}>

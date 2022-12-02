@@ -28,13 +28,13 @@ import MainButton from '../../components/Buttons/MainButton';
 import theme from '../../theme';
 import usePhotosStore from '../../store/usePhotosStore';
 import useUserStore from '../../store/useUserStore';
-import LoadingDots from '../../components/Animations/LoadingDots';
+// import LoadingDots from '../../components/Animations/LoadingDots';
 
 function Home() {
   const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
   const [location, setLocation] = useState<number[]>([0, 0]);
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
-  const {addCategory} = usePhotosStore();
+  const {fetchPhotos} = usePhotosStore();
   const {user} = useUserStore();
 
   const [infoModal, setInfoModal] = useState(false);
@@ -131,21 +131,20 @@ function Home() {
     //     // Uh-oh, an error occurred!
     //   });
     try {
-      const usersCollection = await firestore()
-        .collection('Users')
-        .doc('Xel0Qy1Y9aWn6o27xb0nbr9SdLF3')
-        .collection('Photos')
-        .get();
-      const usersCollectionCat = await firestore()
-        .collection('Users')
-        .doc('Xel0Qy1Y9aWn6o27xb0nbr9SdLF3')
-        .collection('Categories')
-        .get();
-      console.log('COLLECTION AUTH', usersCollection.docs);
-      console.log('COLLECTION CAT', usersCollectionCat.docs);
-      console.log('COLLECTION AUTH 2', usersCollection.docs[1].data());
-
-      addCategory(user, 'Minchester');
+      // const usersCollection = await firestore()
+      //   .collection('Users')
+      //   .doc('Xel0Qy1Y9aWn6o27xb0nbr9SdLF3')
+      //   .collection('Photos')
+      //   .get();
+      // const usersCollectionCat = await firestore()
+      //   .collection('Users')
+      //   .doc('Xel0Qy1Y9aWn6o27xb0nbr9SdLF3')
+      //   .collection('Categories')
+      //   .get();
+      // console.log('COLLECTION AUTH', usersCollection.docs);
+      // console.log('COLLECTION CAT', usersCollectionCat.docs);
+      // console.log('COLLECTION AUTH 2', usersCollection.docs[1].data());
+      // addCategory(user, 'Minchester');
     } catch (err) {
       console.log('ERROR', err);
     }
@@ -224,7 +223,7 @@ function Home() {
       // allowsEditing: true,
       // noData: true,
     };
-    await launchImageLibrary(options, async (response: ImagePickerResponse) => {
+    await launchCamera(options, async (response: ImagePickerResponse) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.errorCode) {
