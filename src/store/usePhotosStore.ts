@@ -219,10 +219,6 @@ const usePhotosStore = create<PhotoState>(set => ({
             .doc(user.uid)
             .collection('Photos')
             .add({...inputUpdate, ref: input.ref, created: timeStamp()});
-          set((state: PhotoState) => ({
-            ...state,
-            transferProgress: 1,
-          }));
 
           const doc = await firestore()
             .collection('Users')
@@ -232,18 +228,19 @@ const usePhotosStore = create<PhotoState>(set => ({
             .get();
           set((state: PhotoState) => ({
             ...state,
+            transferProgress: 1,
             photos: [...(state.photos as PhotoType[]), doc.data() as PhotoType],
           }));
+
           modalClose();
-          // TODO: pass new photo to map
           navigation.navigate('Map', {
             newPhoto: doc.data() as PhotoType,
           });
-          // return url;
         });
       }
 
-      await task;
+      // FIXME: Why was this here (it delays the finally):
+      // await task;
 
       // const upload = async () => {
       //   // WEB VERSION BUT CRASHES FOR IOS BUT STILL UPLOADS
