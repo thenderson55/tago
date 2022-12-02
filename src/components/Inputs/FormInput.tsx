@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import theme from '../../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {categoryValues} from '../../utils/settings';
 
 type Props = {
   onChangeText: (text: string) => void;
@@ -24,6 +25,9 @@ type Props = {
   password?: boolean;
   hidePassword?: boolean;
   setHidePassword?: React.Dispatch<React.SetStateAction<boolean>>;
+  cancel?: boolean;
+  cancelClose?: React.Dispatch<React.SetStateAction<boolean>>;
+  setCategoryValue?: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const FormInput = (props: Props) => {
@@ -39,11 +43,14 @@ const FormInput = (props: Props) => {
     password,
     hidePassword,
     setHidePassword,
+    cancel,
+    cancelClose,
+    setCategoryValue,
   } = props;
   return (
     <>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View style={password && styles.wrapper}>
+      <View style={(password || cancel) && styles.wrapper}>
         <TextInput
           style={[styles.input, {...style}]}
           secureTextEntry={secureTextEntry || false}
@@ -61,6 +68,20 @@ const FormInput = (props: Props) => {
               name={hidePassword ? 'eye' : 'eye-off'}
               size={30}
               color={theme.colors.grey}
+            />
+          </TouchableOpacity>
+        )}
+        {cancel && cancelClose && setCategoryValue && (
+          <TouchableOpacity
+            onPress={() => {
+              cancelClose(false);
+              setCategoryValue(categoryValues.default);
+            }}>
+            <Ionicons
+              style={styles.icon}
+              name={'close-outline'}
+              size={30}
+              color={theme.colors.black}
             />
           </TouchableOpacity>
         )}

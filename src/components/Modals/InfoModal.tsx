@@ -119,19 +119,19 @@ function InfoModal(props: Props) {
                         ),
                   title: values.title,
                   description: values.description,
-                  category: values.newCategory,
+                  category: values.newCategory || categoryValue,
                   location,
                 };
                 console.log('INPUT:', input);
 
-                addPhoto(
-                  user,
-                  imageResponse,
-                  input,
-                  modalClose,
-                  addCategory,
-                  setCategoryAlreadyExists,
-                );
+                // addPhoto(
+                //   user,
+                //   imageResponse,
+                //   input,
+                //   modalClose,
+                //   addCategory,
+                //   setCategoryAlreadyExists,
+                // );
               }}>
               {({
                 values,
@@ -173,6 +173,9 @@ function InfoModal(props: Props) {
                       placeholder="Bangkok"
                       onChangeText={handleChange('newCategory')}
                       onBlur={handleBlur('newCategory')}
+                      cancel={true}
+                      cancelClose={setAddNewCategory}
+                      setCategoryValue={setCategoryValue}
                     />
                   )}
                   <FormError
