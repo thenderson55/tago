@@ -5,11 +5,27 @@ import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 import theme from '../../theme';
 import BackButton from '../../components/Buttons/BackButton';
 import LoadingDots from '../../components/Animations/LoadingDots';
+import usePhotosStore, {PhotoType} from '../../store/usePhotosStore';
+import {HomeParamList} from '../../stacks/Home/HomeParamList';
+import {RouteProp, useRoute} from '@react-navigation/native';
 
 // https://www.youtube.com/watch?v=jvIQQ4ID2JY
 
 const Map = () => {
+  const route: RouteProp<HomeParamList, 'Map'> = useRoute();
+  // const {newPhoto} = route?.params;
   const [location, setLocation] = useState<number[]>();
+  // const [newPhoto, setNewPhoto] = useState<PhotoType>();
+  const {photos} = usePhotosStore();
+  console.log('MAP PHOTOS', photos);
+  route?.params?.newPhoto && console.log('NEW PHOTO', route.params.newPhoto);
+
+  // useEffect(() => {
+  //   if (photos.length > 1) {
+  //     console.log('MAP PHOTOS 1', photos[photos.length - 1]);
+  //     setNewPhoto(photos[photos.length - 1]);
+  //   }
+  // }, [photos]);
 
   const getLocation = useCallback(async () => {
     try {
@@ -40,7 +56,28 @@ const Map = () => {
   //   Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE;
   return (
     <SafeAreaView style={styles.safeView}>
-      {location?.length ? (
+      {route?.params?.newPhoto?.location ? (
+        <MapView
+          provider={PROVIDER_GOOGLE}
+          style={styles.mapView}
+          initialRegion={{
+            latitude: route.params.newPhoto.location[0],
+            longitude: route.params.newPhoto.location[1],
+            latitudeDelta: 0.015,
+            longitudeDelta: 0.0121,
+          }}>
+          <Marker
+            key={1}
+            coordinate={{
+              latitude: route.params.newPhoto.location[0],
+              longitude: route.params.newPhoto.location[1],
+            }}
+            title={'PARAMS'}
+            description={'Tasty looking Sushi'}
+            pinColor={theme.colors.magenta}
+          />
+        </MapView>
+      ) : location?.length ? (
         <MapView
           provider={PROVIDER_GOOGLE}
           style={styles.mapView}

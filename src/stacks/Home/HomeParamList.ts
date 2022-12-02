@@ -1,5 +1,7 @@
+import {PhotoType} from '../../store/usePhotosStore';
+
 export type HomeParamList = {
   Home: undefined;
   Graph: undefined;
-  Map: undefined;
+  Map: {newPhoto?: PhotoType};
 };

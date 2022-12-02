@@ -24,6 +24,7 @@ function HomeStack() {
       />
       <Stack.Screen
         name="Map"
+        // initialParams={{ itemId: 42 }}
         options={{
           header: () => null,
         }}

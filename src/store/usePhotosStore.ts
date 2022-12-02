@@ -235,7 +235,10 @@ const usePhotosStore = create<PhotoState>(set => ({
             photos: [...(state.photos as PhotoType[]), doc.data() as PhotoType],
           }));
           modalClose();
-          navigation.navigate('Map');
+          // TODO: pass new photo to map
+          navigation.navigate('Map', {
+            newPhoto: doc.data() as PhotoType,
+          });
           // return url;
         });
       }
