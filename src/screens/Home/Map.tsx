@@ -9,7 +9,6 @@ import usePhotosStore from '../../store/usePhotosStore';
 import {HomeParamList} from '../../stacks/Home/HomeParamList';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {Avatar} from 'native-base';
-
 // https://www.youtube.com/watch?v=jvIQQ4ID2JY
 
 // https://www.codedaily.io/tutorials/Build-a-Map-with-Custom-Animated-Markers-and-Region-Focus-when-Content-is-Scrolled-in-React-Native
@@ -103,13 +102,25 @@ const Map = () => {
                 title={item.title}
                 description={item.description}
                 pinColor={theme.colors.magenta}>
-                <Avatar
-                  size="md"
-                  // style={{paddingBottom: 50, opacity: 0.5}}
-                  source={{
-                    uri: item.url,
-                  }}
-                />
+                <View style={styles.pinWrapper}>
+                  <Avatar
+                    style={styles.avatar}
+                    size="md"
+                    source={{
+                      uri: item.url,
+                    }}
+                  />
+                  {/* <View
+                    style={{
+                      height: 20,
+                      width: 20,
+                      backgroundColor: 'pink',
+                      marginTop: -5,
+                      zIndex: -1,
+                    }}
+                  /> */}
+                  <View style={styles.triangle} />
+                </View>
               </Marker>
             );
           })}
@@ -165,6 +176,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: (Dimensions.get('window').height / 10) * 2,
+  },
+  pinWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatar: {
+    borderColor: theme.colors.magenta,
+    borderWidth: 3,
+  },
+  triangle: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 10,
+    borderRightWidth: 10,
+    borderBottomWidth: 20,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: theme.colors.magenta,
+    transform: [{rotate: '180deg'}],
+    marginTop: -5,
+    zIndex: -1,
   },
 });
 
