@@ -41,7 +41,6 @@ GoogleSignin.configure({
 const App = () => {
   // const isDarkMode = useColorScheme() === 'dark';
   const {setUser, user} = useUserStore();
-  const {fetchCategories, fetchPhotos} = usePhotosStore();
   const [initializing, setInitializing] = useState(true);
   // const backgroundStyle = {
   //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -50,7 +49,7 @@ const App = () => {
   // Handle user state changes
   function onAuthStateChanged(currentUser: any) {
     setUser(currentUser);
-    console.log('UserId: ', currentUser.uid);
+    console.log('UserId: ', currentUser?.uid);
     if (initializing) {
       setInitializing(false);
     }
@@ -61,13 +60,6 @@ const App = () => {
     return subscriber; // unsubscribe on unmount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (user.uid) {
-      fetchCategories(user.uid);
-      fetchPhotos(user.uid);
-    }
-  }, [user.uid, fetchCategories, fetchPhotos]);
 
   return (
     <NavigationContainer ref={navigationRef}>

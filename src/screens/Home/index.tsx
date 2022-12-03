@@ -34,7 +34,7 @@ function Home() {
   const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
   const [location, setLocation] = useState<number[]>([0, 0]);
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
-  const {fetchPhotos} = usePhotosStore();
+  const {fetchPhotos, fetchCategories} = usePhotosStore();
   const {user} = useUserStore();
 
   const [infoModal, setInfoModal] = useState(false);
@@ -44,6 +44,13 @@ function Home() {
   const infoModalOpen = () => {
     setInfoModal(true);
   };
+
+  useEffect(() => {
+    if (user.uid) {
+      fetchCategories(user.uid);
+      fetchPhotos(user.uid);
+    }
+  }, [user.uid, fetchCategories, fetchPhotos]);
 
   const listFilesAndDirectories = (
     reference: FirebaseStorageTypes.Reference,
