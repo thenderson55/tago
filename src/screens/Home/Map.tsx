@@ -1,15 +1,18 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, SafeAreaView, View, Dimensions} from 'react-native';
-import MapView, {PROVIDER_GOOGLE, Marker, MapMarker} from 'react-native-maps';
+import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 import theme from '../../theme';
 import BackButton from '../../components/Buttons/BackButton';
 import LoadingDots from '../../components/Animations/LoadingDots';
-import usePhotosStore, {PhotoType} from '../../store/usePhotosStore';
+import usePhotosStore from '../../store/usePhotosStore';
 import {HomeParamList} from '../../stacks/Home/HomeParamList';
 import {RouteProp, useRoute} from '@react-navigation/native';
+import {Avatar} from 'native-base';
 
 // https://www.youtube.com/watch?v=jvIQQ4ID2JY
+
+// https://www.codedaily.io/tutorials/Build-a-Map-with-Custom-Animated-Markers-and-Region-Focus-when-Content-is-Scrolled-in-React-Native
 
 const Map = () => {
   const route: RouteProp<HomeParamList, 'Map'> = useRoute();
@@ -87,10 +90,10 @@ const Map = () => {
             latitudeDelta: 0.015,
             longitudeDelta: 0.0121,
           }}>
-          {photos.map(item => {
+          {photos.map((item, index) => {
             return (
               <Marker
-                key={1}
+                key={index}
                 coordinate={{
                   // @ts-ignore
                   latitude: item.location[0],
@@ -99,8 +102,15 @@ const Map = () => {
                 }}
                 title={item.title}
                 description={item.description}
-                pinColor={theme.colors.magenta}
-              />
+                pinColor={theme.colors.magenta}>
+                <Avatar
+                  size="md"
+                  // style={{paddingBottom: 50, opacity: 0.5}}
+                  source={{
+                    uri: item.url,
+                  }}
+                />
+              </Marker>
             );
           })}
         </MapView>
@@ -143,12 +153,12 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    // top: '5%',
-    // left: '5%',
-    // alignSelf: 'flex-start',
-    bottom: '5%',
-    right: '7%',
-    alignSelf: 'flex-end',
+    bottom: '7%',
+    left: '7%',
+    alignSelf: 'flex-start',
+    // bottom: '7%',
+    // right: '7%',
+    // alignSelf: 'flex-end',
   },
   loadingDots: {
     flex: 1,

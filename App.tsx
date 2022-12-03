@@ -28,6 +28,7 @@ import AuthStack from './src/stacks/Auth/AuthStack';
 import HomeStack from './src/stacks/Home/HomeStack';
 import useUserStore from './src/store/useUserStore';
 import usePhotosStore from './src/store/usePhotosStore';
+import {NativeBaseProvider} from 'native-base';
 
 const app = initializeApp(firebaseConfig);
 export const appStorage = getStorage(app);
@@ -63,10 +64,9 @@ const App = () => {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      {/* <SafeAreaView> */}
-      {/* <SafeAreaView style={backgroundStyle}> */}
-      {!user ? <AuthStack /> : <HomeStack />}
-      {/* </SafeAreaView> */}
+      <NativeBaseProvider>
+        {!user ? <AuthStack /> : <HomeStack />}
+      </NativeBaseProvider>
     </NavigationContainer>
   );
 };
