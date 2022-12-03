@@ -72,10 +72,37 @@ const Map = () => {
               latitude: route.params.newPhoto.location[0],
               longitude: route.params.newPhoto.location[1],
             }}
-            title={'PARAMS'}
-            description={'Tasty looking Sushi'}
+            title={route.params.newPhoto.title}
+            description={route.params.newPhoto.description}
             pinColor={theme.colors.magenta}
           />
+        </MapView>
+      ) : photos?.length > 0 && location?.length ? (
+        <MapView
+          provider={PROVIDER_GOOGLE}
+          style={styles.mapView}
+          initialRegion={{
+            latitude: location[0],
+            longitude: location[1],
+            latitudeDelta: 0.015,
+            longitudeDelta: 0.0121,
+          }}>
+          {photos.map(item => {
+            return (
+              <Marker
+                key={1}
+                coordinate={{
+                  // @ts-ignore
+                  latitude: item.location[0],
+                  // @ts-ignore
+                  longitude: item.location[1],
+                }}
+                title={item.title}
+                description={item.description}
+                pinColor={theme.colors.magenta}
+              />
+            );
+          })}
         </MapView>
       ) : location?.length ? (
         <MapView
@@ -86,18 +113,8 @@ const Map = () => {
             longitude: location[1],
             latitudeDelta: 0.015,
             longitudeDelta: 0.0121,
-          }}>
-          <Marker
-            key={1}
-            coordinate={{
-              latitude: location[0],
-              longitude: location[1],
-            }}
-            title={'YO'}
-            description={'Tasty looking Sushi'}
-            pinColor={theme.colors.magenta}
-          />
-        </MapView>
+          }}
+        />
       ) : (
         <View style={styles.loadingDots}>
           <LoadingDots

@@ -47,18 +47,8 @@ export interface PhotoState {
 }
 
 const initialState = {
-  photos: [
-    {
-      ref: '',
-      title: '',
-      location: [1, 2],
-      description: '',
-      url: '',
-      category: '',
-      created: new Date(),
-    },
-  ],
-  categories: [''],
+  photos: [],
+  categories: [],
   loading: false,
   upLoading: false,
   error: '',
