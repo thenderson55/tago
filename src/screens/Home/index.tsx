@@ -46,11 +46,11 @@ function Home() {
   };
 
   useEffect(() => {
-    if (user.uid) {
+    if (user?.uid?.length > 1) {
       fetchCategories(user.uid);
       fetchPhotos(user.uid);
     }
-  }, [user.uid, fetchCategories, fetchPhotos]);
+  }, [user?.uid, fetchCategories, fetchPhotos]);
 
   const listFilesAndDirectories = (
     reference: FirebaseStorageTypes.Reference,
@@ -72,21 +72,19 @@ function Home() {
 
   useEffect(() => {
     // RNFB VERSION
-    const reference = storage().ref();
-    listFilesAndDirectories(reference, '').then(() => {
-      console.log('Finished listing');
-    });
+    // const reference = storage().ref();
+    // listFilesAndDirectories(reference, '').then(() => {
+    //   console.log('Finished listing');
+    // });
     // reference.list().then(res => {
     //   console.log('LIST', res);
     // });
-
     // WEB VERSION
     // const imagesListRef = ref(appStorage);
     // const reference = ref(
     //   appStorage,
     //   '1E9B4F7C-6CF9-4A23-B6BF-66EAF7B4B415.jpg',
     // );
-
     // getDownloadURL(reference).then(url => {
     //   console.log('Fetch on URL using ref:', url);
     // });
@@ -225,8 +223,8 @@ function Home() {
       //   cameraRoll: true,
       //   waitUntilSaved: true,
       // },
-      // maxWidth: 256,
-      // maxHeight: 256,
+      maxWidth: 500,
+      maxHeight: 500,
       // allowsEditing: true,
       // noData: true,
     };

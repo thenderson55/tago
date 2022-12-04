@@ -16,7 +16,7 @@ export interface UserState {
 }
 
 const initialState = {
-  user: {uid: 0, name: ''},
+  user: {uid: '', name: ''},
   loading: false,
   error: '',
 };

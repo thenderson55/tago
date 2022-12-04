@@ -76,8 +76,18 @@ const Map = () => {
             }}
             title={route.params.newPhoto.title}
             description={route.params.newPhoto.description}
-            pinColor={theme.colors.magenta}
-          />
+            pinColor={theme.colors.magenta}>
+            <View style={styles.pinWrapper}>
+              <Avatar
+                style={styles.avatar}
+                size="md"
+                source={{
+                  uri: route.params.newPhoto.url,
+                }}
+              />
+              <View style={styles.triangle} />
+            </View>
+          </Marker>
         </MapView>
       ) : photos?.length > 0 && location?.length ? (
         <MapView
@@ -110,15 +120,6 @@ const Map = () => {
                       uri: item.url,
                     }}
                   />
-                  {/* <View
-                    style={{
-                      height: 20,
-                      width: 20,
-                      backgroundColor: 'pink',
-                      marginTop: -5,
-                      zIndex: -1,
-                    }}
-                  /> */}
                   <View style={styles.triangle} />
                 </View>
               </Marker>
@@ -199,6 +200,7 @@ const styles = StyleSheet.create({
     transform: [{rotate: '180deg'}],
     marginTop: -5,
     zIndex: -1,
+    elevation: -1,
   },
 });
 
