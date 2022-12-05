@@ -30,6 +30,7 @@ const Map = () => {
   // }, [photos]);
 
   const getLocation = useCallback(async () => {
+    // TODO: check for permissions if first time using app and going to map
     try {
       Geolocation.getCurrentPosition(
         (position: GeoPosition) => {
