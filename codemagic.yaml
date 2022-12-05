@@ -51,7 +51,7 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m1
     integrations:
-      app_store_connect: codemagic
+      app_store_connect: Codemagic
     environment:
       ios_signing:
         distribution_type: app_store
@@ -106,11 +106,6 @@ workflows:
           failure: true
       app_store_connect:
         auth: integration
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        submit_to_testflight: true
-
         # Configuration related to TestFlight (optional)
         # Note: This action is performed during post-processing.
         beta_groups: # Specify the names of beta tester groups that will get access to the build once it has passed beta review.
