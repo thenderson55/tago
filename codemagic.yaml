@@ -55,7 +55,7 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.tago.debug
+        bundle_identifier: com.tago
       vars:
         XCODE_WORKSPACE: 'tago.xcworkspace' # <-- Put the name of your Xcode workspace here
         XCODE_SCHEME: 'tago' # <-- Put the name of your Xcode scheme here
