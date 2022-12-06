@@ -92,7 +92,7 @@ workflows:
           agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
       - name: Build ipa for distribution
         script: |
-          echo $FIREBASE_IOS | base64 --decode > $CM_BUILD_DIR/ios/tago/GoogleService-Info.plist
+          echo $FIREBASE_IOS | base64 --decode > /Users/builder/clone/ios/GoogleService-Info.plist
           xcode-project build-ipa \
             --workspace "$CM_BUILD_DIR/ios/$XCODE_WORKSPACE" \
             --scheme "$XCODE_SCHEME"
