@@ -36,7 +36,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  [GMSServices provideAPIKey:@"AIzaSyBvvWe_Bi642Ab57PspSe0YbL_ZNM8RBIc"];
+  [GMSServices provideAPIKey:@"AIzaSyDhiSKluuJIv_F7dfEqauWL0r3qabNv1FI"];
   [FIRApp configure];
   RCTAppSetupPrepareApp(application);
 
