@@ -68,7 +68,7 @@ workflows:
     scripts:
       - name: Decode firebase ios
         script: |
-          echo $FIREBASE_IOS | base64 --decode > $CM_BUILD_DIR/ios/tago/GoogleService-Info.plist
+          echo $FIREBASE_IOS | base64 --decode > /Users/builder/clone/ios/GoogleService-Info.plist
       - name: Install dependencies
         script: |
           yarn
