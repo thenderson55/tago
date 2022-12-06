@@ -64,9 +64,9 @@ workflows:
       xcode: latest
       cocoapods: default
     scripts:
-      - name: Decode firebase ios
-        script: |
-          echo $FIREBASE_IOS | base64 --decode > $CM_BUILD_DIR/$XCODE_SCHEME/GoogleService-Info.plist
+      # - name: Decode firebase ios
+      #   script: |
+      #     echo $FIREBASE_IOS | base64 --decode > $CM_BUILD_DIR/ios/tago/GoogleService-Info.plist
       - name: Install dependencies
         script: |
           yarn
@@ -92,6 +92,7 @@ workflows:
           agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
       - name: Build ipa for distribution
         script: |
+          echo $FIREBASE_IOS | base64 --decode > $CM_BUILD_DIR/ios/tago/GoogleService-Info.plist
           xcode-project build-ipa \
             --workspace "$CM_BUILD_DIR/ios/$XCODE_WORKSPACE" \
             --scheme "$XCODE_SCHEME"
