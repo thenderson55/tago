@@ -117,10 +117,11 @@ workflows:
       app_store_connect:
         auth: integration
         # Configuration related to TestFlight (optional)
-        submit_to_testflight: true
+        submit_to_testflight: false
         # Note: This action is performed during post-processing.
-        beta_groups: # Specify the names of beta tester groups that will get access to the build once it has passed beta review.
-          - Beta Testers
+        # beta_groups: # Specify the names of beta tester groups that will get access to the build once it has passed beta review.
+        #   - App Store Connect Users
+        #   - Beta Testers
 
         # Configuration related to App Store (optional)
         # Note: This action is performed during post-processing.
