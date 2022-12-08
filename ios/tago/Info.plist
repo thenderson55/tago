@@ -51,11 +51,13 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string></string>
+	<string>Take photos to mark places as want to go</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Record location of places user wants to go</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Record location of places user wants to go</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string></string>
+	<string>Keep photos of places user wants to go</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Ionicons.ttf</string>
