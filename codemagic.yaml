@@ -66,6 +66,13 @@ workflows:
       xcode: latest
       cocoapods: default
     scripts:
+      - name: Set the build version
+        script: |
+          #!/bin/sh
+          set -e
+          set -x
+          cd $CM_BUILD_DIR
+          agvtool new-version -all $(($BUILD_NUMBER + 1))
       - name: Decode firebase ios
         script: |
           echo $FIREBASE_IOS | base64 --decode > /Users/builder/clone/ios/GoogleService-Info.plist
