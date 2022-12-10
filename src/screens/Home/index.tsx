@@ -28,6 +28,7 @@ import MainButton from '../../components/Buttons/MainButton';
 import theme from '../../theme';
 import usePhotosStore from '../../store/usePhotosStore';
 import useUserStore from '../../store/useUserStore';
+import {requestLocationPermission} from '../../utils';
 // import LoadingDots from '../../components/Animations/LoadingDots';
 
 function Home() {
@@ -52,142 +53,109 @@ function Home() {
     }
   }, [user?.uid, fetchCategories, fetchPhotos]);
 
-  const listFilesAndDirectories = (
-    reference: FirebaseStorageTypes.Reference,
-    pageToken: string,
-  ): any => {
-    return reference.list({pageToken}).then(result => {
-      // Loop over each item
-      result.items.forEach(ref => {
-        // console.log(ref.fullPath);
-      });
+  // const listFilesAndDirectories = (
+  //   reference: FirebaseStorageTypes.Reference,
+  //   pageToken: string,
+  // ): any => {
+  //   return reference.list({pageToken}).then(result => {
+  //     // Loop over each item
+  //     result.items.forEach(ref => {
+  //       // console.log(ref.fullPath);
+  //     });
 
-      if (result.nextPageToken) {
-        return listFilesAndDirectories(reference, result.nextPageToken);
-      }
+  //     if (result.nextPageToken) {
+  //       return listFilesAndDirectories(reference, result.nextPageToken);
+  //     }
 
-      return Promise.resolve();
-    });
-  };
+  //     return Promise.resolve();
+  //   });
+  // };
 
-  useEffect(() => {
-    // RNFB VERSION
-    // const reference = storage().ref();
-    // listFilesAndDirectories(reference, '').then(() => {
-    //   console.log('Finished listing');
-    // });
-    // reference.list().then(res => {
-    //   console.log('LIST', res);
-    // });
-    // WEB VERSION
-    // const imagesListRef = ref(appStorage);
-    // const reference = ref(
-    //   appStorage,
-    //   '1E9B4F7C-6CF9-4A23-B6BF-66EAF7B4B415.jpg',
-    // );
-    // getDownloadURL(reference).then(url => {
-    //   console.log('Fetch on URL using ref:', url);
-    // });
-    // listAll(imagesListRef).then(response => {
-    //   response.items.forEach(item => {
-    //     getDownloadURL(item).then(url => {
-    //       setImageUrls(prev => [...prev, url]);
-    //     });
-    //   });
-    // });
-  }, []);
+  // useEffect(() => {
+  // RNFB VERSION
+  // const reference = storage().ref();
+  // listFilesAndDirectories(reference, '').then(() => {
+  //   console.log('Finished listing');
+  // });
+  // reference.list().then(res => {
+  //   console.log('LIST', res);
+  // });
+  // WEB VERSION
+  // const imagesListRef = ref(appStorage);
+  // const reference = ref(
+  //   appStorage,
+  //   '1E9B4F7C-6CF9-4A23-B6BF-66EAF7B4B415.jpg',
+  // );
+  // getDownloadURL(reference).then(url => {
+  //   console.log('Fetch on URL using ref:', url);
+  // });
+  // listAll(imagesListRef).then(response => {
+  //   response.items.forEach(item => {
+  //     getDownloadURL(item).then(url => {
+  //       setImageUrls(prev => [...prev, url]);
+  //     });
+  //   });
+  // });
+  // }, []);
 
-  const getData = async () => {
-    // const reference = storage().ref();
-    // console.log('REF', reference);
-    // const url = await storage().ref('DuchessAgain.jpeg').getDownloadURL();
-    // console.log('URL', url);
-    // const url2 = await storage()
-    //   .ref('thomas-henderson-resume-2022c.docx')
-    //   .getDownloadURL();
-    // console.log('URL CV', url2);
-    // const list = async () => {
-    //   const listRes = await reference.list();
-    //   console.log('LIST', listRes.items);
-    //   listRes.items.forEach(listRess => {
-    //     // All the items under listRef.
-    //     console.log('Item', listRess.fullPath);
-    //   });
-    // };
-    // list();
-    // const appstorage = getStorage();
-    // Create a storage reference from our storage service
-    // const storageRef = ref(appstorage);
-    // const listRef = ref(storage, 'files/uid');
-    // Find all the prefixes and items.
-    // listAll(storageRef)
-    //   .then(res => {
-    //     console.log('RES: ', res);
-    //     // res.prefixes.forEach((folderRef) => {
-    //     //   // All the prefixes under listRef.
-    //     //   // You may call listAll() recursively on them.
-    //     // });
-    //     // res.items.forEach((itemRef) => {
-    //     //   // All the items under listRef.
-    //     // });
-    //   })
-    //   .catch(error => {
-    //     console.log('LIST ERROR: ', error);
-    //     // Uh-oh, an error occurred!
-    //   });
-    try {
-      // const usersCollection = await firestore()
-      //   .collection('Users')
-      //   .doc('Xel0Qy1Y9aWn6o27xb0nbr9SdLF3')
-      //   .collection('Photos')
-      //   .get();
-      // const usersCollectionCat = await firestore()
-      //   .collection('Users')
-      //   .doc('Xel0Qy1Y9aWn6o27xb0nbr9SdLF3')
-      //   .collection('Categories')
-      //   .get();
-      // console.log('COLLECTION AUTH', usersCollection.docs);
-      // console.log('COLLECTION CAT', usersCollectionCat.docs);
-      // console.log('COLLECTION AUTH 2', usersCollection.docs[1].data());
-      // addCategory(user, 'Minchester');
-    } catch (err) {
-      console.log('ERROR', err);
-    }
-  };
+  // const getData = async () => {
+  // const reference = storage().ref();
+  // console.log('REF', reference);
+  // const url = await storage().ref('DuchessAgain.jpeg').getDownloadURL();
+  // console.log('URL', url);
+  // const url2 = await storage()
+  //   .ref('thomas-henderson-resume-2022c.docx')
+  //   .getDownloadURL();
+  // console.log('URL CV', url2);
+  // const list = async () => {
+  //   const listRes = await reference.list();
+  //   console.log('LIST', listRes.items);
+  //   listRes.items.forEach(listRess => {
+  //     // All the items under listRef.
+  //     console.log('Item', listRess.fullPath);
+  //   });
+  // };
+  // list();
+  // const appstorage = getStorage();
+  // Create a storage reference from our storage service
+  // const storageRef = ref(appstorage);
+  // const listRef = ref(storage, 'files/uid');
+  // Find all the prefixes and items.
+  // listAll(storageRef)
+  //   .then(res => {
+  //     console.log('RES: ', res);
+  //     // res.prefixes.forEach((folderRef) => {
+  //     //   // All the prefixes under listRef.
+  //     //   // You may call listAll() recursively on them.
+  //     // });
+  //     // res.items.forEach((itemRef) => {
+  //     //   // All the items under listRef.
+  //     // });
+  //   })
+  //   .catch(error => {
+  //     console.log('LIST ERROR: ', error);
+  //     // Uh-oh, an error occurred!
+  //   });
+  // try {
+  // const usersCollection = await firestore()
+  //   .collection('Users')
+  //   .doc('Xel0Qy1Y9aWn6o27xb0nbr9SdLF3')
+  //   .collection('Photos')
+  //   .get();
+  // const usersCollectionCat = await firestore()
+  //   .collection('Users')
+  //   .doc('Xel0Qy1Y9aWn6o27xb0nbr9SdLF3')
+  //   .collection('Categories')
+  //   .get();
+  // console.log('COLLECTION AUTH', usersCollection.docs);
+  // console.log('COLLECTION CAT', usersCollectionCat.docs);
+  // console.log('COLLECTION AUTH 2', usersCollection.docs[1].data());
+  // addCategory(user, 'Minchester');
+  //   } catch (err) {
+  //     console.log('ERROR', err);
+  //   }
+  // };
 
-  async function requestLocationPermission() {
-    if (Platform.OS === 'ios') {
-      const res = await Geolocation.requestAuthorization('whenInUse');
-      console.log('Res', res);
-      // Geolocation.requestAuthorization();
-      // IOS permission request does not offer a callback :/
-      return null;
-    } else if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: 'Geolocation Permission',
-            message: 'Can we access your location?',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        console.log('granted', granted);
-        if (granted === 'granted') {
-          console.log('You can use Geolocation');
-          return true;
-        } else {
-          console.log('You cannot use Geolocation');
-          return false;
-        }
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    }
-  }
   const getLocation = async () => {
     try {
       await requestLocationPermission();
@@ -210,6 +178,7 @@ function Home() {
   };
 
   const handleSelectPicture = async () => {
+    getLocation();
     // dispatch(setPickerOpen(true));
     const options: CameraOptions = {
       // includeExtra: true,
@@ -237,7 +206,6 @@ function Home() {
         console.log('ImagePicker Error Message: ', response.errorMessage);
       } else {
         setImageResponse(response);
-        getLocation();
         infoModalOpen();
       }
     });
@@ -260,9 +228,15 @@ function Home() {
         location={location}
       />
       <View>
-        <MainButton style={{marginTop: 30}} onPress={logOut} text="Log out" />
-        <MainButton text="Take photo" onPress={() => handleSelectPicture()} />
-        <MainButton text="Get Location" onPress={getLocation} />
+        <MainButton
+          style={{marginTop: 30}}
+          text="Take photo"
+          onPress={() => handleSelectPicture()}
+        />
+        <MainButton text="Map" onPress={() => navigation.navigate('Map')} />
+        <MainButton onPress={logOut} text="Log out" />
+
+        {/* <MainButton text="Get Location" onPress={getLocation} /> */}
         {/* <View
           style={{
             marginTop: 10,
@@ -271,16 +245,15 @@ function Home() {
             width: '40%',
           }}
         /> */}
-        {location && (
+        {/* {location && (
           <View style={{marginTop: 20}}>
             <Text>Latitude: {location[0]} </Text>
             <Text>Longitude: {location[1]} </Text>
           </View>
-        )}
+        )} */}
         {/* <Button title="Graph" onPress={() => navigation.navigate('Graph')} /> */}
-        <MainButton text="MAP" onPress={() => navigation.navigate('Map')} />
-        <MainButton text="GET DATA" onPress={getData} />
-
+        {/* <MainButton text="GET DATA" onPress={getData} /> */}
+        {/*
         <FastImage
           style={{height: 300, marginTop: 50}}
           source={{
@@ -291,7 +264,7 @@ function Home() {
             priority: FastImage.priority.normal,
           }}
           resizeMode={FastImage.resizeMode.contain}
-        />
+        /> */}
       </View>
       {/* <Blob /> */}
     </SafeAreaView>

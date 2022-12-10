@@ -9,6 +9,7 @@ import usePhotosStore from '../../store/usePhotosStore';
 import {HomeParamList} from '../../stacks/Home/HomeParamList';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {Avatar} from 'native-base';
+import {requestLocationPermission} from '../../utils';
 // https://www.youtube.com/watch?v=jvIQQ4ID2JY
 
 // https://www.codedaily.io/tutorials/Build-a-Map-with-Custom-Animated-Markers-and-Region-Focus-when-Content-is-Scrolled-in-React-Native
@@ -30,7 +31,7 @@ const Map = () => {
   // }, [photos]);
 
   const getLocation = useCallback(async () => {
-    // TODO: check for permissions if first time using app and going to map
+    await requestLocationPermission();
     try {
       Geolocation.getCurrentPosition(
         (position: GeoPosition) => {
