@@ -7,6 +7,7 @@ import theme from '../../../theme';
 import {signupValidationSchema} from '../../../utils/validations';
 import useAuthStore from '../../../store/useAuthStore';
 import useUserStore from '../../../store/useUserStore';
+import MainButton from '../../../components/Buttons/MainButton';
 
 function SignUp() {
   const {addUser, loading} = useUserStore();
@@ -74,11 +75,12 @@ function SignUp() {
                 label="Password"
               />
               <FormError touched={touched.password} message={errors.password} />
-              <Button
+              <MainButton
+                style={{marginTop: 25}}
                 onPress={() => handleSubmit()}
                 disabled={loading}
                 // spinner={isLoading}
-                title="Sign Up"
+                text="Sign Up"
               />
               {/* {isLoading ? <ActivityIndicator color={theme.black} /> : <>ログイン</>} */}
             </View>

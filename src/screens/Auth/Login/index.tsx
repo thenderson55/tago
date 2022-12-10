@@ -9,6 +9,7 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthParamList} from '../../../stacks/Auth/AuthParamList';
 import useAuthStore from '../../../store/useAuthStore';
+import MainButton from '../../../components/Buttons/MainButton';
 
 function Login() {
   const navigation: NativeStackNavigationProp<AuthParamList, 'SignUp'> =
@@ -62,26 +63,27 @@ function Login() {
                 label="Password"
               />
               <FormError touched={touched.password} message={errors.password} />
-              <Button
+              <MainButton
+                style={{marginTop: 25, marginBottom: 30}}
                 onPress={() => handleSubmit()}
                 disabled={loading}
                 // spinner={loading}
-                title="Login"
+                text="Login"
               />
               {/* {loading ? <ActivityIndicator color={theme.black} /> : <>ログイン</>} */}
             </View>
           )}
         </Formik>
-        <Button
-          title="Google Sign-In"
+        <MainButton
+          text="Google Sign-In"
           onPress={() =>
             onGoogleButtonPress().then(() =>
               console.log('Signed in with Google!'),
             )
           }
         />
-        <Button
-          title="Sign Up with Email"
+        <MainButton
+          text="Sign Up with Email"
           onPress={() => navigation.navigate('SignUp')}
         />
       </View>
