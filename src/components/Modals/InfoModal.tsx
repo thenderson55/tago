@@ -7,6 +7,7 @@ import {
   Platform,
   StyleSheet,
   Text,
+  Dimensions,
 } from 'react-native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -37,7 +38,7 @@ function InfoModal(props: Props) {
   const {modalBool, modalClose, imageResponse, location} = props;
   const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
 
-  const {addCategory, addPhoto, transferProgress, categories} =
+  const {addCategory, addPhoto, transferProgress, categories, upLoading} =
     usePhotosStore();
   // const [selectedLanguage, setSelectedLanguage] = useState();
   const [open, setOpen] = useState(false);
@@ -105,6 +106,7 @@ function InfoModal(props: Props) {
       },
     }),
   });
+  console.log('UP', upLoading);
 
   return (
     <>
@@ -235,6 +237,8 @@ function InfoModal(props: Props) {
                       handleSubmit();
                     }}
                     text="Add info"
+                    disabled={upLoading}
+                    spinner={upLoading}
                   />
                   <MainButton
                     style={{marginTop: 10}}
@@ -246,11 +250,24 @@ function InfoModal(props: Props) {
                       modalClose();
                     }}
                     text="Cancel"
+                    disabled={upLoading}
                   />
+                  {transferProgress > 0 && (
+                    <ProgressBar
+                      style={{marginTop: 50}}
+                      progress={transferProgress}
+                      width={
+                        Dimensions.get('window').width -
+                        theme.margins.screen * 2
+                      }
+                      borderRadius={50}
+                      height={15}
+                      borderWidth={2}
+                    />
+                  )}
                 </ScrollView>
               )}
             </Formik>
-            <ProgressBar progress={transferProgress} width={200} />
           </View>
         </SafeAreaView>
       </Modal>
@@ -297,7 +314,7 @@ const styles = StyleSheet.create({
     height: theme.sizes.formHeight + 4,
   },
   modalView: {
-    backgroundColor: 'pink',
+    backgroundColor: 'white',
     // alignItems: 'center',
     paddingHorizontal: theme.margins.screen,
     width: '100%',

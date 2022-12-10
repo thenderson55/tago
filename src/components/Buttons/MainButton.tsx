@@ -26,7 +26,13 @@ const MainButton = (props: Props) => {
       }}
       onPress={() => onPress()}
       disabled={disabled}>
-      <View style={styles.button}>
+      <View
+        style={{
+          ...styles.button,
+          backgroundColor: disabled
+            ? theme.colors.grey
+            : theme.colors.secondary,
+        }}>
         {spinner ? (
           <ActivityIndicator size="large" color={'white'} />
         ) : (

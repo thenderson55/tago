@@ -170,7 +170,7 @@ const usePhotosStore = create<PhotoState>(set => ({
     addCategory,
     navigation,
   ) => {
-    set(state => ({...state, loading: true}));
+    set(state => ({...state, loading: true, upLoading: true}));
 
     try {
       // https://stackoverflow.com/questions/68643842/react-native-photo-wont-upload-to-firebase
@@ -181,7 +181,6 @@ const usePhotosStore = create<PhotoState>(set => ({
       if (uri) {
         const uploadUri = uri;
         console.log({uploadUri});
-        set(state => ({...state, upLoading: true}));
 
         task = storage().ref(input.ref).putFile(uploadUri);
         task.on('state_changed', taskSnapshot => {
@@ -222,6 +221,13 @@ const usePhotosStore = create<PhotoState>(set => ({
             photos: [...(state.photos as PhotoType[]), doc.data() as PhotoType],
           }));
 
+          set(state => ({
+            ...state,
+            loading: false,
+            upLoading: false,
+            transferProgress: 0,
+          }));
+
           modalClose();
           navigation.navigate('Map', {
             newPhoto: doc.data() as PhotoType,
@@ -249,10 +255,10 @@ const usePhotosStore = create<PhotoState>(set => ({
       // };
     } catch (error) {
       console.log('Add error: ', error);
-    } finally {
       set(state => ({
         ...state,
         loading: false,
+        upLoading: false,
         transferProgress: 0,
       }));
     }
