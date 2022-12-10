@@ -137,8 +137,15 @@ const Map = () => {
             longitude: location[1],
             latitudeDelta: 0.015,
             longitudeDelta: 0.0121,
-          }}
-        />
+          }}>
+          <Marker
+            coordinate={{
+              latitude: location[0],
+              longitude: location[1],
+            }}
+            pinColor={theme.colors.magenta}
+          />
+        </MapView>
       ) : (
         <View style={styles.loadingDots}>
           <LoadingDots

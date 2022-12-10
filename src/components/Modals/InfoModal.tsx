@@ -106,7 +106,6 @@ function InfoModal(props: Props) {
       },
     }),
   });
-  console.log('UP', upLoading);
 
   return (
     <>
