@@ -11,7 +11,7 @@ export interface UserState {
   loading: boolean;
   error: string;
   setUser: (user: UserType) => void;
-  addUser: (id: string) => void;
+  addUser: (id: string, username: string) => void;
   fetchUser: () => void;
 }
 
@@ -51,12 +51,16 @@ const useUserStore = create<UserState>(set => ({
 
   // In our example we only need to fetch the users, but you'd probably want to define other methods here
   // login: async user => {},
-  addUser: async id => {
+  addUser: async (id, username) => {
     try {
       const res = await firestore().collection('Users').doc(id).set({
         created: timeStamp(),
       });
+      const res2 = await firestore().collection('Usernames').doc(username).set({
+        username,
+      });
       console.log('Add doc res ID: ', res);
+      console.log('Add username: ', res2);
       const doc = await firestore().collection('Users').doc(id).get();
       console.log('Fetch new doc: ', doc.data());
     } catch (error) {
