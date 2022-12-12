@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, SafeAreaView, View} from 'react-native';
+import {SafeAreaView, View} from 'react-native';
 import {Formik} from 'formik';
 import FormInput from '../../../components/Inputs/FormInput';
 import FormError from '../../../components/Erorrs/FormError';
@@ -67,7 +67,7 @@ function Login() {
                 style={{marginTop: 25, marginBottom: 30}}
                 onPress={() => handleSubmit()}
                 disabled={loading}
-                // spinner={loading}
+                spinner={loading}
                 text="Login"
               />
               {/* {loading ? <ActivityIndicator color={theme.black} /> : <>ログイン</>} */}
@@ -81,10 +81,12 @@ function Login() {
               console.log('Signed in with Google!'),
             )
           }
+          disabled={loading}
         />
         <MainButton
           text="Sign Up with Email"
           onPress={() => navigation.navigate('SignUp')}
+          disabled={loading}
         />
       </View>
     </SafeAreaView>

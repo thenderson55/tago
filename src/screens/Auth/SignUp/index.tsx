@@ -10,8 +10,8 @@ import useUserStore from '../../../store/useUserStore';
 import MainButton from '../../../components/Buttons/MainButton';
 
 function SignUp() {
-  const {addUser, loading} = useUserStore();
-  const {emailSignUp} = useAuthStore();
+  const {addUser} = useUserStore();
+  const {emailSignUp, loading} = useAuthStore();
   const [hidePassword, setHidePassword] = useState<boolean>(true);
 
   return (
