@@ -44,7 +44,7 @@ const useAuthStore = create<AuthState>(set => ({
         displayName: values.username,
       });
 
-      addUser(res.user.uid);
+      addUser(res.user.uid, values.username);
     } catch (error: any) {
       let errorMessage = '';
 

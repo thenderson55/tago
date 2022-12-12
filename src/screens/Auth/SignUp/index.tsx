@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, SafeAreaView, View} from 'react-native';
+import {SafeAreaView, View} from 'react-native';
 import {Formik} from 'formik';
 import FormError from '../../../components/Erorrs/FormError';
 import FormInput from '../../../components/Inputs/FormInput';
@@ -14,6 +14,8 @@ function SignUp() {
   const {emailSignUp, loading} = useAuthStore();
   const [hidePassword, setHidePassword] = useState<boolean>(true);
 
+  // FIXME: Checking username when any key press on any field slows down everything
+  // including the submit causing a delay before loader starts
   return (
     <SafeAreaView>
       <View style={{margin: theme.margins.screen}}>
@@ -79,7 +81,7 @@ function SignUp() {
                 style={{marginTop: 25}}
                 onPress={() => handleSubmit()}
                 disabled={loading}
-                // spinner={isLoading}
+                spinner={loading}
                 text="Sign Up"
               />
               {/* {isLoading ? <ActivityIndicator color={theme.black} /> : <>ログイン</>} */}
