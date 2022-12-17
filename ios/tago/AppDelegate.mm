@@ -1,6 +1,7 @@
 #import "AppDelegate.h"
 
 #import <GoogleMaps/GoogleMaps.h>
+#import <FBSDKCoreKit/FBSDKCoreKit-swift.h>
 // @import UIKit;
 // @import FirebaseCore;
 #import <UIKit/UIKit.h>
@@ -36,6 +37,9 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [FBSDKApplicationDelegate.sharedInstance initializeSDK]; 
+  [[FBSDKApplicationDelegate sharedInstance] application:application
+                        didFinishLaunchingWithOptions:launchOptions];
   [GMSServices provideAPIKey:@"AIzaSyDhiSKluuJIv_F7dfEqauWL0r3qabNv1FI"];
   [FIRApp configure];
   RCTAppSetupPrepareApp(application);
@@ -76,6 +80,14 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 {
   // Switch this bool to turn on and off the concurrent root
   return true;
+}
+- (BOOL)application:(UIApplication *)app
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+  return [[FBSDKApplicationDelegate sharedInstance]application:app
+                                                      openURL:url
+                                                      options:options];
 }
 
 - (NSDictionary *)prepareInitialProps

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {SafeAreaView, View} from 'react-native';
+import {Platform, SafeAreaView, View} from 'react-native';
 import {Formik} from 'formik';
 import FormInput from '../../../components/Inputs/FormInput';
 import FormError from '../../../components/Erorrs/FormError';
@@ -75,15 +75,18 @@ function Login() {
             </View>
           )}
         </Formik>
-        <MainButton
-          text="Google Sign-In"
-          onPress={() =>
-            onGoogleButtonPress().then(() =>
-              console.log('Signed in with Google!'),
-            )
-          }
-          disabled={loading}
-        />
+        {Platform.OS === 'android' && (
+          <MainButton
+            text="Google Sign-In"
+            onPress={() =>
+              onGoogleButtonPress().then(() =>
+                console.log('Signed in with Google!'),
+              )
+            }
+            disabled={loading}
+          />
+        )}
+
         <MainButton
           text="Facebook Sign-In"
           onPress={() =>

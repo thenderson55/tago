@@ -37,12 +37,15 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = tago/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = tago/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = tago/main.m; sourceTree = "<group>"; };
+		19F23E4C81B8D8D273833F9F /* Pods-tago-tagoTests.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tago-tagoTests.staging.xcconfig"; path = "Target Support Files/Pods-tago-tagoTests/Pods-tago-tagoTests.staging.xcconfig"; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-tago-tagoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-tago-tagoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		27E7B306C78A8CBE8E318FF7 /* Pods-tago.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tago.staging.xcconfig"; path = "Target Support Files/Pods-tago/Pods-tago.staging.xcconfig"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-tago.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tago.debug.xcconfig"; path = "Target Support Files/Pods-tago/Pods-tago.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-tago.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tago.release.xcconfig"; path = "Target Support Files/Pods-tago/Pods-tago.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-tago-tagoTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tago-tagoTests.debug.xcconfig"; path = "Target Support Files/Pods-tago-tagoTests/Pods-tago-tagoTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-tago.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-tago.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = tago/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		83047352294DDA6F001B6245 /* tago.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = tago.entitlements; path = tago/tago.entitlements; sourceTree = "<group>"; };
 		837729342937368E004395C5 /* Ionicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		83FACB7B290CCF6800DBE39B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-tago-tagoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tago-tagoTests.release.xcconfig"; path = "Target Support Files/Pods-tago-tagoTests/Pods-tago-tagoTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -89,6 +92,7 @@
 		13B07FAE1A68108700A75B9A /* tago */ = {
 			isa = PBXGroup;
 			children = (
+				83047352294DDA6F001B6245 /* tago.entitlements */,
 				8377293329373665004395C5 /* Fonts */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -157,6 +161,8 @@
 				5709B34CF0A7D63546082F79 /* Pods-tago.release.xcconfig */,
 				5B7EB9410499542E8C5724F5 /* Pods-tago-tagoTests.debug.xcconfig */,
 				89C6BE57DB24E9ADA2F236DE /* Pods-tago-tagoTests.release.xcconfig */,
+				27E7B306C78A8CBE8E318FF7 /* Pods-tago.staging.xcconfig */,
+				19F23E4C81B8D8D273833F9F /* Pods-tago-tagoTests.staging.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -513,6 +519,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = tago/tago.entitlements;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = UN6N68M74K;
 				ENABLE_BITCODE = NO;
@@ -540,6 +547,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = tago/tago.entitlements;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = UN6N68M74K;
 				INFOPLIST_FILE = tago/Info.plist;
@@ -633,10 +641,11 @@
 		};
 		834A0D8C293ECC8F00468889 /* Staging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-tago.debug.xcconfig */;
+			baseConfigurationReference = 27E7B306C78A8CBE8E318FF7 /* Pods-tago.staging.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = tago/tago.entitlements;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = UN6N68M74K;
 				ENABLE_BITCODE = NO;
@@ -660,7 +669,7 @@
 		};
 		834A0D8D293ECC8F00468889 /* Staging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-tago-tagoTests.debug.xcconfig */;
+			baseConfigurationReference = 19F23E4C81B8D8D273833F9F /* Pods-tago-tagoTests.staging.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (

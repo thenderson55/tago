@@ -7,6 +7,7 @@ import {
 import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 
 // import {FIREBASE_AUTH_DOMAIN} from '@env';
+// FIXME: Google sign in not working on iOS for now - need to investigate
 GoogleSignin.configure({
   webClientId:
     '969588173065-g4qjpcnmftjr01jlvsu9u0uicdiem8b8.apps.googleusercontent.com',
