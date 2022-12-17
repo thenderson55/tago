@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">tago</string>
+    <string name="facebook_app_id">673247687742044</string>
+    <string name="fb_login_protocol_scheme">fb673247687742044</string>
+    <string name="facebook_client_token">48025ed7c2869cace94ff17bb216956b</string>
 </resources>

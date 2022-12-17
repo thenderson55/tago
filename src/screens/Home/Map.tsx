@@ -52,6 +52,7 @@ const Map = () => {
     }
   }, []);
 
+  // FIXME: need to use a stored version first to prevent loading each time
   useEffect(() => {
     getLocation();
   }, [getLocation]);

@@ -4,6 +4,9 @@ import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
+
+// import {FIREBASE_AUTH_DOMAIN} from '@env';
 GoogleSignin.configure({
   webClientId:
     '969588173065-g4qjpcnmftjr01jlvsu9u0uicdiem8b8.apps.googleusercontent.com',
@@ -19,7 +22,12 @@ export interface AuthState {
     values: {username: string; email: string; password: string},
     addUser: Function,
   ) => void;
-  onGoogleButtonPress: () => Promise<FirebaseAuthTypes.UserCredential>;
+  onGoogleButtonPress: () => Promise<
+    FirebaseAuthTypes.UserCredential | undefined
+  >;
+  onFacebookButtonPress: () => Promise<
+    FirebaseAuthTypes.UserCredential | undefined
+  >;
 }
 
 const initialState = {
@@ -40,6 +48,12 @@ const useAuthStore = create<AuthState>(set => ({
       );
       console.log('User account created & signed in!');
       console.log('New ID: ', res.user.uid);
+      // TODO: Add modal to await verification? Better to use the email link
+      // console.log('FIREBASE_AUTH_DOMAIN: ', FIREBASE_AUTH_DOMAIN);
+      //  await auth().currentUser!.sendEmailVerification({
+      //   handleCodeInApp: true,
+      //   url: `https://${FIREBASE_AUTH_DOMAIN}`,
+      // });
       await res.user.updateProfile({
         displayName: values.username,
       });
@@ -106,6 +120,37 @@ const useAuthStore = create<AuthState>(set => ({
         ...state,
         loading: false,
       }));
+    }
+  },
+
+  onFacebookButtonPress: async () => {
+    // Attempt login with permissions
+    try {
+      const result = await LoginManager.logInWithPermissions([
+        'public_profile',
+        'email',
+      ]);
+
+      if (result.isCancelled) {
+        throw 'User cancelled the login process';
+      }
+
+      // Once signed in, get the users AccesToken
+      const data = await AccessToken.getCurrentAccessToken();
+
+      if (!data) {
+        throw 'Something went wrong obtaining access token';
+      }
+
+      // Create a Firebase credential with the AccessToken
+      const facebookCredential = auth.FacebookAuthProvider.credential(
+        data.accessToken,
+      );
+
+      // Sign-in the user with the credential
+      return auth().signInWithCredential(facebookCredential);
+    } catch (error: any) {
+      console.log('error: ', error);
     }
   },
 

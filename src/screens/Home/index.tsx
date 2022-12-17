@@ -37,6 +37,7 @@ function Home() {
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
   const {fetchPhotos, fetchCategories} = usePhotosStore();
   const {user} = useUserStore();
+  console.log('User: ', user);
 
   const [infoModal, setInfoModal] = useState(false);
   const infoModalClose = () => {

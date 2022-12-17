@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {SafeAreaView, View} from 'react-native';
+import {SafeAreaView, Text, View} from 'react-native';
 import {Formik} from 'formik';
 import FormError from '../../../components/Erorrs/FormError';
 import FormInput from '../../../components/Inputs/FormInput';
@@ -8,10 +8,11 @@ import {signupValidationSchema} from '../../../utils/validations';
 import useAuthStore from '../../../store/useAuthStore';
 import useUserStore from '../../../store/useUserStore';
 import MainButton from '../../../components/Buttons/MainButton';
+import ResponseError from '../../../components/Erorrs/ResponseError';
 
 function SignUp() {
   const {addUser} = useUserStore();
-  const {emailSignUp, loading} = useAuthStore();
+  const {emailSignUp, loading, error} = useAuthStore();
   const [hidePassword, setHidePassword] = useState<boolean>(true);
 
   // FIXME: Checking username when any key press on any field slows down everything
@@ -84,6 +85,7 @@ function SignUp() {
                 spinner={loading}
                 text="Sign Up"
               />
+              <ResponseError message={error} />
               {/* {isLoading ? <ActivityIndicator color={theme.black} /> : <>ログイン</>} */}
             </View>
           )}

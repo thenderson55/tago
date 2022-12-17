@@ -14,7 +14,8 @@ import MainButton from '../../../components/Buttons/MainButton';
 function Login() {
   const navigation: NativeStackNavigationProp<AuthParamList, 'SignUp'> =
     useNavigation();
-  const {emailLogin, onGoogleButtonPress, loading} = useAuthStore();
+  const {emailLogin, onGoogleButtonPress, loading, onFacebookButtonPress} =
+    useAuthStore();
   const [hidePassword, setHidePassword] = useState<boolean>(true);
 
   return (
@@ -82,6 +83,14 @@ function Login() {
             )
           }
           disabled={loading}
+        />
+        <MainButton
+          text="Facebook Sign-In"
+          onPress={() =>
+            onFacebookButtonPress().then(() =>
+              console.log('Signed in with Facebook!'),
+            )
+          }
         />
         <MainButton
           text="Sign Up with Email"
