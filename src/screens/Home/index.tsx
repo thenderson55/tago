@@ -29,6 +29,7 @@ import theme from '../../theme';
 import usePhotosStore from '../../store/usePhotosStore';
 import useUserStore from '../../store/useUserStore';
 import {requestLocationPermission} from '../../utils';
+import useAuthStore from '../../store/useAuthStore';
 // import LoadingDots from '../../components/Animations/LoadingDots';
 
 function Home() {
@@ -36,7 +37,15 @@ function Home() {
   const [location, setLocation] = useState<number[]>([0, 0]);
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
   const {fetchPhotos, fetchCategories} = usePhotosStore();
-  const {user, deleteUser, loading} = useUserStore();
+  const {
+    user,
+    deleteUser,
+    loading,
+    updateEmail,
+    updatePassword,
+    updateUsername,
+  } = useUserStore();
+  const {logOut} = useAuthStore();
 
   const [infoModal, setInfoModal] = useState(false);
   const infoModalClose = () => {
@@ -211,14 +220,6 @@ function Home() {
     });
   };
 
-  const logOut = async () => {
-    try {
-      await auth().signOut();
-      console.log('Signed out!');
-    } catch (error) {
-      console.log('Log Out Error', error);
-    }
-  };
   return (
     <SafeAreaView style={styles.safeView}>
       <InfoModal
@@ -238,6 +239,24 @@ function Home() {
         <MainButton
           onPress={() => deleteUser(user)}
           text="Delete user"
+          disabled={loading}
+          spinner={loading}
+        />
+        <MainButton
+          onPress={() => updateEmail('hi@hi.com')}
+          text="Update email"
+          disabled={loading}
+          spinner={loading}
+        />
+        <MainButton
+          onPress={() => updateUsername('Fuck')}
+          text="Update username"
+          disabled={loading}
+          spinner={loading}
+        />
+        <MainButton
+          onPress={() => updatePassword('12345asdfg')}
+          text="Update password"
           disabled={loading}
           spinner={loading}
         />

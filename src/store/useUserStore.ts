@@ -12,6 +12,10 @@ export interface UserState {
   addUser: (id: string, username: string) => void;
   fetchUser: () => void;
   deleteUser: (user: User) => void;
+  updatePassword: (newPassword: string) => void;
+  updateEmail: (newEmail: string) => void;
+  updateUsername: (newUsername: string) => void;
+  forgotPassword: (email: string) => void;
 }
 
 const initialState = {
@@ -83,7 +87,50 @@ const useUserStore = create<UserState>(set => ({
       console.log('Add error: ', error);
     }
   },
-  // updateUser: async user => {},
+
+  forgotPassword: email => {
+    auth()
+      .sendPasswordResetEmail(email)
+      .then(function (user) {
+        console.log('Please check your email...', user);
+      })
+      .catch(function (e) {
+        console.log('Forgot Password Error', e);
+      });
+  },
+
+  updatePassword: async newPassword => {
+    // const user = await auth().currentUser;
+    auth().currentUser?.updatePassword(newPassword);
+  },
+
+  updateEmail: async newEmail => {
+    auth().currentUser?.updateEmail(newEmail);
+  },
+
+  updateUsername: async newUsername => {
+    try {
+      const user = await auth().currentUser;
+      await firestore().collection('Users').doc(user?.uid).update({
+        username: newUsername,
+      });
+      await auth().currentUser?.updateProfile({
+        displayName: newUsername,
+      });
+      if (user?.displayName) {
+        await firestore()
+          .collection('Usernames')
+          .doc(user.displayName)
+          .delete();
+      }
+      await firestore().collection('Usernames').doc(newUsername).set({
+        newUsername,
+      });
+    } catch (e) {
+      console.log('Update username error: ', e);
+    }
+  },
+
   deleteUser: async () => {
     set(state => ({...state, loading: true}));
     const user = await auth().currentUser;
