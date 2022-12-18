@@ -17,9 +17,14 @@ function AuthStack() {
         }}
         component={Login}
       />
-      <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+      <Stack.Screen
+        name="ForgotPassword"
+        component={ForgotPassword}
+        options={{title: 'Forgot Password'}}
+      />
       <Stack.Screen
         name="SignUp"
+        options={{title: 'Sign Up'}}
         // options={{
         //   header: () => null,
         //   headerLeft: () => null,

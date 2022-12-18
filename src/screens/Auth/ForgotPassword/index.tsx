@@ -1,22 +1,16 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {SafeAreaView, View} from 'react-native';
 import {Formik} from 'formik';
 import FormInput from '../../../components/Inputs/FormInput';
 import FormError from '../../../components/Erorrs/FormError';
 import theme from '../../../theme';
 import {forgotPasswordValidationSchema} from '../../../utils/validations';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {AuthParamList} from '../../../stacks/Auth/AuthParamList';
 import useAuthStore from '../../../store/useAuthStore';
 import MainButton from '../../../components/Buttons/MainButton';
 import ResponseError from '../../../components/Erorrs/ResponseError';
 
 function ForgotPassword() {
-  // const navigation: NativeStackNavigationProp<AuthParamList, 'SignUp'> =
-  //   useNavigation();
-  const {forgotPassword, loading} = useAuthStore();
-  const [hidePassword, setHidePassword] = useState<boolean>(true);
+  const {forgotPassword, loading, resetPasswordMessage} = useAuthStore();
 
   return (
     <SafeAreaView>
@@ -54,10 +48,9 @@ function ForgotPassword() {
                 onPress={() => handleSubmit()}
                 disabled={loading}
                 spinner={loading}
-                text="Send email link">
-                {/* <ResponseError message={loginError} /> */}
+                text="Reset Password">
+                <ResponseError message={resetPasswordMessage} />
               </MainButton>
-              {/* {loading ? <ActivityIndicator color={theme.black} /> : <>ログイン</>} */}
             </View>
           )}
         </Formik>

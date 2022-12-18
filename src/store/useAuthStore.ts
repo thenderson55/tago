@@ -19,6 +19,7 @@ export interface AuthState {
   loading: boolean;
   error: string;
   loginError: string;
+  resetPasswordMessage: string;
   emailLogin: (email: string, password: string) => void;
   emailSignUp: (
     values: {username: string; email: string; password: string},
@@ -38,12 +39,14 @@ const initialState = {
   loading: false,
   error: '',
   loginError: '',
+  resetPasswordMessage: '',
 };
 
 const useAuthStore = create<AuthState>(set => ({
   loading: initialState.loading,
   error: initialState.error,
   loginError: initialState.loginError,
+  resetPasswordMessage: initialState.resetPasswordMessage,
 
   emailSignUp: async (values, addUser) => {
     set(state => ({...state, loading: true}));
@@ -200,10 +203,24 @@ const useAuthStore = create<AuthState>(set => ({
     try {
       const res = await auth().sendPasswordResetEmail(email);
       console.log('Please check your email...', res);
-      set(state => ({...state, loading: false}));
-    } catch (e) {
-      console.log('Forgot Password Error', e);
-      set(state => ({...state, loading: false}));
+      set(state => ({
+        ...state,
+        loading: false,
+        resetPasswordMessage: 'Please check your email...',
+      }));
+    } catch (error: any) {
+      console.log('Forgot Password Error', error.code);
+      let errorMessage = '';
+      if (error.code === 'auth/user-not-found') {
+        (errorMessage =
+          'There is no user record corresponding to this identifier. The user may have been deleted.'),
+          console.log(errorMessage);
+      }
+      set(state => ({
+        ...state,
+        loading: false,
+        resetPasswordMessage: errorMessage,
+      }));
     }
   },
 
