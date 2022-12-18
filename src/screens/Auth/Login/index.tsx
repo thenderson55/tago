@@ -107,6 +107,11 @@ function Login() {
           onPress={() => navigation.navigate('SignUp')}
           disabled={loading}
         />
+        <MainButton
+          text="Forgot Password"
+          onPress={() => navigation.navigate('ForgotPassword')}
+          disabled={loading}
+        />
       </View>
     </SafeAreaView>
   );

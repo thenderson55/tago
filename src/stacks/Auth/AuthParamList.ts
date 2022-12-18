@@ -1,6 +1,7 @@
 export type AuthParamList = {
   Login: undefined;
   SignUp: undefined;
+  ForgotPassword: undefined;
 };
 
 // export type AuthNavProps<T extends keyof AuthParamList> = {

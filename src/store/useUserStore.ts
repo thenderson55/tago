@@ -15,7 +15,6 @@ export interface UserState {
   updatePassword: (newPassword: string) => void;
   updateEmail: (newEmail: string) => void;
   updateUsername: (newUsername: string) => void;
-  forgotPassword: (email: string) => void;
 }
 
 const initialState = {
@@ -86,17 +85,6 @@ const useUserStore = create<UserState>(set => ({
     } catch (error) {
       console.log('Add error: ', error);
     }
-  },
-
-  forgotPassword: email => {
-    auth()
-      .sendPasswordResetEmail(email)
-      .then(function (user) {
-        console.log('Please check your email...', user);
-      })
-      .catch(function (e) {
-        console.log('Forgot Password Error', e);
-      });
   },
 
   updatePassword: async newPassword => {

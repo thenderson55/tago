@@ -30,6 +30,7 @@ export interface AuthState {
   onFacebookButtonPress: () => Promise<
     FirebaseAuthTypes.UserCredential | undefined
   >;
+  forgotPassword: (email: string) => void;
   logOut: () => void;
 }
 
@@ -191,6 +192,18 @@ const useAuthStore = create<AuthState>(set => ({
       } else {
         // some other error happened
       }
+    }
+  },
+
+  forgotPassword: async email => {
+    set(state => ({...state, loading: true}));
+    try {
+      const res = await auth().sendPasswordResetEmail(email);
+      console.log('Please check your email...', res);
+      set(state => ({...state, loading: false}));
+    } catch (e) {
+      console.log('Forgot Password Error', e);
+      set(state => ({...state, loading: false}));
     }
   },
 

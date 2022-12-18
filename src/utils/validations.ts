@@ -49,3 +49,9 @@ export const loginValidationSchema = Yup.object().shape({
     .max(30, 'Maximun 30 characters')
     .required('Password is required'),
 });
+
+export const forgotPasswordValidationSchema = Yup.object().shape({
+  email: Yup.string()
+    .email('Please enter email')
+    .required('Valid email address is required'),
+});
