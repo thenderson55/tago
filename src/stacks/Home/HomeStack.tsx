@@ -5,6 +5,7 @@ import {HomeParamList} from './HomeParamList';
 import Home from '../../screens/Home';
 import Graph from '../../screens/Home/Graph';
 import Map from '../../screens/Home/Map';
+import Settings from '../../screens//Home/Settings';
 
 const Stack = createNativeStackNavigator<HomeParamList>();
 
@@ -37,6 +38,7 @@ function HomeStack() {
         }}
         component={Graph}
       />
+      <Stack.Screen name="Settings" component={Settings} />
     </Stack.Navigator>
   );
 }

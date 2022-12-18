@@ -11,7 +11,7 @@ export interface UserState {
   setUser: (user: User) => void;
   addUser: (id: string, username: string) => void;
   fetchUser: () => void;
-  deleteUser: (user: User) => void;
+  deleteUser: (modalClose: () => void) => void;
   updatePassword: (newPassword: string) => void;
   updateEmail: (newEmail: string) => void;
   updateUsername: (newUsername: string) => void;
@@ -119,7 +119,7 @@ const useUserStore = create<UserState>(set => ({
     }
   },
 
-  deleteUser: async () => {
+  deleteUser: async modalClose => {
     set(state => ({...state, loading: true}));
     const user = await auth().currentUser;
     if (user) {
@@ -133,6 +133,7 @@ const useUserStore = create<UserState>(set => ({
         }
         await auth().currentUser?.delete();
         set(state => ({...state, loading: false}));
+        modalClose();
       } catch (error) {
         console.log('Delete user error: ', error);
         set(state => ({...state, loading: false}));

@@ -235,47 +235,10 @@ function Home() {
           onPress={() => handleSelectPicture()}
         />
         <MainButton text="Map" onPress={() => navigation.navigate('Map')} />
-        <MainButton onPress={logOut} text="Log out" />
         <MainButton
-          onPress={() => deleteUser(user)}
-          text="Delete user"
-          disabled={loading}
-          spinner={loading}
+          text="Settings"
+          onPress={() => navigation.navigate('Settings')}
         />
-        <MainButton
-          onPress={() => updateEmail('hi@hi.com')}
-          text="Update email"
-          disabled={loading}
-          spinner={loading}
-        />
-        <MainButton
-          onPress={() => updateUsername('Fuck')}
-          text="Update username"
-          disabled={loading}
-          spinner={loading}
-        />
-        <MainButton
-          onPress={() => updatePassword('12345asdfg')}
-          text="Update password"
-          disabled={loading}
-          spinner={loading}
-        />
-
-        {/* <MainButton text="Get Location" onPress={getLocation} /> */}
-        {/* <View
-          style={{
-            marginTop: 10,
-            padding: 10,
-            borderRadius: 10,
-            width: '40%',
-          }}
-        /> */}
-        {/* {location && (
-          <View style={{marginTop: 20}}>
-            <Text>Latitude: {location[0]} </Text>
-            <Text>Longitude: {location[1]} </Text>
-          </View>
-        )} */}
         {/* <Button title="Graph" onPress={() => navigation.navigate('Graph')} /> */}
         {/* <MainButton text="GET DATA" onPress={getData} /> */}
         {/*
