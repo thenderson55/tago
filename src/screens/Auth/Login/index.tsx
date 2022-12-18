@@ -25,8 +25,14 @@ function Login() {
   const [hidePassword, setHidePassword] = useState<boolean>(true);
 
   return (
-    <SafeAreaView>
-      <View style={{margin: theme.margins.screen}}>
+    <SafeAreaView
+      style={{
+        backgroundColor: theme.colors.muted,
+      }}>
+      <View
+        style={{
+          margin: theme.margins.screen,
+        }}>
         <Formik
           initialValues={{
             email: '',
@@ -101,6 +107,7 @@ function Login() {
               console.log('Signed in with Facebook!'),
             )
           }
+          disabled={loading}
         />
         <MainButton
           text="Sign Up with Email"
