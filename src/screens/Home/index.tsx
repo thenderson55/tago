@@ -36,7 +36,7 @@ function Home() {
   const [location, setLocation] = useState<number[]>([0, 0]);
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
   const {fetchPhotos, fetchCategories} = usePhotosStore();
-  const {user} = useUserStore();
+  const {user, deleteUser} = useUserStore();
   console.log('User: ', user);
 
   const [infoModal, setInfoModal] = useState(false);
@@ -236,6 +236,7 @@ function Home() {
         />
         <MainButton text="Map" onPress={() => navigation.navigate('Map')} />
         <MainButton onPress={logOut} text="Log out" />
+        <MainButton onPress={() => deleteUser(user)} text="Delete user" />
 
         {/* <MainButton text="Get Location" onPress={getLocation} /> */}
         {/* <View

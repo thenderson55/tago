@@ -3,10 +3,10 @@ import firestore from '@react-native-firebase/firestore';
 import {categoryValues, timeStamp} from '../utils/settings';
 import storage from '@react-native-firebase/storage';
 import {ImagePickerResponse} from 'react-native-image-picker';
-import {UserType} from './useUserStore';
 import {Dispatch, SetStateAction} from 'react';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeParamList} from '../stacks/Home/HomeParamList';
+import {User} from 'firebase/auth';
 
 export type PhotoType = {
   ref: string;
@@ -33,17 +33,17 @@ export interface PhotoState {
   fetchPhotos: (userId: string) => void;
   fetchPhoto: (id: number) => void;
   addPhoto: (
-    user: UserType,
+    user: User,
     response: ImagePickerResponse,
     input: PhotoType,
     modalClose: () => void,
-    addCategory: (user: UserType, category: string) => void,
+    addCategory: (user: User, category: string) => void,
     navigation: NativeStackNavigationProp<HomeParamList>,
   ) => void;
   editPhoto: (input: PhotoType) => void;
   deletePhoto: (id: number) => void;
   fetchCategories: (userId: string) => void;
-  addCategory: (user: UserType, category: string) => void;
+  addCategory: (user: User, category: string) => void;
 }
 
 const initialState = {
@@ -115,7 +115,7 @@ const usePhotosStore = create<PhotoState>(set => ({
     }
   },
 
-  addCategory: async (user: UserType, category: string) => {
+  addCategory: async (user: User, category: string) => {
     set(state => ({...state, loading: true}));
     try {
       const categories = usePhotosStore.getState().categories;

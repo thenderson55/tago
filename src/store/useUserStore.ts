@@ -1,22 +1,35 @@
 import create from 'zustand';
 import {timeStamp} from '../utils/settings';
 import firestore from '@react-native-firebase/firestore';
+import {deleteUser as firebaseDeleteUser, User} from 'firebase/auth';
 
-export type UserType = {
-  uid: string;
-  name: string;
-};
 export interface UserState {
-  user: UserType;
+  user: User;
   loading: boolean;
   error: string;
-  setUser: (user: UserType) => void;
+  setUser: (user: User) => void;
   addUser: (id: string, username: string) => void;
   fetchUser: () => void;
+  deleteUser: (user: User) => void;
 }
 
 const initialState = {
-  user: {uid: '', name: ''},
+  user: {
+    uid: '',
+    name: '',
+    emailVerified: false,
+    email: '',
+    phoneNumber: '',
+    photoURL: '',
+    providerId: '',
+    tenantId: '',
+    displayName: '',
+    refreshToken: '',
+    metadata: {
+      creationTime: '',
+      lastSignInTime: '',
+    },
+  },
   loading: false,
   error: '',
 };
@@ -26,7 +39,7 @@ const useUserStore = create<UserState>(set => ({
   loading: initialState.loading,
   error: initialState.error,
 
-  setUser: async (user: UserType) => {
+  setUser: async (user: User) => {
     set(state => ({...state, user}));
   },
 
@@ -68,7 +81,15 @@ const useUserStore = create<UserState>(set => ({
     }
   },
   // updateUser: async user => {},
-  // deleteUser: async id => {},
+  deleteUser: async user => {
+    firebaseDeleteUser(user)
+      .then(() => {
+        console.log('Successfully deleted user');
+      })
+      .catch(error => {
+        console.log('Error deleting user:', error);
+      });
+  },
 }));
 
 export default useUserStore;
