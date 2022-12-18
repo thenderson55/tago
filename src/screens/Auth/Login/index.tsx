@@ -10,12 +10,18 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthParamList} from '../../../stacks/Auth/AuthParamList';
 import useAuthStore from '../../../store/useAuthStore';
 import MainButton from '../../../components/Buttons/MainButton';
+import ResponseError from '../../../components/Erorrs/ResponseError';
 
 function Login() {
   const navigation: NativeStackNavigationProp<AuthParamList, 'SignUp'> =
     useNavigation();
-  const {emailLogin, onGoogleButtonPress, loading, onFacebookButtonPress} =
-    useAuthStore();
+  const {
+    emailLogin,
+    onGoogleButtonPress,
+    loading,
+    onFacebookButtonPress,
+    loginError,
+  } = useAuthStore();
   const [hidePassword, setHidePassword] = useState<boolean>(true);
 
   return (
@@ -69,8 +75,9 @@ function Login() {
                 onPress={() => handleSubmit()}
                 disabled={loading}
                 spinner={loading}
-                text="Login"
-              />
+                text="Login">
+                <ResponseError message={loginError} />
+              </MainButton>
               {/* {loading ? <ActivityIndicator color={theme.black} /> : <>ログイン</>} */}
             </View>
           )}

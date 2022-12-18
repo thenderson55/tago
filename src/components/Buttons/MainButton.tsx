@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Children, ReactNode} from 'react';
 import {
   View,
   StyleSheet,
@@ -10,15 +10,15 @@ import theme from '../../theme';
 
 type Props = {
   text: string;
-  // children?: ReactNode;
-  style?: {};
   onPress: Function;
+  children?: ReactNode;
+  style?: {};
   disabled?: boolean;
   spinner?: boolean;
 };
 
 const MainButton = (props: Props) => {
-  const {text, style, onPress, disabled, spinner} = props;
+  const {text, style, onPress, disabled, spinner, children} = props;
   return (
     <TouchableOpacity
       style={{
@@ -39,6 +39,7 @@ const MainButton = (props: Props) => {
           <Text style={styles.buttonText}>{text}</Text>
         )}
       </View>
+      {children}
     </TouchableOpacity>
   );
 };

@@ -23,7 +23,11 @@ function ResponseError(props: Props) {
 }
 
 const styles = StyleSheet.create({
-  error: {color: 'red', fontSize: 16, height: 20, marginTop: 20},
+  error: {
+    color: 'red',
+    fontSize: 16,
+    marginTop: 20,
+  },
   filler: {height: 20},
 });
 

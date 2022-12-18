@@ -18,6 +18,7 @@ GoogleSignin.configure({
 export interface AuthState {
   loading: boolean;
   error: string;
+  loginError: string;
   emailLogin: (email: string, password: string) => void;
   emailSignUp: (
     values: {username: string; email: string; password: string},
@@ -29,16 +30,19 @@ export interface AuthState {
   onFacebookButtonPress: () => Promise<
     FirebaseAuthTypes.UserCredential | undefined
   >;
+  logOut: () => void;
 }
 
 const initialState = {
   loading: false,
   error: '',
+  loginError: '',
 };
 
 const useAuthStore = create<AuthState>(set => ({
   loading: initialState.loading,
   error: initialState.error,
+  loginError: initialState.loginError,
 
   emailSignUp: async (values, addUser) => {
     set(state => ({...state, loading: true}));
@@ -97,6 +101,7 @@ const useAuthStore = create<AuthState>(set => ({
       const res = await auth().signInWithEmailAndPassword(email, password);
       console.log('Zustand user account signed in!', res);
     } catch (error: any) {
+      console.log('Zustand error: ', error);
       let errorMessage = '';
       if (error.code === 'auth/user-not-found') {
         errorMessage =
@@ -111,9 +116,18 @@ const useAuthStore = create<AuthState>(set => ({
         errorMessage = 'That email address is invalid!';
         console.log(errorMessage);
       }
+      if (error.code === 'auth/wrong-password') {
+        errorMessage = 'That password is invalid!';
+        console.log(errorMessage);
+      }
+      if (error.code === 'auth/too-many-requests') {
+        errorMessage =
+          'Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.';
+        console.log(errorMessage);
+      }
       set(state => ({
         ...state,
-        error: errorMessage,
+        loginError: errorMessage,
         loading: false,
       }));
     } finally {
@@ -177,6 +191,20 @@ const useAuthStore = create<AuthState>(set => ({
       } else {
         // some other error happened
       }
+    }
+  },
+
+  logOut: async () => {
+    try {
+      await auth().signOut();
+      console.log('Signed out!');
+      set(state => ({
+        ...state,
+        loginError: '',
+        loading: false,
+      }));
+    } catch (error) {
+      console.log('Log Out Error', error);
     }
   },
 }));
