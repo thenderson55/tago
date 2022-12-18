@@ -1,7 +1,8 @@
 import create from 'zustand';
 import {timeStamp} from '../utils/settings';
 import firestore from '@react-native-firebase/firestore';
-import {deleteUser as firebaseDeleteUser, User} from 'firebase/auth';
+import {User} from 'firebase/auth';
+import auth from '@react-native-firebase/auth';
 
 export interface UserState {
   user: User;
@@ -68,6 +69,7 @@ const useUserStore = create<UserState>(set => ({
     try {
       const res = await firestore().collection('Users').doc(id).set({
         created: timeStamp(),
+        username,
       });
       const res2 = await firestore().collection('Usernames').doc(username).set({
         username,
@@ -76,19 +78,31 @@ const useUserStore = create<UserState>(set => ({
       console.log('Add username: ', res2);
       const doc = await firestore().collection('Users').doc(id).get();
       console.log('Fetch new doc: ', doc.data());
+      // set(state => ({...state, user: true}));
     } catch (error) {
       console.log('Add error: ', error);
     }
   },
   // updateUser: async user => {},
-  deleteUser: async user => {
-    firebaseDeleteUser(user)
-      .then(() => {
-        console.log('Successfully deleted user');
-      })
-      .catch(error => {
-        console.log('Error deleting user:', error);
-      });
+  deleteUser: async () => {
+    set(state => ({...state, loading: true}));
+    const user = await auth().currentUser;
+    if (user) {
+      try {
+        await firestore().collection('Users').doc(user.uid).delete();
+        if (user.displayName) {
+          await firestore()
+            .collection('Usernames')
+            .doc(user.displayName)
+            .delete();
+        }
+        await auth().currentUser?.delete();
+        set(state => ({...state, loading: false}));
+      } catch (error) {
+        console.log('Delete user error: ', error);
+        set(state => ({...state, loading: false}));
+      }
+    }
   },
 }));
 
