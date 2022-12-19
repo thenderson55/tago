@@ -15,7 +15,7 @@ interface ThemeStyles {
     light: string;
     medium: string;
     bright: string;
-    muted: string;
+    white: string;
     grey: string;
     lightGrey: string;
     darkGrey: string;
@@ -63,14 +63,14 @@ interface ThemeStyles {
 const theme: ThemeStyles = {
   colors: {
     text: '#000',
-    background: '#fff',
+    white: '#fff',
     // https://coolors.co/d9e5d6-00a7e1-eddea4-f7a072-ff9b42
     primary: '#F7A072',
     secondary: '#00A7E1',
     light: '#D9E5D6',
     medium: '#EDDEA4',
     bright: '#FF9B42',
-    muted: '#f6f6f6',
+    background: '#f6f6f6',
     grey: '#b4b4b4',
     lightGrey: '#dadada',
     darkGrey: '#9b9b9b',

@@ -262,6 +262,7 @@ function Home() {
 const styles = StyleSheet.create({
   safeView: {
     margin: theme.margins.screen,
+    backgroundColor: theme.colors.background,
   },
   loadingDots: {
     flex: 1,
