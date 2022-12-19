@@ -20,8 +20,6 @@ import ResponseError from '../Erorrs/ResponseError';
 interface Props {
   modalBool: boolean;
   modalClose: () => void;
-  imageResponse: ImagePickerResponse;
-  location: number[];
 }
 
 function ModalUsername(props: Props) {
@@ -58,7 +56,7 @@ function ModalUsername(props: Props) {
                     onBlur={handleBlur('newUsername')}
                     value={values.newUsername}
                     placeholder="e.g tago"
-                    label="Username"
+                    label="New Username"
                   />
                   <FormError
                     touched={touched.newUsername}
@@ -72,6 +70,14 @@ function ModalUsername(props: Props) {
                     text="Update Email">
                     {/* <ResponseError message=''/> */}
                   </MainButton>
+                  <MainButton
+                    style={styles.button}
+                    onPress={() => {
+                      modalClose();
+                    }}
+                    text="Cancel"
+                    disabled={loading}
+                  />
                 </ScrollView>
               )}
             </Formik>
@@ -99,6 +105,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     height: 20,
     marginTop: 5,
+  },
+  button: {
+    width: '100%',
+    marginTop: 20,
   },
 });
 

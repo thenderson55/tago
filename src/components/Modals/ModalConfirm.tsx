@@ -16,9 +16,9 @@ interface Props {
   modalClose: () => void;
 }
 
-function ConfirmModal(props: Props) {
+function ModalConfirm(props: Props) {
   const {modalBool, modalClose} = props;
-  const {user, deleteUser, loading} = useUserStore();
+  const {deleteUser, loading} = useUserStore();
   return (
     <Modal visible={modalBool} animationType="fade" transparent={true}>
       <SafeAreaView style={styles.safeView}>
@@ -71,4 +71,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConfirmModal;
+export default ModalConfirm;

@@ -1,41 +1,56 @@
 import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {SafeAreaView, StyleSheet} from 'react-native';
 import MainButton from '../../components/Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
 import useAuthStore from '../../store/useAuthStore';
 import theme from '../../theme';
-import ConfirmModal from '../../components/Modals/ConfirmModal';
+import ModalConfirm from '../../components/Modals/ModalConfirm';
+import ModalEmail from '../../components/Modals/ModalEmail';
+import ModalUsername from '../../components/Modals/ModalUsername';
 
 function Settings() {
-  const {
-    user,
-    deleteUser,
-    loading,
-    updateEmail,
-    updatePassword,
-    updateUsername,
-  } = useUserStore();
+  const {loading, updatePassword} = useUserStore();
   const {logOut} = useAuthStore();
 
-  const [confirmModal, setConfirmModal] = useState(false);
-  const confirmModalClose = () => {
-    setConfirmModal(false);
+  const [modalConfirm, setModalConfirm] = useState(false);
+  const modalConfirmClose = () => {
+    setModalConfirm(false);
   };
-  const confirmModalOpen = () => {
-    setConfirmModal(true);
+  const modalConfirmOpen = () => {
+    setModalConfirm(true);
+  };
+
+  const [modalEmail, setModalEmail] = useState(false);
+  const modalEmailClose = () => {
+    setModalEmail(false);
+  };
+  const modalEmailOpen = () => {
+    setModalEmail(true);
+  };
+  const [modalUsername, setModalUsername] = useState(false);
+  const modalUsernameClose = () => {
+    setModalUsername(false);
+  };
+  const modalUsernameOpen = () => {
+    setModalUsername(true);
   };
 
   return (
     <SafeAreaView style={styles.safeView}>
-      <ConfirmModal modalBool={confirmModal} modalClose={confirmModalClose} />
+      <ModalConfirm modalBool={modalConfirm} modalClose={modalConfirmClose} />
+      <ModalEmail modalBool={modalEmail} modalClose={modalEmailClose} />
+      <ModalUsername
+        modalBool={modalUsername}
+        modalClose={modalUsernameClose}
+      />
       <MainButton
-        onPress={() => updateEmail('hi@hi.com')}
+        onPress={modalEmailOpen}
         text="Update email"
         disabled={loading}
         spinner={loading}
       />
       <MainButton
-        onPress={() => updateUsername('Fuck')}
+        onPress={modalUsernameOpen}
         text="Update username"
         disabled={loading}
         spinner={loading}
@@ -50,7 +65,7 @@ function Settings() {
       {/* <View style={{marginTop: 'auto'}}> */}
       <MainButton
         style={{marginTop: 50}}
-        onPress={confirmModalOpen}
+        onPress={modalConfirmOpen}
         text="Delete user"
         disabled={loading}
       />

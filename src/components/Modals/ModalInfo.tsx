@@ -34,7 +34,7 @@ interface Props {
   location: number[];
 }
 
-function InfoModal(props: Props) {
+function ModalInfo(props: Props) {
   const {modalBool, modalClose, imageResponse, location} = props;
   const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
 
@@ -352,4 +352,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default InfoModal;
+export default ModalInfo;

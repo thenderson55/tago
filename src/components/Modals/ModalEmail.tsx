@@ -55,7 +55,7 @@ function ModalEmail(props: Props) {
                     onBlur={handleBlur('newEmail')}
                     value={values.newEmail}
                     placeholder="e.g tago@tago.com"
-                    label="Email"
+                    label="New Email"
                   />
                   <FormError
                     touched={touched.newEmail}
@@ -69,6 +69,14 @@ function ModalEmail(props: Props) {
                     text="Update Email">
                     {/* <ResponseError message=''/> */}
                   </MainButton>
+                  <MainButton
+                    style={styles.button}
+                    onPress={() => {
+                      modalClose();
+                    }}
+                    text="Cancel"
+                    disabled={loading}
+                  />
                 </ScrollView>
               )}
             </Formik>
@@ -96,6 +104,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     height: 20,
     marginTop: 5,
+  },
+  button: {
+    width: '100%',
+    marginTop: 20,
   },
 });
 
