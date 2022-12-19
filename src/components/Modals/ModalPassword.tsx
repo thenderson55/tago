@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Modal,
@@ -13,17 +13,18 @@ import FormInput from '../Inputs/FormInput';
 import MainButton from '../Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
 import FormError from '../Erorrs/FormError';
-import {updateUsernameValidationSchema} from '../../utils/validations';
-import ResponseError from '../Erorrs/ResponseError';
+import {updatePasswordValidationSchema} from '../../utils/validations';
 
 interface Props {
   modalBool: boolean;
   modalClose: () => void;
 }
 
-function ModalUsername(props: Props) {
+function ModalPassword(props: Props) {
   const {modalBool, modalClose} = props;
-  const {updateUsername, loading} = useUserStore();
+  const {updateEmail, loading} = useUserStore();
+  const [hidePassword, setHidePassword] = useState<boolean>(true);
+  const [hidePasswordConfirm, setHidePasswordConfirm] = useState<boolean>(true);
 
   return (
     <>
@@ -33,12 +34,13 @@ function ModalUsername(props: Props) {
             <Formik
               enableReinitialize={true}
               initialValues={{
-                newUsername: '',
+                newPassword: '',
+                confirmPassword: '',
               }}
-              validationSchema={updateUsernameValidationSchema}
+              validationSchema={updatePasswordValidationSchema}
               onSubmit={values => {
-                const newUsername = values.newUsername.trim();
-                updateUsername(newUsername, modalClose);
+                const newPassword = values.newPassword.trim();
+                updateEmail(newPassword, modalClose);
               }}>
               {({
                 values,
@@ -51,22 +53,41 @@ function ModalUsername(props: Props) {
               }) => (
                 <ScrollView>
                   <FormInput
-                    onChangeText={handleChange('newUsername')}
-                    onBlur={handleBlur('newUsername')}
-                    value={values.newUsername}
-                    placeholder="e.g tago"
-                    label="New Username"
+                    hidePassword={hidePassword}
+                    setHidePassword={setHidePassword}
+                    password={true}
+                    secureTextEntry={hidePassword}
+                    onChangeText={handleChange('newPassword')}
+                    onBlur={handleBlur('newPassword')}
+                    value={values.newPassword}
+                    placeholder="abc123"
+                    label="New Password"
                   />
                   <FormError
-                    touched={touched.newUsername}
-                    message={errors.newUsername}
+                    touched={touched.newPassword}
+                    message={errors.newPassword}
+                  />
+                  <FormInput
+                    hidePassword={hidePasswordConfirm}
+                    setHidePassword={setHidePasswordConfirm}
+                    password={true}
+                    secureTextEntry={hidePasswordConfirm}
+                    onChangeText={handleChange('confirmPassword')}
+                    onBlur={handleBlur('confirmPassword')}
+                    value={values.confirmPassword}
+                    placeholder="abc123"
+                    label="Password Confirmation"
+                  />
+                  <FormError
+                    touched={touched.confirmPassword}
+                    message={errors.confirmPassword}
                   />
                   <MainButton
                     style={{marginTop: 25}}
                     onPress={() => handleSubmit()}
                     disabled={loading}
                     spinner={loading}
-                    text="Update Username">
+                    text="Update Password">
                     {/* <ResponseError message=''/> */}
                   </MainButton>
                   <MainButton
@@ -96,7 +117,7 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: 'white',
     paddingHorizontal: theme.margins.screen,
-    paddingTop: theme.margins.largeTop,
+    paddingVertical: theme.margins.largeTop,
     width: '100%',
     height: '100%',
   },
@@ -112,4 +133,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModalUsername;
+export default ModalPassword;

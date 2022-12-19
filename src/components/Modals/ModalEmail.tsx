@@ -10,7 +10,6 @@ import {
 import {Formik} from 'formik';
 import theme from '../../theme';
 import FormInput from '../Inputs/FormInput';
-import {ImagePickerResponse} from 'react-native-image-picker';
 import MainButton from '../Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
 import FormError from '../Erorrs/FormError';
@@ -96,6 +95,7 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: 'white',
     paddingHorizontal: theme.margins.screen,
+    paddingVertical: theme.margins.largeTop,
     width: '100%',
     height: '100%',
   },

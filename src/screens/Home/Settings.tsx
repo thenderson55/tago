@@ -7,9 +7,10 @@ import theme from '../../theme';
 import ModalConfirm from '../../components/Modals/ModalConfirm';
 import ModalEmail from '../../components/Modals/ModalEmail';
 import ModalUsername from '../../components/Modals/ModalUsername';
+import ModalPassword from '../../components/Modals/ModalPassword';
 
 function Settings() {
-  const {loading, updatePassword} = useUserStore();
+  const {loading} = useUserStore();
   const {logOut} = useAuthStore();
 
   const [modalConfirm, setModalConfirm] = useState(false);
@@ -27,12 +28,21 @@ function Settings() {
   const modalEmailOpen = () => {
     setModalEmail(true);
   };
+
   const [modalUsername, setModalUsername] = useState(false);
   const modalUsernameClose = () => {
     setModalUsername(false);
   };
   const modalUsernameOpen = () => {
     setModalUsername(true);
+  };
+
+  const [modalPassword, setModalPassword] = useState(false);
+  const modalPasswordClose = () => {
+    setModalPassword(false);
+  };
+  const modalPasswordOpen = () => {
+    setModalPassword(true);
   };
 
   return (
@@ -43,30 +53,34 @@ function Settings() {
         modalBool={modalUsername}
         modalClose={modalUsernameClose}
       />
+      <ModalPassword
+        modalBool={modalPassword}
+        modalClose={modalPasswordClose}
+      />
       <MainButton
         onPress={modalEmailOpen}
-        text="Update email"
+        text="Update Email"
         disabled={loading}
         spinner={loading}
       />
       <MainButton
         onPress={modalUsernameOpen}
-        text="Update username"
+        text="Update Username"
         disabled={loading}
         spinner={loading}
       />
       <MainButton
-        onPress={() => updatePassword('12345asdfg')}
-        text="Update password"
+        onPress={modalPasswordOpen}
+        text="Update Password"
         disabled={loading}
         spinner={loading}
       />
-      <MainButton onPress={logOut} text="Log out" />
+      <MainButton onPress={logOut} text="Log Out" />
       {/* <View style={{marginTop: 'auto'}}> */}
       <MainButton
         style={{marginTop: 50}}
         onPress={modalConfirmOpen}
-        text="Delete user"
+        text="Delete User"
         disabled={loading}
       />
       {/* </View> */}

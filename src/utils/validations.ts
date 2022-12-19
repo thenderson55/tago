@@ -51,16 +51,26 @@ export const loginValidationSchema = Yup.object().shape({
 });
 
 export const forgotPasswordValidationSchema = Yup.object().shape({
-  password: Yup.string()
-    .min(6, 'Minimum 6 characters')
-    .max(30, 'Maximun 30 characters')
-    .required('Password is required'),
+  newEmail: Yup.string()
+    .email('Please enter email')
+    .required('Valid email address is required'),
 });
 
 export const updateEmailValidationSchema = Yup.object().shape({
   newEmail: Yup.string()
     .email('Please enter email')
     .required('Valid email address is required'),
+});
+
+export const updatePasswordValidationSchema = Yup.object().shape({
+  newPassword: Yup.string()
+    .min(6, 'Minimum 6 characters')
+    .max(30, 'Maximun 30 characters')
+    .required('Password is required'),
+  confirmPassword: Yup.string().oneOf(
+    [Yup.ref('newPassword'), null],
+    'Passwords must match',
+  ),
 });
 
 export const updateUsernameValidationSchema = Yup.object().shape({
