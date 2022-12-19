@@ -14,16 +14,19 @@ import {ImagePickerResponse} from 'react-native-image-picker';
 import MainButton from '../Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
 import FormError from '../Erorrs/FormError';
-import {updateEmailValidationSchema} from '../../utils/validations';
+import {updateUsernameValidationSchema} from '../../utils/validations';
+import ResponseError from '../Erorrs/ResponseError';
 
 interface Props {
   modalBool: boolean;
   modalClose: () => void;
+  imageResponse: ImagePickerResponse;
+  location: number[];
 }
 
-function ModalEmail(props: Props) {
+function ModalUsername(props: Props) {
   const {modalBool, modalClose} = props;
-  const {updateEmail, loading} = useUserStore();
+  const {updateUsername, loading} = useUserStore();
 
   return (
     <>
@@ -33,12 +36,12 @@ function ModalEmail(props: Props) {
             <Formik
               enableReinitialize={true}
               initialValues={{
-                newEmail: '',
+                newUsername: '',
               }}
-              validationSchema={updateEmailValidationSchema}
+              validationSchema={updateUsernameValidationSchema}
               onSubmit={values => {
-                const newEmail = values.newEmail.trim();
-                updateEmail(newEmail, modalClose);
+                const newUsername = values.newUsername.trim();
+                updateUsername(newUsername, modalClose);
               }}>
               {({
                 values,
@@ -51,15 +54,15 @@ function ModalEmail(props: Props) {
               }) => (
                 <ScrollView>
                   <FormInput
-                    onChangeText={handleChange('newEmail')}
-                    onBlur={handleBlur('newEmail')}
-                    value={values.newEmail}
-                    placeholder="e.g tago@tago.com"
-                    label="Email"
+                    onChangeText={handleChange('newUsername')}
+                    onBlur={handleBlur('newUsername')}
+                    value={values.newUsername}
+                    placeholder="e.g tago"
+                    label="Username"
                   />
                   <FormError
-                    touched={touched.newEmail}
-                    message={errors.newEmail}
+                    touched={touched.newUsername}
+                    message={errors.newUsername}
                   />
                   <MainButton
                     style={{marginTop: 25}}
@@ -99,4 +102,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModalEmail;
+export default ModalUsername;
