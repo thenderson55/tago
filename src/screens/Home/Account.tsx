@@ -9,7 +9,7 @@ import ModalEmail from '../../components/Modals/ModalEmail';
 import ModalUsername from '../../components/Modals/ModalUsername';
 import ModalPassword from '../../components/Modals/ModalPassword';
 
-function Settings() {
+function Account() {
   const {loading} = useUserStore();
   const {logOut} = useAuthStore();
 
@@ -95,4 +95,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Settings;
+export default Account;

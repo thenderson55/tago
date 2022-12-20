@@ -3,6 +3,6 @@ import {PhotoType} from '../../store/usePhotosStore';
 export type HomeParamList = {
   Home: undefined;
   Graph: undefined;
-  Settings: undefined;
+  Account: undefined;
   Map?: {newPhoto?: PhotoType};
 };

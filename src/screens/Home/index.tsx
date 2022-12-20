@@ -23,7 +23,7 @@ import {HomeParamList} from '../../stacks/Home/HomeParamList';
 import firestore from '@react-native-firebase/firestore';
 import storage, {FirebaseStorageTypes} from '@react-native-firebase/storage';
 import FastImage from 'react-native-fast-image';
-import InfoModal from '../../components/Modals/InfoModal';
+import ModalInfo from '../../components/Modals/ModalInfo';
 import MainButton from '../../components/Buttons/MainButton';
 import theme from '../../theme';
 import usePhotosStore from '../../store/usePhotosStore';
@@ -222,7 +222,7 @@ function Home() {
 
   return (
     <SafeAreaView style={styles.safeView}>
-      <InfoModal
+      <ModalInfo
         modalBool={infoModal}
         modalClose={infoModalClose}
         imageResponse={imageResponse!}
@@ -236,8 +236,8 @@ function Home() {
         />
         <MainButton text="Map" onPress={() => navigation.navigate('Map')} />
         <MainButton
-          text="Settings"
-          onPress={() => navigation.navigate('Settings')}
+          text="Account"
+          onPress={() => navigation.navigate('Account')}
         />
         {/* <Button title="Graph" onPress={() => navigation.navigate('Graph')} /> */}
         {/* <MainButton text="GET DATA" onPress={getData} /> */}
