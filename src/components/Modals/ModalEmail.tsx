@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {
   View,
   Modal,
@@ -14,6 +14,7 @@ import MainButton from '../Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
 import FormError from '../Erorrs/FormError';
 import {updateEmailValidationSchema} from '../../utils/validations';
+import ResponseError from '../Erorrs/ResponseError';
 
 interface Props {
   modalBool: boolean;
@@ -22,7 +23,7 @@ interface Props {
 
 function ModalEmail(props: Props) {
   const {modalBool, modalClose} = props;
-  const {updateEmail, loading} = useUserStore();
+  const {updateEmail, loading, errorAccount} = useUserStore();
 
   return (
     <>
@@ -66,7 +67,7 @@ function ModalEmail(props: Props) {
                     disabled={loading}
                     spinner={loading}
                     text="Update Email">
-                    {/* <ResponseError message=''/> */}
+                    <ResponseError message={errorAccount} />
                   </MainButton>
                   <MainButton
                     style={styles.button}

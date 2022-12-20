@@ -5,7 +5,7 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
-import {errorResponseMessage} from '../utils';
+import {firebaseErrorMessage} from '../utils';
 
 // import {FIREBASE_AUTH_DOMAIN} from '@env';
 // FIXME: Google sign in not working on iOS for now - need to investigate
@@ -70,7 +70,7 @@ const useAuthStore = create<AuthState>(set => ({
 
       addUser(res.user.uid, values.username);
     } catch (error: any) {
-      const errorMessage = errorResponseMessage(error);
+      const errorMessage = await firebaseErrorMessage(error);
       set(state => ({
         ...state,
         error: errorMessage || '',
@@ -92,7 +92,7 @@ const useAuthStore = create<AuthState>(set => ({
       console.log('Zustand user account signed in!', res);
     } catch (error: any) {
       console.log('Zustand error: ', error);
-      const errorMessage = errorResponseMessage(error);
+      const errorMessage = await firebaseErrorMessage(error);
       set(state => ({
         ...state,
         loginError: errorMessage || '',
@@ -174,7 +174,7 @@ const useAuthStore = create<AuthState>(set => ({
       }));
     } catch (error: any) {
       console.log('Forgot Password Error', error.code);
-      const errorMessage = errorResponseMessage(error);
+      const errorMessage = await firebaseErrorMessage(error);
       set(state => ({
         ...state,
         resetPasswordMessage: errorMessage || '',

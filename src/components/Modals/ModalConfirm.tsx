@@ -10,6 +10,7 @@ import {
 import useUserStore from '../../store/useUserStore';
 import theme from '../../theme';
 import MainButton from '../Buttons/MainButton';
+import ResponseError from '../Erorrs/ResponseError';
 
 interface Props {
   modalBool: boolean;
@@ -18,7 +19,7 @@ interface Props {
 
 function ModalConfirm(props: Props) {
   const {modalBool, modalClose} = props;
-  const {deleteUser, loading} = useUserStore();
+  const {deleteUser, loading, errorAccount} = useUserStore();
   return (
     <Modal visible={modalBool} animationType="fade" transparent={true}>
       <SafeAreaView style={styles.safeView}>
@@ -39,6 +40,7 @@ function ModalConfirm(props: Props) {
             disabled={loading}
             spinner={loading}
           />
+          <ResponseError message={errorAccount} />
         </View>
       </SafeAreaView>
     </Modal>

@@ -23,7 +23,7 @@ interface Props {
 
 function ModalUsername(props: Props) {
   const {modalBool, modalClose} = props;
-  const {updateUsername, loading} = useUserStore();
+  const {updateUsername, loading, errorAccount} = useUserStore();
 
   return (
     <>
@@ -67,7 +67,7 @@ function ModalUsername(props: Props) {
                     disabled={loading}
                     spinner={loading}
                     text="Update Username">
-                    {/* <ResponseError message=''/> */}
+                    <ResponseError message={errorAccount} />
                   </MainButton>
                   <MainButton
                     style={styles.button}

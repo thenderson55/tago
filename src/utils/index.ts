@@ -34,7 +34,7 @@ export const requestLocationPermission = async () => {
   }
 };
 
-export const errorResponseMessage = (error: {code: string}) => {
+export const firebaseErrorMessage = (error: {code: string}) => {
   let errorMessage;
   if (error.code === 'auth/user-not-found') {
     (errorMessage =

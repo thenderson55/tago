@@ -3,15 +3,13 @@ import {timeStamp} from '../utils/settings';
 import firestore from '@react-native-firebase/firestore';
 import {User} from 'firebase/auth';
 import auth from '@react-native-firebase/auth';
-import {errorResponseMessage} from '../utils';
+import {firebaseErrorMessage} from '../utils';
 
 export interface UserState {
   user: User;
   loading: boolean;
   error: string;
-  errorEmail: string;
-  errorPassword: string;
-  errorUsername: string;
+  errorAccount: string;
   clearErrors: () => void;
   setUser: (user: User) => void;
   addUser: (id: string, username: string) => void;
@@ -41,27 +39,21 @@ const initialState = {
   },
   loading: false,
   error: '',
-  errorEmail: '',
-  errorPassword: '',
-  errorUsername: '',
+  errorAccount: '',
 };
 
 const useUserStore = create<UserState>(set => ({
   user: initialState.user,
   loading: initialState.loading,
   error: initialState.error,
-  errorEmail: initialState.errorEmail,
-  errorPassword: initialState.errorPassword,
-  errorUsername: initialState.errorUsername,
+  errorAccount: initialState.errorAccount,
 
   clearErrors: async () => {
     console.log('Clearing errors');
     set(state => ({
       ...state,
       error: '',
-      errorEmail: '',
-      errorPassword: '',
-      errorUsername: '',
+      errorAccount: '',
     }));
   },
 
@@ -110,30 +102,47 @@ const useUserStore = create<UserState>(set => ({
   },
 
   updatePassword: async (newPassword, modalClose) => {
+    set(state => ({...state, loading: true}));
     try {
       await auth().currentUser?.updatePassword(newPassword);
+      set(state => ({
+        ...state,
+        loading: false,
+      }));
       modalClose();
-    } catch (e) {
-      console.log('Update password error: ', e);
-      modalClose();
+    } catch (error: any) {
+      console.log('Update password error: ', error);
+      const errorMessage = await firebaseErrorMessage(error);
+      set(state => ({
+        ...state,
+        loading: false,
+        errorAccount: errorMessage || `Update password error:  ${error}`,
+      }));
     }
   },
 
   updateEmail: async (newEmail, modalClose) => {
+    set(state => ({...state, loading: true}));
     try {
       await auth().currentUser?.updateEmail(newEmail);
+      set(state => ({
+        ...state,
+        loading: false,
+      }));
       modalClose();
     } catch (error: any) {
       console.log('Update email error: ', error);
-      const errorMessage = errorResponseMessage(error);
+      const errorMessage = await firebaseErrorMessage(error);
       set(state => ({
         ...state,
-        errorEmail: errorMessage || '',
+        loading: false,
+        errorAccount: errorMessage || `Update email error:  ${error}`,
       }));
     }
   },
 
   updateUsername: async (newUsername, modalClose) => {
+    set(state => ({...state, loading: true}));
     try {
       const user = await auth().currentUser;
       await firestore().collection('Users').doc(user?.uid).update({
@@ -151,10 +160,19 @@ const useUserStore = create<UserState>(set => ({
       await firestore().collection('Usernames').doc(newUsername).set({
         newUsername,
       });
+      set(state => ({
+        ...state,
+        loading: false,
+      }));
       modalClose();
-    } catch (e) {
-      console.log('Update username error: ', e);
-      modalClose();
+    } catch (error: any) {
+      console.log('Update username error: ', error);
+      const errorMessage = await firebaseErrorMessage(error);
+      set(state => ({
+        ...state,
+        loading: false,
+        errorAccount: errorMessage || `Update username error:  ${error}`,
+      }));
     }
   },
 
@@ -173,9 +191,14 @@ const useUserStore = create<UserState>(set => ({
         await auth().currentUser?.delete();
         set(state => ({...state, loading: false}));
         modalClose();
-      } catch (error) {
+      } catch (error: any) {
         console.log('Delete user error: ', error);
-        set(state => ({...state, loading: false}));
+        const errorMessage = await firebaseErrorMessage(error);
+        set(state => ({
+          ...state,
+          loading: false,
+          errorAccount: errorMessage || `Delete user error:  ${error}`,
+        }));
       }
     }
   },

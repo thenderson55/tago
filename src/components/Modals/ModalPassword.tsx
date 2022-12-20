@@ -14,6 +14,7 @@ import MainButton from '../Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
 import FormError from '../Erorrs/FormError';
 import {updatePasswordValidationSchema} from '../../utils/validations';
+import ResponseError from '../Erorrs/ResponseError';
 
 interface Props {
   modalBool: boolean;
@@ -22,7 +23,7 @@ interface Props {
 
 function ModalPassword(props: Props) {
   const {modalBool, modalClose} = props;
-  const {updateEmail, loading} = useUserStore();
+  const {updateEmail, loading, errorAccount} = useUserStore();
   const [hidePassword, setHidePassword] = useState<boolean>(true);
   const [hidePasswordConfirm, setHidePasswordConfirm] = useState<boolean>(true);
 
@@ -88,7 +89,7 @@ function ModalPassword(props: Props) {
                     disabled={loading}
                     spinner={loading}
                     text="Update Password">
-                    {/* <ResponseError message=''/> */}
+                    <ResponseError message={errorAccount} />
                   </MainButton>
                   <MainButton
                     style={styles.button}
