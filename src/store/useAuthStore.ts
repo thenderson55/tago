@@ -5,6 +5,7 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
+import {errorResponseMessage} from '../utils';
 
 // import {FIREBASE_AUTH_DOMAIN} from '@env';
 // FIXME: Google sign in not working on iOS for now - need to investigate
@@ -69,25 +70,10 @@ const useAuthStore = create<AuthState>(set => ({
 
       addUser(res.user.uid, values.username);
     } catch (error: any) {
-      let errorMessage = '';
-
-      if (error.code === 'auth/user-not-found') {
-        (errorMessage =
-          'There is no user record corresponding to this identifier. The user may have been deleted.'),
-          console.log(errorMessage);
-      }
-      if (error.code === 'auth/email-already-in-use') {
-        errorMessage = 'That email address is already in use!';
-        console.log(errorMessage);
-      }
-
-      if (error.code === 'auth/invalid-email') {
-        errorMessage = 'That email address is invalid!';
-        console.log(errorMessage);
-      }
+      const errorMessage = errorResponseMessage(error);
       set(state => ({
         ...state,
-        error: errorMessage,
+        error: errorMessage || '',
         loading: false,
       }));
       console.error(error);
@@ -106,32 +92,10 @@ const useAuthStore = create<AuthState>(set => ({
       console.log('Zustand user account signed in!', res);
     } catch (error: any) {
       console.log('Zustand error: ', error);
-      let errorMessage = '';
-      if (error.code === 'auth/user-not-found') {
-        errorMessage =
-          'There is no user record corresponding to this identifier. The user may have been deleted.';
-        console.log(errorMessage);
-      }
-      if (error.code === 'auth/email-already-in-use') {
-        errorMessage = 'That email address is already in use!';
-        console.log(errorMessage);
-      }
-      if (error.code === 'auth/invalid-email') {
-        errorMessage = 'That email address is invalid!';
-        console.log(errorMessage);
-      }
-      if (error.code === 'auth/wrong-password') {
-        errorMessage = 'That password is invalid!';
-        console.log(errorMessage);
-      }
-      if (error.code === 'auth/too-many-requests') {
-        errorMessage =
-          'Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.';
-        console.log(errorMessage);
-      }
+      const errorMessage = errorResponseMessage(error);
       set(state => ({
         ...state,
-        loginError: errorMessage,
+        loginError: errorMessage || '',
         loading: false,
       }));
     } finally {
@@ -210,16 +174,11 @@ const useAuthStore = create<AuthState>(set => ({
       }));
     } catch (error: any) {
       console.log('Forgot Password Error', error.code);
-      let errorMessage = '';
-      if (error.code === 'auth/user-not-found') {
-        (errorMessage =
-          'There is no user record corresponding to this identifier. The user may have been deleted.'),
-          console.log(errorMessage);
-      }
+      const errorMessage = errorResponseMessage(error);
       set(state => ({
         ...state,
+        resetPasswordMessage: errorMessage || '',
         loading: false,
-        resetPasswordMessage: errorMessage,
       }));
     }
   },

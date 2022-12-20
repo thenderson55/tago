@@ -3,11 +3,16 @@ import {timeStamp} from '../utils/settings';
 import firestore from '@react-native-firebase/firestore';
 import {User} from 'firebase/auth';
 import auth from '@react-native-firebase/auth';
+import {errorResponseMessage} from '../utils';
 
 export interface UserState {
   user: User;
   loading: boolean;
   error: string;
+  errorEmail: string;
+  errorPassword: string;
+  errorUsername: string;
+  clearErrors: () => void;
   setUser: (user: User) => void;
   addUser: (id: string, username: string) => void;
   fetchUser: () => void;
@@ -36,12 +41,29 @@ const initialState = {
   },
   loading: false,
   error: '',
+  errorEmail: '',
+  errorPassword: '',
+  errorUsername: '',
 };
 
 const useUserStore = create<UserState>(set => ({
   user: initialState.user,
   loading: initialState.loading,
   error: initialState.error,
+  errorEmail: initialState.errorEmail,
+  errorPassword: initialState.errorPassword,
+  errorUsername: initialState.errorUsername,
+
+  clearErrors: async () => {
+    console.log('Clearing errors');
+    set(state => ({
+      ...state,
+      error: '',
+      errorEmail: '',
+      errorPassword: '',
+      errorUsername: '',
+    }));
+  },
 
   setUser: async (user: User) => {
     set(state => ({...state, user}));
@@ -101,9 +123,13 @@ const useUserStore = create<UserState>(set => ({
     try {
       await auth().currentUser?.updateEmail(newEmail);
       modalClose();
-    } catch (e) {
-      console.log('Update email error: ', e);
-      modalClose();
+    } catch (error: any) {
+      console.log('Update email error: ', error);
+      const errorMessage = errorResponseMessage(error);
+      set(state => ({
+        ...state,
+        errorEmail: errorMessage || '',
+      }));
     }
   },
 
