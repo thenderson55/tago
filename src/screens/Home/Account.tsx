@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {SafeAreaView, StyleSheet} from 'react-native';
 import MainButton from '../../components/Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
@@ -10,7 +10,7 @@ import ModalUsername from '../../components/Modals/ModalUsername';
 import ModalPassword from '../../components/Modals/ModalPassword';
 
 function Account() {
-  const {loading} = useUserStore();
+  const {loading, clearErrors} = useUserStore();
   const {logOut} = useAuthStore();
 
   const [modalConfirm, setModalConfirm] = useState(false);
@@ -23,25 +23,31 @@ function Account() {
 
   const [modalEmail, setModalEmail] = useState(false);
   const modalEmailClose = () => {
+    clearErrors();
     setModalEmail(false);
   };
   const modalEmailOpen = () => {
+    clearErrors();
     setModalEmail(true);
   };
 
   const [modalUsername, setModalUsername] = useState(false);
   const modalUsernameClose = () => {
+    clearErrors();
     setModalUsername(false);
   };
   const modalUsernameOpen = () => {
+    clearErrors();
     setModalUsername(true);
   };
 
   const [modalPassword, setModalPassword] = useState(false);
   const modalPasswordClose = () => {
+    clearErrors();
     setModalPassword(false);
   };
   const modalPasswordOpen = () => {
+    clearErrors();
     setModalPassword(true);
   };
 
