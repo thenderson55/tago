@@ -1,6 +1,19 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {StyleSheet, SafeAreaView, View, Dimensions} from 'react-native';
-import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
+import {
+  StyleSheet,
+  SafeAreaView,
+  View,
+  Dimensions,
+  Linking,
+  Platform,
+  Button,
+  Text,
+} from 'react-native';
+import MapView, {
+  PROVIDER_GOOGLE,
+  Marker,
+  PROVIDER_DEFAULT,
+} from 'react-native-maps';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 import theme from '../../theme';
 import BackButton from '../../components/Buttons/BackButton';
@@ -20,7 +33,8 @@ const Map = () => {
   const [location, setLocation] = useState<number[]>();
   // const [newPhoto, setNewPhoto] = useState<PhotoType>();
   const {photos} = usePhotosStore();
-  console.log('MAP PHOTOS', photos);
+  console.log('MAP PHOTOS', photos.length);
+  console.log('LOCATION', location);
   route?.params?.newPhoto && console.log('NEW PHOTO', route.params.newPhoto);
 
   // useEffect(() => {
@@ -52,6 +66,63 @@ const Map = () => {
     }
   }, []);
 
+  useEffect(() => {
+    let watchID: number = 0;
+    const watchLocation = async () => {
+      await requestLocationPermission();
+      try {
+        watchID = Geolocation.watchPosition(
+          (position: GeoPosition) => {
+            console.log('Watch Location:', position);
+            setLocation([position.coords.latitude, position.coords.longitude]);
+            return;
+          },
+          error => {
+            // See error code charts below.
+            console.log(error.code, error.message);
+            setLocation([]);
+            return;
+          },
+          {
+            enableHighAccuracy: true,
+            interval: 100,
+            fastestInterval: 100,
+            distanceFilter: 0,
+          },
+        );
+        console.log('WATCH ID', watchID);
+      } catch (error) {
+        console.log('Location Watch Error', error);
+      }
+    };
+    watchLocation();
+    console.log('WATCH ID', watchID);
+    return () => {
+      // FIXME: watchID not being returned in above function
+      // stopObserving works somwtimes but throws yellow box error
+      Geolocation.clearWatch(watchID);
+      Geolocation.stopObserving();
+    };
+  }, []);
+
+  // const directionsButton = () => {
+  //   const lat = location[0];
+  //   const lng = location[1];
+  //   // const lat = 46.37231;
+  //   // const lng = -10.01132;
+  //   console.log('LAT', lat, 'LNG', lng);
+  //   const scheme = Platform.select({ios: 'maps:0,0?q=', android: 'geo:0,0?q='});
+  //   const latLng = `${lat},${lng}`;
+  //   const label = 'Custom Label';
+  //   const url = Platform.select({
+  //     // ios: `${scheme}${label}@${latLng}`,
+  //     ios: `https://www.google.com/maps/@${latLng},6z`,
+  //     android: `${scheme}${latLng}(${label})`,
+  //   });
+  //   console.log('url', url);
+  //   Linking.openURL(url!);
+  // };
+
   // FIXME: need to use a stored version first to prevent loading each time
   useEffect(() => {
     getLocation();
@@ -63,7 +134,7 @@ const Map = () => {
     <SafeAreaView style={styles.safeView}>
       {route?.params?.newPhoto?.location ? (
         <MapView
-          provider={PROVIDER_GOOGLE}
+          provider={PROVIDER_DEFAULT}
           style={styles.mapView}
           initialRegion={{
             latitude: route.params.newPhoto.location[0],
@@ -94,7 +165,7 @@ const Map = () => {
         </MapView>
       ) : photos?.length > 0 && location?.length ? (
         <MapView
-          provider={PROVIDER_GOOGLE}
+          provider={PROVIDER_DEFAULT}
           style={styles.mapView}
           initialRegion={{
             latitude: location[0],
@@ -102,6 +173,12 @@ const Map = () => {
             latitudeDelta: 0.015,
             longitudeDelta: 0.0121,
           }}>
+          <Marker
+            coordinate={{
+              latitude: location[0],
+              longitude: location[1],
+            }}
+          />
           {photos.map((item, index) => {
             return (
               <Marker
@@ -131,7 +208,7 @@ const Map = () => {
         </MapView>
       ) : location?.length ? (
         <MapView
-          provider={PROVIDER_GOOGLE}
+          provider={PROVIDER_DEFAULT}
           style={styles.mapView}
           initialRegion={{
             latitude: location[0],
@@ -144,7 +221,7 @@ const Map = () => {
               latitude: location[0],
               longitude: location[1],
             }}
-            pinColor={theme.colors.magenta}
+            // pinColor={theme.colors.magenta}
           />
         </MapView>
       ) : (
@@ -161,6 +238,11 @@ const Map = () => {
       <View style={styles.backButton}>
         <BackButton map={true} />
       </View>
+      {/* {Platform.OS === 'ios' && (
+        <View style={styles.directionsButton}>
+          <Button title="Directions" onPress={() => directionsButton()} />
+        </View>
+      )} */}
     </SafeAreaView>
   );
 };
@@ -181,6 +263,12 @@ const styles = StyleSheet.create({
     // bottom: '7%',
     // right: '7%',
     // alignSelf: 'flex-end',
+  },
+  directionsButton: {
+    position: 'absolute',
+    bottom: '7%',
+    right: '7%',
+    alignSelf: 'flex-end',
   },
   loadingDots: {
     flex: 1,
