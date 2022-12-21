@@ -15,8 +15,8 @@ export type PhotoType = {
   // location: [number, number];
   description: string;
   category: string;
-  url?: string;
-  location?: number[];
+  url: string;
+  location: number[];
   created?: Date;
 };
 export type CategoryType = {
@@ -71,8 +71,12 @@ const usePhotosStore = create<PhotoState>(set => ({
         .doc(userId)
         .collection('Photos')
         .get();
-      const photos = res.docs.map(item => item.data() as PhotoType);
-      set(state => ({...state, photos}));
+      const photosMap = res.docs.map(item => item.data() as PhotoType);
+      // Make sure that the photo has location
+      const filtered = photosMap.filter(item =>
+        item.hasOwnProperty('location'),
+      );
+      set(state => ({...state, photos: filtered}));
     } catch (error: any) {
       set(state => ({
         ...state,
