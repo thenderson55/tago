@@ -10,6 +10,7 @@ import {GOOGLE_MAPS_API_KEY} from '@env';
 
 // navigator.geolocation = require('react-native-geolocation-service');
 
+// https://www.youtube.com/watch?v=Wq3dO05jv6o
 function SearchInput() {
   // useEffect(() => {
   //   const placeByAutocomplete = async (input: string) => {

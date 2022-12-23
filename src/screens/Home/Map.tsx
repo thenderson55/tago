@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -37,6 +37,7 @@ import MapViewDirections from 'react-native-maps-directions';
 
 const Map = () => {
   const route: RouteProp<HomeParamList, 'Map'> = useRoute();
+  const mapRef = useRef<MapView>(null);
   // const {newPhoto} = route?.params;
   const [location, setLocation] = useState<number[]>();
   const [directions, setDirections] = useState<boolean>(false);
@@ -52,6 +53,27 @@ const Map = () => {
   //     setNewPhoto(photos[photos.length - 1]);
   //   }
   // }, [photos]);
+
+  const traceRoute = () => {
+    setDirections(!directions);
+    mapRef.current?.fitToCoordinates(
+      [
+        {latitude: location![0], longitude: location![1]},
+        {latitude: 56.3766, longitude: -3.842},
+      ],
+      {
+        edgePadding: {top: 30, right: 30, bottom: 30, left: 30},
+        animated: true,
+      },
+    );
+
+    // mapRef.current?.animateToRegion({
+    //   latitude: location![0],
+    //   longitude: location![1],
+    //   latitudeDelta: 0.0922,
+    //   longitudeDelta: 0.0421,
+    // });
+  };
 
   const getLocation = useCallback(async () => {
     await requestLocationPermission();
@@ -144,6 +166,7 @@ const Map = () => {
       {route?.params?.newPhoto?.location ? (
         <>
           <MapView
+            ref={mapRef}
             provider={PROVIDER_GOOGLE}
             style={styles.mapView}
             initialRegion={{
@@ -180,6 +203,8 @@ const Map = () => {
                 }}
                 destination={{latitude: 56.3766, longitude: -3.842}}
                 apikey={GOOGLE_MAPS_API_KEY}
+                strokeColor={theme.colors.magenta}
+                strokeWidth={3}
               />
             )}
           </MapView>
@@ -188,6 +213,7 @@ const Map = () => {
       ) : photos?.length > 0 && location?.length ? (
         <>
           <MapView
+            ref={mapRef}
             provider={PROVIDER_GOOGLE}
             style={styles.mapView}
             initialRegion={{
@@ -233,6 +259,8 @@ const Map = () => {
                 origin={{latitude: location[0], longitude: location[1]}}
                 destination={{latitude: 56.3766, longitude: -3.842}}
                 apikey={GOOGLE_MAPS_API_KEY}
+                strokeColor={theme.colors.magenta}
+                strokeWidth={3}
               />
             )}
           </MapView>
@@ -241,6 +269,7 @@ const Map = () => {
       ) : location?.length ? (
         <>
           <MapView
+            ref={mapRef}
             provider={PROVIDER_GOOGLE}
             style={styles.mapView}
             initialRegion={{
@@ -261,6 +290,8 @@ const Map = () => {
                 origin={{latitude: location[0], longitude: location[1]}}
                 destination={{latitude: 56.3766, longitude: -3.842}}
                 apikey={GOOGLE_MAPS_API_KEY}
+                strokeColor={theme.colors.magenta}
+                strokeWidth={3}
               />
             )}
           </MapView>
@@ -282,7 +313,7 @@ const Map = () => {
       </View>
       {Platform.OS === 'ios' && (
         <View style={styles.directionsButton}>
-          <Button title="Directions" onPress={() => setDirections(true)} />
+          <Button title="Directions" onPress={() => traceRoute()} />
         </View>
       )}
     </SafeAreaView>
