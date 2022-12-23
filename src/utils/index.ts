@@ -1,5 +1,7 @@
 import {PermissionsAndroid, Platform} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
+import Qs from 'qs';
+import {GOOGLE_MAPS_API_KEY} from '@env';
 
 export const requestLocationPermission = async () => {
   if (Platform.OS === 'ios') {
@@ -65,3 +67,66 @@ export const firebaseErrorMessage = (error: {code: string}) => {
   }
   return errorMessage;
 };
+console.log('GOOGLE_MAPS_API_KEY', GOOGLE_MAPS_API_KEY);
+
+export const getGoogleMapsPlaceByAutocomplete = (
+  place: string,
+): Promise<{
+  data?: {
+    predictions: Array<{
+      description: string;
+      place_id: string;
+      types: Array<string>;
+    }>;
+  };
+  error?: string;
+}> =>
+  new Promise(res => {
+    try {
+      const request = new XMLHttpRequest();
+
+      request.open(
+        'GET',
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=' +
+          encodeURIComponent(place) +
+          '&' +
+          Qs.stringify({
+            key: GOOGLE_MAPS_API_KEY,
+            language: 'en',
+            types: 'geocode',
+          }),
+      );
+
+      request.send();
+
+      request.onreadystatechange = () => {
+        if (request.readyState !== 4) {
+          return;
+        }
+
+        if (request.status !== 200) {
+          res({error: 'status: ' + request.status.toString()});
+        }
+
+        const responseJSON = JSON.parse(request.responseText);
+
+        if (responseJSON.status === 'ZERO_RESULTS') {
+          res({data: undefined});
+        }
+        if (responseJSON.status === 'OK') {
+          // console.log('responseJSON', responseJSON);
+          // To get the place details in component
+          // const placeByAutocomplete = async (input: string) => {
+          //   const res = await getGoogleMapsPlaceByAutocomplete(input);
+          //   console.log('RES', res.data?.predictions);
+          // };
+          res({data: responseJSON});
+        }
+
+        res({error: responseJSON.status});
+      };
+    } catch (e) {
+      console.warn('google places autocomplete catch: ' + e);
+      res({error: String(e)});
+    }
+  });
