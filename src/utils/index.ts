@@ -67,7 +67,6 @@ export const firebaseErrorMessage = (error: {code: string}) => {
   }
   return errorMessage;
 };
-console.log('GOOGLE_MAPS_API_KEY', GOOGLE_MAPS_API_KEY);
 
 export const getGoogleMapsPlaceByAutocomplete = (
   place: string,
