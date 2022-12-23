@@ -57,7 +57,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 10,
     marginBottom: 20,
-    backgroundColor: 'white',
+    color: theme.colors.black,
+    // backgroundColor: 'white',
   },
   modalView: {
     backgroundColor: 'white',
