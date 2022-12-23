@@ -41,6 +41,8 @@ const Map = () => {
   // const {newPhoto} = route?.params;
   const [location, setLocation] = useState<number[]>();
   const [directions, setDirections] = useState<boolean>(false);
+  const [distance, setDistance] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
   // const [newPhoto, setNewPhoto] = useState<PhotoType>();
   const {photos} = usePhotosStore();
   console.log('MAP PHOTOS', photos.length);
@@ -54,15 +56,29 @@ const Map = () => {
   //   }
   // }, [photos]);
 
+  const setDistanceAndDuration = (args: any) => {
+    console.log('DISTANCE AND DURATION', args);
+    if (args) {
+      setDistance(args.distance);
+      setDuration(args.duration);
+    }
+  };
+
+  const mapPadding = 50;
   const traceRoute = () => {
     setDirections(!directions);
     mapRef.current?.fitToCoordinates(
       [
         {latitude: location![0], longitude: location![1]},
-        {latitude: 56.3766, longitude: -3.842},
+        {latitude: 56.3766, longitude: -4.0},
       ],
       {
-        edgePadding: {top: 30, right: 30, bottom: 30, left: 30},
+        edgePadding: {
+          top: mapPadding,
+          right: mapPadding,
+          bottom: mapPadding,
+          left: mapPadding,
+        },
         animated: true,
       },
     );
@@ -126,7 +142,7 @@ const Map = () => {
         console.log('Location Watch Error', error);
       }
     };
-    watchLocation();
+    // watchLocation();
     console.log('WATCH ID', watchID);
     return () => {
       // FIXME: watchID not being returned in above function
@@ -201,10 +217,12 @@ const Map = () => {
                   latitude: route.params.newPhoto.location[0],
                   longitude: route.params.newPhoto.location[1],
                 }}
-                destination={{latitude: 56.3766, longitude: -3.842}}
+                destination={{latitude: 56.3766, longitude: -4.0}}
                 apikey={GOOGLE_MAPS_API_KEY}
                 strokeColor={theme.colors.magenta}
                 strokeWidth={3}
+                mode="WALKING"
+                onReady={setDistanceAndDuration}
               />
             )}
           </MapView>
@@ -257,10 +275,12 @@ const Map = () => {
             {directions && (
               <MapViewDirections
                 origin={{latitude: location[0], longitude: location[1]}}
-                destination={{latitude: 56.3766, longitude: -3.842}}
+                destination={{latitude: 56.3766, longitude: -4.0}}
                 apikey={GOOGLE_MAPS_API_KEY}
                 strokeColor={theme.colors.magenta}
                 strokeWidth={3}
+                mode="WALKING"
+                onReady={setDistanceAndDuration}
               />
             )}
           </MapView>
@@ -292,6 +312,8 @@ const Map = () => {
                 apikey={GOOGLE_MAPS_API_KEY}
                 strokeColor={theme.colors.magenta}
                 strokeWidth={3}
+                mode="WALKING"
+                onReady={setDistanceAndDuration}
               />
             )}
           </MapView>
@@ -314,6 +336,10 @@ const Map = () => {
       {Platform.OS === 'ios' && (
         <View style={styles.directionsButton}>
           <Button title="Directions" onPress={() => traceRoute()} />
+          <View>
+            <Text>Distance: {distance.toFixed(2)}</Text>
+            <Text>Duration: {Math.ceil(duration)} min</Text>
+          </View>
         </View>
       )}
     </SafeAreaView>
