@@ -39,7 +39,7 @@ function MapMarker(props: Props) {
         <View style={styles.triangle} />
       </View>
       <Callout tooltip={true}>
-        <MapCard item={item} onPress={() => null} />
+        <MapCard item={item} onPress={() => console.log('null')} />
       </Callout>
     </Marker>
   );
