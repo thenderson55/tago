@@ -1,27 +1,32 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import {Avatar} from 'native-base';
-import {Marker} from 'react-native-maps';
+import {Callout, Marker} from 'react-native-maps';
 import {PhotoType} from '../../store/usePhotosStore';
 import theme from '../../theme';
+import MapCard from './MapCard';
 
 type Props = {
   item: PhotoType;
   index: number;
+  onPress: () => void;
 };
 
 function MapMarker(props: Props) {
   //FIXME: Key issue with markers, index is unique but throws error
-  const {item, index} = props;
+  const {item, index, onPress} = props;
   return (
     <Marker
       key={index}
+      // key={`key_${item.location[0]}_${item.location[2]}`}
       coordinate={{
         latitude: item.location[0],
         longitude: item.location[1],
       }}
       title={item.title}
       description={item.description}
+      onPress={onPress}
+      // tracksViewChanges={false}
       pinColor={theme.colors.magenta}>
       <View style={styles.pinWrapper}>
         <Avatar
@@ -33,6 +38,9 @@ function MapMarker(props: Props) {
         />
         <View style={styles.triangle} />
       </View>
+      <Callout tooltip={true}>
+        <MapCard item={item} onPress={() => null} />
+      </Callout>
     </Marker>
   );
 }
