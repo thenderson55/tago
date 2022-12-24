@@ -1,5 +1,6 @@
 import {PermissionsAndroid, Platform} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
+// @ts-ignore
 import Qs from 'qs';
 import {GOOGLE_MAPS_API_KEY} from '@env';
 

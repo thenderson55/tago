@@ -7,6 +7,10 @@ import {Dispatch, SetStateAction} from 'react';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeParamList} from '../stacks/Home/HomeParamList';
 import {User} from 'firebase/auth';
+import Geolocation, {
+  GeoError,
+  GeoPosition,
+} from 'react-native-geolocation-service';
 
 export type PhotoType = {
   ref: string;
@@ -25,13 +29,16 @@ export type CategoryType = {
 
 export interface PhotoState {
   photos: PhotoType[];
+  currentLocation: number[];
   categories: string[];
   loading: boolean;
   upLoading: boolean;
   transferProgress: number;
   error: string;
+  geoError: GeoError;
   fetchPhotos: (userId: string) => void;
   fetchPhoto: (id: number) => void;
+  getCurrentLocation: () => void;
   addPhoto: (
     user: User,
     response: ImagePickerResponse,
@@ -48,19 +55,23 @@ export interface PhotoState {
 
 const initialState = {
   photos: [],
+  currentLocation: [],
   categories: [],
   loading: false,
   upLoading: false,
   error: '',
+  geoError: {} as GeoError,
   transferProgress: 0,
 };
 
 const usePhotosStore = create<PhotoState>(set => ({
   photos: initialState.photos,
+  currentLocation: initialState.currentLocation,
   categories: initialState.categories,
   loading: initialState.loading,
   upLoading: initialState.upLoading,
   error: initialState.error,
+  geoError: initialState.geoError,
   transferProgress: initialState.transferProgress,
   // transferFinished: initialState.transferFinished,
 
@@ -83,6 +94,33 @@ const usePhotosStore = create<PhotoState>(set => ({
         error: error,
       }));
     }
+  },
+
+  getCurrentLocation: async () => {
+    Geolocation.getCurrentPosition(
+      (position: GeoPosition) => {
+        console.log('YOOOOO');
+        // setLocation([position.coords.latitude, position.coords.longitude]);
+        set(state => ({
+          ...state,
+          currentLocation: [
+            position.coords.latitude,
+            position.coords.longitude,
+          ],
+        }));
+        return;
+      },
+      error => {
+        // See error code charts below.
+        console.log(error.code, error.message);
+        set(state => ({
+          ...state,
+          geoError: error,
+        }));
+        return;
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
   },
 
   fetchPhoto: async id => {

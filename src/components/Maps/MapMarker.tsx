@@ -11,10 +11,11 @@ type Props = {
 };
 
 function MapMarker(props: Props) {
+  //FIXME: Key issue with markers, index is unique but throws error
   const {item, index} = props;
   return (
     <Marker
-      key={index || 1}
+      key={index}
       coordinate={{
         latitude: item.location[0],
         longitude: item.location[1],

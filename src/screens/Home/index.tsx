@@ -1,13 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  Dimensions,
-  PermissionsAndroid,
-  Platform,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {Dimensions, SafeAreaView, StyleSheet, View} from 'react-native';
 import auth, {firebase} from '@react-native-firebase/auth';
 import {
   ImagePickerResponse,
@@ -15,37 +7,25 @@ import {
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeParamList} from '../../stacks/Home/HomeParamList';
 // import Blob from './Blob';
 import firestore from '@react-native-firebase/firestore';
 import storage, {FirebaseStorageTypes} from '@react-native-firebase/storage';
-import FastImage from 'react-native-fast-image';
 import ModalInfo from '../../components/Modals/ModalInfo';
 import MainButton from '../../components/Buttons/MainButton';
 import theme from '../../theme';
 import usePhotosStore from '../../store/usePhotosStore';
 import useUserStore from '../../store/useUserStore';
 import {requestLocationPermission} from '../../utils';
-import useAuthStore from '../../store/useAuthStore';
-// import LoadingDots from '../../components/Animations/LoadingDots';
 
 function Home() {
   const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
-  const [location, setLocation] = useState<number[]>([0, 0]);
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
-  const {fetchPhotos, fetchCategories} = usePhotosStore();
-  const {
-    user,
-    deleteUser,
-    loading,
-    updateEmail,
-    updatePassword,
-    updateUsername,
-  } = useUserStore();
-  const {logOut} = useAuthStore();
+  const {fetchPhotos, fetchCategories, getCurrentLocation, currentLocation} =
+    usePhotosStore();
+  const {user} = useUserStore();
 
   const [infoModal, setInfoModal] = useState(false);
   const infoModalClose = () => {
@@ -54,6 +34,16 @@ function Home() {
   const infoModalOpen = () => {
     setInfoModal(true);
   };
+
+  useEffect(() => {
+    const getPermssionsAndLocation = async () => {
+      await requestLocationPermission();
+      getCurrentLocation();
+    };
+    getPermssionsAndLocation();
+  }, [getCurrentLocation]);
+
+  console.log('CURRENT LOCATION', currentLocation);
 
   useEffect(() => {
     if (user?.uid?.length > 1) {
@@ -165,30 +155,7 @@ function Home() {
   //   }
   // };
 
-  const getLocation = async () => {
-    try {
-      await requestLocationPermission();
-      Geolocation.getCurrentPosition(
-        (position: GeoPosition) => {
-          setLocation([position.coords.latitude, position.coords.longitude]);
-          return;
-        },
-        error => {
-          // See error code charts below.
-          console.log(error.code, error.message);
-          setLocation([]);
-          return;
-        },
-        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-      );
-    } catch (error) {
-      console.log('Location Error', error);
-    }
-  };
-
   const handleSelectPicture = async () => {
-    getLocation();
-    // dispatch(setPickerOpen(true));
     const options: CameraOptions = {
       // includeExtra: true,
       mediaType: 'photo',
@@ -226,7 +193,7 @@ function Home() {
         modalBool={infoModal}
         modalClose={infoModalClose}
         imageResponse={imageResponse!}
-        location={location}
+        location={currentLocation}
       />
       <View>
         <MainButton

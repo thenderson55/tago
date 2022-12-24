@@ -4,16 +4,11 @@ import {
   SafeAreaView,
   View,
   Dimensions,
-  Linking,
   Platform,
   Button,
   Text,
 } from 'react-native';
-import MapView, {
-  PROVIDER_GOOGLE,
-  Marker,
-  PROVIDER_DEFAULT,
-} from 'react-native-maps';
+import MapView, {Marker} from 'react-native-maps';
 //@ts-ignore
 import {GOOGLE_MAPS_API_KEY} from '@env';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
@@ -31,11 +26,14 @@ import {
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import SearchInput from '../../components/Inputs/SearchInput';
 import MapViewDirections from 'react-native-maps-directions';
+import MapMain from '../../components/Maps/MapMain';
+import MapMarker from '../../components/Maps/MapMarker';
+import MapDirections from '../../components/Maps/MapDirections';
 // https://www.youtube.com/watch?v=jvIQQ4ID2JY
 
 // https://www.codedaily.io/tutorials/Build-a-Map-with-Custom-Animated-Markers-and-Region-Focus-when-Content-is-Scrolled-in-React-Native
 
-const Map = () => {
+const MapScreen = () => {
   const route: RouteProp<HomeParamList, 'Map'> = useRoute();
   const mapRef = useRef<MapView>(null);
   // const {newPhoto} = route?.params;
@@ -44,7 +42,7 @@ const Map = () => {
   const [distance, setDistance] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   // const [newPhoto, setNewPhoto] = useState<PhotoType>();
-  const {photos} = usePhotosStore();
+  const {photos, currentLocation, getCurrentLocation} = usePhotosStore();
   console.log('MAP PHOTOS', photos.length);
   // console.log('LOCATION', location);
   // route?.params?.newPhoto && console.log('NEW PHOTO', route.params.newPhoto);
@@ -55,6 +53,9 @@ const Map = () => {
   //     setNewPhoto(photos[photos.length - 1]);
   //   }
   // }, [photos]);
+  useEffect(() => {
+    getCurrentLocation();
+  }, [getCurrentLocation]);
 
   const setDistanceAndDuration = (args: any) => {
     console.log('DISTANCE AND DURATION', args);
@@ -90,28 +91,6 @@ const Map = () => {
     //   longitudeDelta: 0.0421,
     // });
   };
-
-  const getLocation = useCallback(async () => {
-    await requestLocationPermission();
-    try {
-      Geolocation.getCurrentPosition(
-        (position: GeoPosition) => {
-          console.log('Location:', position);
-          setLocation([position.coords.latitude, position.coords.longitude]);
-          return;
-        },
-        error => {
-          // See error code charts below.
-          console.log(error.code, error.message);
-          setLocation([]);
-          return;
-        },
-        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-      );
-    } catch (error) {
-      console.log('Location Error', error);
-    }
-  }, []);
 
   useEffect(() => {
     let watchID: number = 0;
@@ -170,52 +149,48 @@ const Map = () => {
   //   Linking.openURL(url!);
   // };
 
-  // FIXME: need to use a stored version first to prevent loading each time
-  useEffect(() => {
-    getLocation();
-  }, [getLocation]);
-
   // const defaultProvider =
   //   Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE;
   return (
     <SafeAreaView style={styles.safeView}>
       {route?.params?.newPhoto?.location ? (
         <>
-          <MapView
-            ref={mapRef}
-            provider={PROVIDER_GOOGLE}
-            style={styles.mapView}
-            initialRegion={{
-              latitude: route.params.newPhoto.location[0],
-              longitude: route.params.newPhoto.location[1],
-              latitudeDelta: 0.015,
-              longitudeDelta: 0.0121,
-            }}>
-            <Marker
-              key={1}
+          <MapMain
+            mapRef={mapRef}
+            location={[
+              route.params.newPhoto.location[0],
+              route.params.newPhoto.location[1],
+            ]}>
+            <MapMarker item={route.params.newPhoto} index={-1} />
+            {directions && (
+              <MapDirections
+                item={route.params.newPhoto}
+                mode="WALKING"
+                setDistanceAndDuration={setDistanceAndDuration}
+              />
+            )}
+          </MapMain>
+          {/* <SearchInput /> */}
+        </>
+      ) : photos?.length > 0 && currentLocation?.length ? (
+        <>
+          <MapMain
+            mapRef={mapRef}
+            location={[currentLocation[0], currentLocation[1]]}>
+            {/* <Marker
               coordinate={{
-                latitude: route.params.newPhoto.location[0],
-                longitude: route.params.newPhoto.location[1],
+                latitude: currentLocation[0],
+                longitude: currentLocation[1],
               }}
-              title={route.params.newPhoto.title}
-              description={route.params.newPhoto.description}
-              pinColor={theme.colors.magenta}>
-              <View style={styles.pinWrapper}>
-                <Avatar
-                  style={styles.avatar}
-                  size="md"
-                  source={{
-                    uri: route.params.newPhoto.url,
-                  }}
-                />
-                <View style={styles.triangle} />
-              </View>
-            </Marker>
+            /> */}
+            {photos.map((item, index) => {
+              return <MapMarker index={index} item={item} />;
+            })}
             {directions && (
               <MapViewDirections
                 origin={{
-                  latitude: route.params.newPhoto.location[0],
-                  longitude: route.params.newPhoto.location[1],
+                  latitude: currentLocation[0],
+                  longitude: currentLocation[1],
                 }}
                 destination={{latitude: 56.3766, longitude: -4.0}}
                 apikey={GOOGLE_MAPS_API_KEY}
@@ -225,98 +200,22 @@ const Map = () => {
                 onReady={setDistanceAndDuration}
               />
             )}
-          </MapView>
+          </MapMain>
           {/* <SearchInput /> */}
         </>
-      ) : photos?.length > 0 && location?.length ? (
+      ) : currentLocation?.length ? (
         <>
-          <MapView
-            ref={mapRef}
-            provider={PROVIDER_GOOGLE}
-            style={styles.mapView}
-            initialRegion={{
-              latitude: location[0],
-              longitude: location[1],
-              latitudeDelta: 0.015,
-              longitudeDelta: 0.0121,
-            }}>
+          <MapMain
+            mapRef={mapRef}
+            location={[currentLocation[0], currentLocation[1]]}>
             <Marker
               coordinate={{
-                latitude: location[0],
-                longitude: location[1],
-              }}
-            />
-            {photos.map((item, index) => {
-              return (
-                <Marker
-                  key={index}
-                  coordinate={{
-                    // @ts-ignore
-                    latitude: item.location[0],
-                    // @ts-ignore
-                    longitude: item.location[1],
-                  }}
-                  title={item.title}
-                  description={item.description}
-                  pinColor={theme.colors.magenta}>
-                  <View style={styles.pinWrapper}>
-                    <Avatar
-                      style={styles.avatar}
-                      size="md"
-                      source={{
-                        uri: item.url,
-                      }}
-                    />
-                    <View style={styles.triangle} />
-                  </View>
-                </Marker>
-              );
-            })}
-            {directions && (
-              <MapViewDirections
-                origin={{latitude: location[0], longitude: location[1]}}
-                destination={{latitude: 56.3766, longitude: -4.0}}
-                apikey={GOOGLE_MAPS_API_KEY}
-                strokeColor={theme.colors.magenta}
-                strokeWidth={3}
-                mode="WALKING"
-                onReady={setDistanceAndDuration}
-              />
-            )}
-          </MapView>
-          {/* <SearchInput /> */}
-        </>
-      ) : location?.length ? (
-        <>
-          <MapView
-            ref={mapRef}
-            provider={PROVIDER_GOOGLE}
-            style={styles.mapView}
-            initialRegion={{
-              latitude: location[0],
-              longitude: location[1],
-              latitudeDelta: 0.015,
-              longitudeDelta: 0.0121,
-            }}>
-            <Marker
-              coordinate={{
-                latitude: location[0],
-                longitude: location[1],
+                latitude: currentLocation[0],
+                longitude: currentLocation[1],
               }}
               // pinColor={theme.colors.magenta}
             />
-            {directions && (
-              <MapViewDirections
-                origin={{latitude: location[0], longitude: location[1]}}
-                destination={{latitude: 56.3766, longitude: -3.842}}
-                apikey={GOOGLE_MAPS_API_KEY}
-                strokeColor={theme.colors.magenta}
-                strokeWidth={3}
-                mode="WALKING"
-                onReady={setDistanceAndDuration}
-              />
-            )}
-          </MapView>
+          </MapMain>
           {/* <SearchInput /> */}
         </>
       ) : (
@@ -352,12 +251,6 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     // justifyContent: 'center',
     // backgroundColor: theme.colors.white,
-  },
-  mapView: {
-    flex: 1,
-    ...StyleSheet.absoluteFillObject,
-    // wdith: Dimensions.get('window').width,
-    // height: Dimensions.get('window').height,
   },
   backButton: {
     position: 'absolute',
@@ -406,4 +299,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Map;
+export default MapScreen;
