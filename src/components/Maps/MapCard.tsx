@@ -1,19 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Platform,
-  Image,
-} from 'react-native';
+import React from 'react';
+import {View, Text, StyleSheet, Platform} from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {CalloutSubview, Circle} from 'react-native-maps';
+import {CalloutSubview} from 'react-native-maps';
 import {PhotoType} from '../../store/usePhotosStore';
 import theme from '../../theme';
-import {Svg, Image as ImageSvg, ClipPath, Defs} from 'react-native-svg';
-
-// import StarRating from './StarRating';
+import {Svg, Image as ImageSvg} from 'react-native-svg';
 
 type Props = {
   item: PhotoType;
@@ -22,8 +13,6 @@ type Props = {
 
 const MapCard = (props: Props) => {
   const {item, onPress} = props;
-  const [isLoading, setIsLoading] = useState(false);
-  useEffect(() => {}, [isLoading]);
 
   console.log('MapCard item: ', item);
   return (
@@ -41,18 +30,16 @@ const MapCard = (props: Props) => {
             />
           </CalloutSubview>
         ) : (
-          <TouchableOpacity onPress={() => onPress()}>
-            <View style={styles.svgWrapper}>
-              <Svg width={250} height={200}>
-                <ImageSvg
-                  width={'100%'}
-                  height={'100%'}
-                  preserveAspectRatio="xMidYMid slice"
-                  href={{uri: item.url}}
-                />
-              </Svg>
-            </View>
-          </TouchableOpacity>
+          <View style={styles.svgWrapper}>
+            <Svg width={250} height={200}>
+              <ImageSvg
+                width={'100%'}
+                height={'100%'}
+                preserveAspectRatio="xMidYMid slice"
+                href={{uri: item.url}}
+              />
+            </Svg>
+          </View>
         )}
         <View style={styles.cardInfo}>
           <Text style={styles.cardCategory}>{item.category}</Text>

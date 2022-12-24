@@ -38,8 +38,10 @@ function MapMarker(props: Props) {
         />
         <View style={styles.triangle} />
       </View>
-      <Callout tooltip={true}>
-        <MapCard item={item} onPress={() => console.log('null')} />
+      <Callout
+        tooltip={true}
+        onPress={() => console.log('Android/iOS onPress')}>
+        <MapCard item={item} onPress={() => console.log('iOS onPress only')} />
       </Callout>
     </Marker>
   );
