@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
-import {SafeAreaView, Text, View} from 'react-native';
+import {SafeAreaView, View} from 'react-native';
 import {Formik} from 'formik';
 import FormError from '../../../components/Erorrs/FormError';
-import FormInput from '../../../components/Inputs/FormInput';
+import InputForm from '../../../components/Inputs/InputForm';
 import theme from '../../../theme';
 import {signupValidationSchema} from '../../../utils/validations';
 import useAuthStore from '../../../store/useAuthStore';
@@ -44,7 +44,7 @@ function SignUp() {
             handleSubmit,
           }) => (
             <View>
-              <FormInput
+              <InputForm
                 onChangeText={handleChange('username')}
                 onBlur={handleBlur('username')}
                 value={values.username}
@@ -58,7 +58,7 @@ function SignUp() {
                 //   isTaken ? 'Username is already taken' : errors.username
                 // }
               />
-              <FormInput
+              <InputForm
                 onChangeText={handleChange('email')}
                 onBlur={handleBlur('email')}
                 value={values.email}
@@ -66,7 +66,7 @@ function SignUp() {
                 label="Email"
               />
               <FormError touched={touched.email} message={errors.email} />
-              <FormInput
+              <InputForm
                 hidePassword={hidePassword}
                 setHidePassword={setHidePassword}
                 password={true}

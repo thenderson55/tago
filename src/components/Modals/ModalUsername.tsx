@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {Formik} from 'formik';
 import theme from '../../theme';
-import FormInput from '../Inputs/FormInput';
+import InputForm from '../Inputs/InputForm';
 import MainButton from '../Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
 import FormError from '../Erorrs/FormError';
@@ -50,7 +50,7 @@ function ModalUsername(props: Props) {
                 // handleReset,
               }) => (
                 <ScrollView>
-                  <FormInput
+                  <InputForm
                     onChangeText={handleChange('newUsername')}
                     onBlur={handleBlur('newUsername')}
                     value={values.newUsername}

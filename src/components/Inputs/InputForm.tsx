@@ -31,7 +31,7 @@ type Props = {
   handleReset?: (e?: React.SyntheticEvent<any, Event> | undefined) => void;
 };
 
-const FormInput = (props: Props) => {
+const InputForm = (props: Props) => {
   const {
     secureTextEntry,
     onChangeText,
@@ -124,4 +124,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FormInput;
+export default InputForm;

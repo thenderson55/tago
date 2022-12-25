@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Platform, SafeAreaView, View} from 'react-native';
 import {Formik} from 'formik';
-import FormInput from '../../../components/Inputs/FormInput';
+import InputForm from '../../../components/Inputs/InputForm';
 import FormError from '../../../components/Erorrs/FormError';
 import theme from '../../../theme';
 import {loginValidationSchema} from '../../../utils/validations';
@@ -55,7 +55,7 @@ function Login() {
             handleSubmit,
           }) => (
             <View>
-              <FormInput
+              <InputForm
                 onChangeText={handleChange('email')}
                 onBlur={handleBlur('email')}
                 value={values.email}
@@ -64,7 +64,7 @@ function Login() {
               />
               <FormError touched={touched.email} message={errors.email} />
 
-              <FormInput
+              <InputForm
                 hidePassword={hidePassword}
                 setHidePassword={setHidePassword}
                 password={true}

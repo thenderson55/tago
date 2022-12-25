@@ -24,13 +24,13 @@ import {
   requestLocationPermission,
 } from '../../utils';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import SearchInput from '../../components/Inputs/SearchInput';
+import InputSearch from '../../components/Inputs/InputSearch';
 import MapViewDirections from 'react-native-maps-directions';
 import MapMain from '../../components/Maps/MapMain';
 import MapMarker from '../../components/Maps/MapMarker';
 import MapDirections from '../../components/Maps/MapDirections';
 // https://www.youtube.com/watch?v=jvIQQ4ID2JY
-
+// https://www.youtube.com/watch?v=4N-8RTeQ1fA&ab_channel=PradipDebnath
 // https://www.codedaily.io/tutorials/Build-a-Map-with-Custom-Animated-Markers-and-Region-Focus-when-Content-is-Scrolled-in-React-Native
 
 const MapScreen = () => {
@@ -43,8 +43,8 @@ const MapScreen = () => {
   const [duration, setDuration] = useState<number>(0);
   // const [newPhoto, setNewPhoto] = useState<PhotoType>();
   const {photos, currentLocation, getCurrentLocation} = usePhotosStore();
-  console.log('MAP PHOTOS', photos.length);
-  // console.log('LOCATION', location);
+  console.log('MAP PHOTOS', photos);
+  console.log('LOCATION', currentLocation);
   // route?.params?.newPhoto && console.log('NEW PHOTO', route.params.newPhoto);
 
   // useEffect(() => {
@@ -67,10 +67,10 @@ const MapScreen = () => {
 
   const mapPadding = 50;
   const traceRoute = () => {
-    setDirections(!directions);
+    // setDirections(!directions);
     mapRef.current?.fitToCoordinates(
       [
-        {latitude: location![0], longitude: location![1]},
+        {latitude: currentLocation![0], longitude: currentLocation![1]},
         {latitude: 56.3766, longitude: -4.0},
       ],
       {
@@ -92,44 +92,44 @@ const MapScreen = () => {
     // });
   };
 
-  useEffect(() => {
-    let watchID: number = 0;
-    const watchLocation = async () => {
-      await requestLocationPermission();
-      try {
-        watchID = Geolocation.watchPosition(
-          (position: GeoPosition) => {
-            // console.log('Watch Location:', position);
-            setLocation([position.coords.latitude, position.coords.longitude]);
-            return;
-          },
-          error => {
-            // See error code charts below.
-            console.log(error.code, error.message);
-            setLocation([]);
-            return;
-          },
-          {
-            enableHighAccuracy: true,
-            interval: 100,
-            fastestInterval: 100,
-            distanceFilter: 0,
-          },
-        );
-        console.log('WATCH ID', watchID);
-      } catch (error) {
-        console.log('Location Watch Error', error);
-      }
-    };
-    // watchLocation();
-    console.log('WATCH ID', watchID);
-    return () => {
-      // FIXME: watchID not being returned in above function
-      // stopObserving works somwtimes but throws yellow box error
-      Geolocation.clearWatch(watchID);
-      Geolocation.stopObserving();
-    };
-  }, []);
+  // useEffect(() => {
+  //   let watchID: number = 0;
+  //   const watchLocation = async () => {
+  //     await requestLocationPermission();
+  //     try {
+  //       watchID = Geolocation.watchPosition(
+  //         (position: GeoPosition) => {
+  //           // console.log('Watch Location:', position);
+  //           setLocation([position.coords.latitude, position.coords.longitude]);
+  //           return;
+  //         },
+  //         error => {
+  //           // See error code charts below.
+  //           console.log(error.code, error.message);
+  //           setLocation([]);
+  //           return;
+  //         },
+  //         {
+  //           enableHighAccuracy: true,
+  //           interval: 100,
+  //           fastestInterval: 100,
+  //           distanceFilter: 0,
+  //         },
+  //       );
+  //       console.log('WATCH ID', watchID);
+  //     } catch (error) {
+  //       console.log('Location Watch Error', error);
+  //     }
+  //   };
+  //   // watchLocation();
+  //   console.log('WATCH ID', watchID);
+  //   return () => {
+  //     // FIXME: watchID not being returned in above function
+  //     // stopObserving works somwtimes but throws yellow box error
+  //     Geolocation.clearWatch(watchID);
+  //     Geolocation.stopObserving();
+  //   };
+  // }, []);
 
   // const directionsButton = () => {
   //   const lat = location[0];
@@ -161,7 +161,11 @@ const MapScreen = () => {
               route.params.newPhoto.location[0],
               route.params.newPhoto.location[1],
             ]}>
-            <MapMarker item={route.params.newPhoto} index={-1} />
+            <MapMarker
+              item={route.params.newPhoto}
+              index={-1}
+              onPress={() => setDirections(true)}
+            />
             {directions && (
               <MapDirections
                 item={route.params.newPhoto}
@@ -177,16 +181,22 @@ const MapScreen = () => {
           <MapMain
             mapRef={mapRef}
             location={[currentLocation[0], currentLocation[1]]}>
-            {/* <Marker
+            <Marker
               coordinate={{
                 latitude: currentLocation[0],
                 longitude: currentLocation[1],
               }}
-            /> */}
+            />
             {photos.map((item, index) => {
-              return <MapMarker index={index} item={item} />;
+              return (
+                <MapMarker
+                  index={index}
+                  item={item}
+                  onPress={() => setDirections(true)}
+                />
+              );
             })}
-            {directions && (
+            {/* {directions && (
               <MapViewDirections
                 origin={{
                   latitude: currentLocation[0],
@@ -199,7 +209,7 @@ const MapScreen = () => {
                 mode="WALKING"
                 onReady={setDistanceAndDuration}
               />
-            )}
+            )} */}
           </MapMain>
           {/* <SearchInput /> */}
         </>
@@ -232,7 +242,7 @@ const MapScreen = () => {
       <View style={styles.backButton}>
         <BackButton map={true} />
       </View>
-      {Platform.OS === 'ios' && (
+      {Platform.OS === 'ios' && directions && (
         <View style={styles.directionsButton}>
           <Button title="Directions" onPress={() => traceRoute()} />
           <View>
@@ -272,30 +282,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: (Dimensions.get('window').height / 10) * 2,
-  },
-  pinWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  avatar: {
-    borderColor: theme.colors.magenta,
-    borderWidth: 3,
-  },
-  triangle: {
-    width: 0,
-    height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 10,
-    borderRightWidth: 10,
-    borderBottomWidth: 20,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: theme.colors.magenta,
-    transform: [{rotate: '180deg'}],
-    marginTop: -5,
-    zIndex: -1,
-    elevation: -1,
   },
 });
 

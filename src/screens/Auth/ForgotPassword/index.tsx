@@ -1,7 +1,7 @@
 import React from 'react';
 import {SafeAreaView, View} from 'react-native';
 import {Formik} from 'formik';
-import FormInput from '../../../components/Inputs/FormInput';
+import InputForm from '../../../components/Inputs/InputForm';
 import FormError from '../../../components/Erorrs/FormError';
 import theme from '../../../theme';
 import {forgotPasswordValidationSchema} from '../../../utils/validations';
@@ -35,7 +35,7 @@ function ForgotPassword() {
             handleSubmit,
           }) => (
             <View>
-              <FormInput
+              <InputForm
                 onChangeText={handleChange('email')}
                 onBlur={handleBlur('email')}
                 value={values.email}

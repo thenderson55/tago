@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {Formik} from 'formik';
 import theme from '../../theme';
-import FormInput from '../Inputs/FormInput';
+import InputForm from '../Inputs/InputForm';
 import MainButton from '../Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
 import FormError from '../Erorrs/FormError';
@@ -53,7 +53,7 @@ function ModalPassword(props: Props) {
                 // handleReset,
               }) => (
                 <ScrollView>
-                  <FormInput
+                  <InputForm
                     hidePassword={hidePassword}
                     setHidePassword={setHidePassword}
                     password={true}
@@ -68,7 +68,7 @@ function ModalPassword(props: Props) {
                     touched={touched.newPassword}
                     message={errors.newPassword}
                   />
-                  <FormInput
+                  <InputForm
                     hidePassword={hidePasswordConfirm}
                     setHidePassword={setHidePasswordConfirm}
                     password={true}

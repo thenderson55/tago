@@ -12,7 +12,7 @@ import {
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import theme from '../../theme';
-import FormInput from '../Inputs/FormInput';
+import InputForm from '../Inputs/InputForm';
 import {ImagePickerResponse} from 'react-native-image-picker';
 //@ts-ignore
 import ProgressBar from 'react-native-progress/Bar';
@@ -179,7 +179,7 @@ function ModalInfo(props: Props) {
                     // setItems={handleChange('category')}
                   />
                   {addNewCategory && (
-                    <FormInput
+                    <InputForm
                       label="New Category"
                       value={values.newCategory}
                       placeholder="Bangkok"
@@ -204,7 +204,7 @@ function ModalInfo(props: Props) {
                     </View>
                   )}
 
-                  <FormInput
+                  <InputForm
                     label="Title (optional)"
                     value={values.title}
                     placeholder="Sushi"
@@ -217,7 +217,7 @@ function ModalInfo(props: Props) {
                     spaceFiller={false}
                   />
 
-                  <FormInput
+                  <InputForm
                     label="Description (optional)"
                     value={values.description}
                     placeholder="Cheap Otoro"

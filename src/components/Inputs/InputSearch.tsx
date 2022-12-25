@@ -11,7 +11,7 @@ import {GOOGLE_MAPS_API_KEY} from '@env';
 // navigator.geolocation = require('react-native-geolocation-service');
 
 // https://www.youtube.com/watch?v=Wq3dO05jv6o
-function SearchInput() {
+function InputSearch() {
   // useEffect(() => {
   //   const placeByAutocomplete = async (input: string) => {
   //     const res = await getGoogleMapsPlaceByAutocomplete(input);
@@ -62,4 +62,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SearchInput;
+export default InputSearch;
