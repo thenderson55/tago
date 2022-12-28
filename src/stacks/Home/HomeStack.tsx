@@ -6,6 +6,7 @@ import Home from '../../screens/Home';
 import Graph from '../../screens/Home/Graph';
 import Map from '../../screens/Home/Map';
 import Account from '../../screens/Home/Account';
+import addGlobalRoutes from '../addGlobalRoutes';
 
 const Stack = createNativeStackNavigator<HomeParamList>();
 
@@ -16,6 +17,7 @@ function HomeStack() {
       //   header:() => null
       // }}
       initialRouteName="Home">
+      {addGlobalRoutes(Stack)}
       <Stack.Screen
         name="Home"
         options={{
