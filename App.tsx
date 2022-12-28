@@ -29,6 +29,7 @@ import HomeStack from './src/stacks/Home/HomeStack';
 import useUserStore from './src/store/useUserStore';
 import usePhotosStore from './src/store/usePhotosStore';
 import {NativeBaseProvider} from 'native-base';
+import BottomTabs from './src/BottomTabs';
 
 const app = initializeApp(firebaseConfig);
 export const appStorage = getStorage(app);
@@ -66,7 +67,7 @@ const App = () => {
   return (
     <NavigationContainer ref={navigationRef}>
       <NativeBaseProvider>
-        {!user ? <AuthStack /> : <HomeStack />}
+        {!user ? <AuthStack /> : <BottomTabs />}
       </NativeBaseProvider>
     </NavigationContainer>
   );
