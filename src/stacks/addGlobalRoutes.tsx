@@ -5,10 +5,10 @@ function addGlobalRoutes(Stack: any) {
   return (
     <>
       <Stack.Screen
-        // options={({ route, navigation }) => ({
-        //   headerTitle: route.params.name,
-        // })}
         name="Photo"
+        // options={{
+        //   header: () => null,
+        // }}
         component={PhotoScreen}
       />
     </>

@@ -5,6 +5,9 @@ import {Callout, Marker} from 'react-native-maps';
 import {PhotoType} from '../../store/usePhotosStore';
 import theme from '../../theme';
 import MapCard from './MapCard';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
+import {PhotosParamList} from '../../stacks/Photos/PhotosParamList';
 
 type Props = {
   item: PhotoType;
@@ -13,8 +16,11 @@ type Props = {
 };
 
 function MapMarker(props: Props) {
+  const navigation: NativeStackNavigationProp<PhotosParamList, 'Photo'> =
+    useNavigation();
   //FIXME: Key issue with markers, index is unique but throws error
   const {item, index, onPress} = props;
+  console.log('MapMarker item', item);
   return (
     <Marker
       key={index}
@@ -40,7 +46,7 @@ function MapMarker(props: Props) {
       </View>
       <Callout
         tooltip={true}
-        onPress={() => console.log('Android/iOS onPress')}>
+        onPress={() => navigation.navigate('Photo', {item})}>
         <MapCard item={item} onPress={() => console.log('iOS onPress only')} />
       </Callout>
     </Marker>

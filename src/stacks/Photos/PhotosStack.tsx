@@ -15,7 +15,7 @@ function PhotosStack() {
       initialRouteName="Photo">
       <Stack.Screen
         name="Photo"
-        initialParams={{item: {} as PhotoType}}
+        // initialParams={{item: {} as PhotoType}}
         options={{
           header: () => null,
         }}
