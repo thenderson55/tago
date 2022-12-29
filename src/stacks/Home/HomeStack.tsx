@@ -4,7 +4,6 @@ import {HomeParamList} from './HomeParamList';
 
 import Home from '../../screens/Home';
 import Graph from '../../screens/Home/Graph';
-import Map from '../../screens/Home/Map';
 import Account from '../../screens/Home/Account';
 import addGlobalRoutes from '../addGlobalRoutes';
 
@@ -24,14 +23,6 @@ function HomeStack() {
           header: () => null,
         }}
         component={Home}
-      />
-      <Stack.Screen
-        name="Map"
-        // initialParams={{ itemId: 42 }}
-        options={{
-          header: () => null,
-        }}
-        component={Map}
       />
       <Stack.Screen
         name="Graph"

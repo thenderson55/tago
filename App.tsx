@@ -25,11 +25,9 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {NavigationContainer} from '@react-navigation/native';
 import {navigationRef} from './src/utils/RouteNavigation';
 import AuthStack from './src/stacks/Auth/AuthStack';
-import HomeStack from './src/stacks/Home/HomeStack';
 import useUserStore from './src/store/useUserStore';
-import usePhotosStore from './src/store/usePhotosStore';
 import {NativeBaseProvider} from 'native-base';
-import BottomTabs from './src/BottomTabs';
+import TabScreen from './src/TabScreen';
 
 const app = initializeApp(firebaseConfig);
 export const appStorage = getStorage(app);
@@ -67,7 +65,7 @@ const App = () => {
   return (
     <NavigationContainer ref={navigationRef}>
       <NativeBaseProvider>
-        {!user ? <AuthStack /> : <BottomTabs />}
+        {!user ? <AuthStack /> : <TabScreen />}
       </NativeBaseProvider>
     </NavigationContainer>
   );
