@@ -7,6 +7,7 @@ import {
   Platform,
   Button,
   Text,
+  TouchableOpacity,
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 //@ts-ignore
@@ -21,6 +22,7 @@ import {RouteProp, useRoute} from '@react-navigation/native';
 import {Avatar} from 'native-base';
 import {
   getGoogleMapsPlaceByAutocomplete,
+  handleSelectPicture,
   requestLocationPermission,
 } from '../../utils';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
@@ -29,6 +31,9 @@ import MapViewDirections from 'react-native-maps-directions';
 import MapMain from '../../components/Maps/MapMain';
 import MapMarker from '../../components/Maps/MapMarker';
 import MapDirections from '../../components/Maps/MapDirections';
+import {ImagePickerResponse} from 'react-native-image-picker';
+import ModalInfo from '../../components/Modals/ModalInfo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 // https://www.youtube.com/watch?v=jvIQQ4ID2JY
 // https://www.youtube.com/watch?v=4N-8RTeQ1fA&ab_channel=PradipDebnath
 // https://www.codedaily.io/tutorials/Build-a-Map-with-Custom-Animated-Markers-and-Region-Focus-when-Content-is-Scrolled-in-React-Native
@@ -42,7 +47,16 @@ const MapScreen = () => {
   const [duration, setDuration] = useState<number>(0);
   // const [newPhoto, setNewPhoto] = useState<PlaceType>();
   const {photos, currentLocation, getCurrentLocation} = usePhotosStore();
-  console.log('MAP PHOTOS', photos);
+  const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
+  const [infoModal, setInfoModal] = useState(false);
+  const infoModalClose = () => {
+    setInfoModal(false);
+  };
+  const infoModalOpen = () => {
+    setInfoModal(true);
+  };
+
+  console.log('MAP PHOTOS', photos.length);
   console.log('LOCATION', currentLocation);
   // route?.params?.newPhoto && console.log('NEW PHOTO', route.params.newPhoto);
 
@@ -152,6 +166,12 @@ const MapScreen = () => {
   //   Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE;
   return (
     <SafeAreaView style={styles.safeView}>
+      <ModalInfo
+        modalBool={infoModal}
+        modalClose={infoModalClose}
+        imageResponse={imageResponse!}
+        location={currentLocation}
+      />
       {route?.params?.newPhoto?.location ? (
         <>
           <MapMain
@@ -165,13 +185,22 @@ const MapScreen = () => {
               index={-1}
               onPress={() => setDirections(true)}
             />
-            {directions && (
+            {photos?.map((item, index) => {
+              return (
+                <MapMarker
+                  index={index}
+                  item={item}
+                  onPress={() => setDirections(true)}
+                />
+              );
+            })}
+            {/* {directions && (
               <MapDirections
                 item={route.params.newPhoto}
                 mode="WALKING"
                 setDistanceAndDuration={setDistanceAndDuration}
               />
-            )}
+            )} */}
           </MapMain>
           {/* <SearchInput /> */}
         </>
@@ -241,6 +270,13 @@ const MapScreen = () => {
       <View style={styles.backButton}>
         <BackButton map={true} />
       </View>
+      <View style={styles.cameraButton}>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => handleSelectPicture(setImageResponse, infoModalOpen)}>
+          <Ionicons name={'camera'} size={50} color={theme.colors.secondary} />
+        </TouchableOpacity>
+      </View>
       {Platform.OS === 'ios' && directions && (
         <View style={styles.directionsButton}>
           <Button title="Directions" onPress={() => traceRoute()} />
@@ -266,6 +302,15 @@ const styles = StyleSheet.create({
     bottom: '7%',
     left: '7%',
     alignSelf: 'flex-start',
+    // bottom: '7%',
+    // right: '7%',
+    // alignSelf: 'flex-end',
+  },
+  cameraButton: {
+    position: 'absolute',
+    top: '3%',
+    right: '7%',
+    alignSelf: 'center',
     // bottom: '7%',
     // right: '7%',
     // alignSelf: 'flex-end',

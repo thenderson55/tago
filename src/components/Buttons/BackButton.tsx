@@ -19,7 +19,7 @@ const BackButton = (props: Props) => {
       activeOpacity={1}
       onPress={() => (modalClose ? modalClose() : navigation.goBack())}
       style={!map ? {...styles.wrapper, ...style} : {...style}}>
-      <View />
+      {/* <View /> */}
       <Ionicons
         name={'arrow-back-circle-outline'}
         // name={'arrow-back-outline'}

@@ -18,7 +18,7 @@ import MainButton from '../../components/Buttons/MainButton';
 import theme from '../../theme';
 import usePhotosStore from '../../store/usePhotosStore';
 import useUserStore from '../../store/useUserStore';
-import {requestLocationPermission} from '../../utils';
+import {handleSelectPicture, requestLocationPermission} from '../../utils';
 
 function Home() {
   const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
@@ -155,38 +155,6 @@ function Home() {
   //   }
   // };
 
-  const handleSelectPicture = async () => {
-    const options: CameraOptions = {
-      // includeExtra: true,
-      mediaType: 'photo',
-      // saveToPhotos: true,
-      // title: '',
-      // takePhotoButtonTitle: '写真を撮る',
-      // chooseFromLibraryButtonTitle: 'ギャラリーから写真を選択する',
-      // cancelButtonTitle: 'キャンセル',
-      // storageOptions: {
-      //   cameraRoll: true,
-      //   waitUntilSaved: true,
-      // },
-      maxWidth: 500,
-      maxHeight: 500,
-      // allowsEditing: true,
-      // noData: true,
-    };
-    await launchCamera(options, async (response: ImagePickerResponse) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        console.log('ImagePicker Error Code: ', response.errorCode);
-      } else if (response.errorMessage) {
-        console.log('ImagePicker Error Message: ', response.errorMessage);
-      } else {
-        setImageResponse(response);
-        infoModalOpen();
-      }
-    });
-  };
-
   return (
     <SafeAreaView style={styles.safeView}>
       <ModalInfo
@@ -199,9 +167,8 @@ function Home() {
         <MainButton
           style={{marginTop: 30}}
           text="Take photo"
-          onPress={() => handleSelectPicture()}
+          onPress={() => handleSelectPicture(setImageResponse, infoModalOpen)}
         />
-        <MainButton text="Map" onPress={() => navigation.navigate('Map')} />
         <MainButton
           text="Account"
           onPress={() => navigation.navigate('Account')}

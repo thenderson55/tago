@@ -42,7 +42,6 @@ const App = () => {
   // const isDarkMode = useColorScheme() === 'dark';
   const {setUser, user} = useUserStore();
   const [initializing, setInitializing] = useState(true);
-  console.log('User: ', user);
   // const backgroundStyle = {
   //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   // };

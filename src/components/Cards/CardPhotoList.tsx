@@ -6,7 +6,6 @@ import {PhotoType} from '../../store/usePhotosStore';
 import theme from '../../theme';
 
 function CardPhotoList({item}: {item: PhotoType}) {
-  console.log('CardPhotoList item', item);
   return (
     <View style={styles.item}>
       <FastImage

@@ -134,7 +134,6 @@ function ModalInfo(props: Props) {
                   category: values.newCategory || categoryValue,
                   location,
                 };
-                console.log('INPUT:', input);
 
                 addPhoto(
                   user,

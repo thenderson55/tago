@@ -3,6 +3,11 @@ import Geolocation from 'react-native-geolocation-service';
 // @ts-ignore
 import Qs from 'qs';
 import {GOOGLE_MAPS_API_KEY} from '@env';
+import {
+  CameraOptions,
+  ImagePickerResponse,
+  launchCamera,
+} from 'react-native-image-picker';
 
 export const requestLocationPermission = async () => {
   if (Platform.OS === 'ios') {
@@ -130,3 +135,41 @@ export const getGoogleMapsPlaceByAutocomplete = (
       res({error: String(e)});
     }
   });
+
+export const handleSelectPicture = async (
+  setImageResponse: (
+    value: React.SetStateAction<ImagePickerResponse | undefined>,
+  ) => void,
+  infoModalOpen: () => void,
+) => {
+  console.log('handleSelectPicture');
+  const options: CameraOptions = {
+    // includeExtra: true,
+    mediaType: 'photo',
+    // saveToPhotos: true,
+    // title: '',
+    // takePhotoButtonTitle: '写真を撮る',
+    // chooseFromLibraryButtonTitle: 'ギャラリーから写真を選択する',
+    // cancelButtonTitle: 'キャンセル',
+    // storageOptions: {
+    //   cameraRoll: true,
+    //   waitUntilSaved: true,
+    // },
+    maxWidth: 500,
+    maxHeight: 500,
+    // allowsEditing: true,
+    // noData: true,
+  };
+  await launchCamera(options, async (response: ImagePickerResponse) => {
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.errorCode) {
+      console.log('ImagePicker Error Code: ', response.errorCode);
+    } else if (response.errorMessage) {
+      console.log('ImagePicker Error Message: ', response.errorMessage);
+    } else {
+      setImageResponse(response);
+      infoModalOpen();
+    }
+  });
+};

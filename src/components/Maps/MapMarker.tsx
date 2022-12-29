@@ -20,7 +20,7 @@ function MapMarker(props: Props) {
     useNavigation();
   //FIXME: Key issue with markers, index is unique but throws error
   const {item, index, onPress} = props;
-  console.log('MapMarker item', item);
+  'MapMarker item', item;
   return (
     <Marker
       key={index}
