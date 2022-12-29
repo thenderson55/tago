@@ -11,15 +11,15 @@ const Stack = createNativeStackNavigator<HomeParamList>();
 function HomeStack() {
   return (
     <Stack.Navigator
-      screenOptions={{
-        header: () => null,
-      }}
+      // screenOptions={{
+      //   header: () => null,
+      // }}
       initialRouteName="Home">
       <Stack.Screen
         name="Home"
-        options={{
-          header: () => null,
-        }}
+        // options={{
+        //   header: () => null,
+        // }}
         component={Home}
       />
       <Stack.Screen

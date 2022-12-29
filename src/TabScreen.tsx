@@ -6,6 +6,7 @@ import HomeStack from './stacks/Home/HomeStack';
 import addGlobalRoutes from './stacks/addGlobalRoutes';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import theme from './theme';
+import MapStack from './stacks/Map/MapStack';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -13,15 +14,18 @@ const Tab = createBottomTabNavigator();
 function BottomTabs() {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="HomeStack"
       screenOptions={({route}) => ({
         tabBarIcon: ({focused, color, size}) => {
           let iconName = '';
 
-          if (route.name === 'Home') {
+          if (route.name === 'HomeStack') {
             iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Photos') {
+          } else if (route.name === 'PhotosStack') {
             iconName = focused ? 'images' : 'images-outline';
+            // iconName = focused ? 'ios-list' : 'ios-list-outline';
+          } else if (route.name === 'MapStack') {
+            iconName = focused ? 'map' : 'map-outline';
             // iconName = focused ? 'ios-list' : 'ios-list-outline';
           }
 
@@ -34,11 +38,28 @@ function BottomTabs() {
       <Tab.Screen
         options={() => ({
           headerShown: false,
+          tabBarLabel: 'Home',
         })}
-        name="Home"
+        name="HomeStack"
         component={HomeStack}
       />
-      <Tab.Screen name="Photos" component={PhotosStack} />
+      <Tab.Screen
+        name="MapStack"
+        component={MapStack}
+        options={{
+          headerShown: false,
+          tabBarStyle: {display: 'none'},
+          tabBarLabel: 'Map',
+        }}
+      />
+      <Tab.Screen
+        name="PhotosStack"
+        component={PhotosStack}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Photos',
+        }}
+      />
     </Tab.Navigator>
   );
 }
@@ -50,7 +71,7 @@ function TabScreen() {
         options={() => ({
           headerShown: false,
         })}
-        name="Home"
+        name="BottomTabs"
         component={BottomTabs}
       />
       {addGlobalRoutes(Stack)}
