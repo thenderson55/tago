@@ -21,7 +21,7 @@ export type PhotoType = {
   category: string;
   url: string;
   location: number[];
-  created?: Date;
+  created: Date;
 };
 export type CategoryType = {
   name: string;
