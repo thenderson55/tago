@@ -14,9 +14,9 @@ function addGlobalRoutes(Stack: any) {
       />
       <Stack.Screen
         name="Map"
-        // options={{
-        //   header: () => null,
-        // }}
+        options={{
+          header: () => null,
+        }}
         component={MapScreen}
       />
     </>

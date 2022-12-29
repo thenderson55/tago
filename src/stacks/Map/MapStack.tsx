@@ -1,26 +1,26 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {MapParamList} from './MapParamList';
-import Map from '../../screens/Home/Map';
+import MapScreen from '../../screens/Map/MapScreen';
 
 const Stack = createNativeStackNavigator<MapParamList>();
 
-function HomeStack() {
+function MapStack() {
   return (
     <Stack.Navigator
-      // screenOptions={{
-      //   header:() => null
-      // }}
+      screenOptions={{
+        header: () => null,
+      }}
       initialRouteName="Map">
       <Stack.Screen
         name="Map"
         options={{
           header: () => null,
         }}
-        component={Map}
+        component={MapScreen}
       />
     </Stack.Navigator>
   );
 }
 
-export default HomeStack;
+export default MapStack;
