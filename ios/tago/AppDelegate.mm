@@ -41,6 +41,8 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   [[FBSDKApplicationDelegate sharedInstance] application:application
                         didFinishLaunchingWithOptions:launchOptions];
   [GMSServices provideAPIKey:@"AIzaSyDhiSKluuJIv_F7dfEqauWL0r3qabNv1FI"];
+  // AIzaSyA-EJ2w6wgvvAljbU30XQPh76DaBOhXm44 for Xcode debug
+  // AIzaSyDhiSKluuJIv_F7dfEqauWL0r3qabNv1FI for release
   [FIRApp configure];
   RCTAppSetupPrepareApp(application);
 
