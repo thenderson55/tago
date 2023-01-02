@@ -18,7 +18,7 @@ import BackButton from '../../components/Buttons/BackButton';
 import LoadingDots from '../../components/Animations/LoadingDots';
 import usePhotosStore, {PhotoType} from '../../store/usePhotosStore';
 import {HomeParamList} from '../../stacks/Home/HomeParamList';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
 import {Avatar} from 'native-base';
 import {
   getGoogleMapsPlaceByAutocomplete,
@@ -58,27 +58,31 @@ const MapScreen = () => {
     setInfoModal(true);
   };
 
-  console.log('MAP PHOTOS', photos.length);
-  console.log('LOCATION', currentLocation);
-  // route?.params?.newPhoto && console.log('NEW PHOTO', route.params.newPhoto);
-
-  // useEffect(() => {
-  //   if (photos.length > 1) {
-  //     console.log('MAP PHOTOS 1', photos[photos.length - 1]);
-  //     setNewPhoto(photos[photos.length - 1]);
-  //   }
-  // }, [photos]);
   useEffect(() => {
     getCurrentLocation();
   }, [getCurrentLocation]);
 
-  const setDistanceAndDuration = (args: any) => {
-    console.log('DISTANCE AND DURATION', args);
-    if (args) {
-      setDistance(args.distance);
-      setDuration(args.duration);
-    }
-  };
+  useFocusEffect(
+    useCallback(() => {
+      mapRef.current?.animateToRegion(
+        {
+          latitude: currentLocation[0],
+          longitude: currentLocation[1],
+          latitudeDelta: initialMapValues.latitudeDelta,
+          longitudeDelta: initialMapValues.longitudeDelta,
+        },
+        200,
+      );
+    }, [currentLocation]),
+  );
+
+  // const setDistanceAndDuration = (args: any) => {
+  //   console.log('DISTANCE AND DURATION', args);
+  //   if (args) {
+  //     setDistance(args.distance);
+  //     setDuration(args.duration);
+  //   }
+  // };
 
   const mapPadding = 50;
   const traceRoute = () => {
