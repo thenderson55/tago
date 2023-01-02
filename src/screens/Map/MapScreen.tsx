@@ -9,7 +9,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, {Marker, Region} from 'react-native-maps';
 //@ts-ignore
 import {GOOGLE_MAPS_API_KEY} from '@env';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
@@ -34,6 +34,7 @@ import MapDirections from '../../components/Maps/MapDirections';
 import {ImagePickerResponse} from 'react-native-image-picker';
 import ModalInfo from '../../components/Modals/ModalInfo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {initialMapValues} from '../../utils/settings';
 // https://www.youtube.com/watch?v=jvIQQ4ID2JY
 // https://www.youtube.com/watch?v=4N-8RTeQ1fA&ab_channel=PradipDebnath
 // https://www.codedaily.io/tutorials/Build-a-Map-with-Custom-Animated-Markers-and-Region-Focus-when-Content-is-Scrolled-in-React-Native
@@ -45,6 +46,7 @@ const MapScreen = () => {
   const [directions, setDirections] = useState<boolean>(false);
   const [distance, setDistance] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
+  const [currentRegion, setCurrentRegion] = useState<Region>({} as Region);
   // const [newPhoto, setNewPhoto] = useState<PlaceType>();
   const {photos, currentLocation, getCurrentLocation} = usePhotosStore();
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
@@ -98,14 +100,17 @@ const MapScreen = () => {
     );
   };
 
-  const centerToPin = (item: PhotoType) => {
-    console.log('CENTER TO PIN', item);
-    mapRef.current?.animateToRegion({
-      latitude: item.location[0],
-      longitude: item.location[1],
-      latitudeDelta: 0.0,
-      longitudeDelta: 0.0,
-    });
+  const centerToPin = (item: PhotoType, region: Region) => {
+    mapRef.current?.animateToRegion(
+      {
+        latitude: item.location[0],
+        longitude: item.location[1],
+        latitudeDelta: region.latitudeDelta || initialMapValues.latitudeDelta,
+        longitudeDelta:
+          region.longitudeDelta || initialMapValues.longitudeDelta,
+      },
+      200,
+    );
   };
 
   // useEffect(() => {
@@ -179,6 +184,7 @@ const MapScreen = () => {
         <>
           <MapMain
             mapRef={mapRef}
+            setCurrentRegion={setCurrentRegion}
             location={[
               route.params.newPhoto.location[0],
               route.params.newPhoto.location[1],
@@ -188,7 +194,7 @@ const MapScreen = () => {
               index={-1}
               onPress={() => {
                 if (Platform.OS === 'ios') {
-                  centerToPin(route!.params!.newPhoto!);
+                  centerToPin(route!.params!.newPhoto!, currentRegion);
                   setDirections(true);
                 }
               }}
@@ -200,7 +206,7 @@ const MapScreen = () => {
                   item={item}
                   onPress={() => {
                     if (Platform.OS === 'ios') {
-                      centerToPin(item);
+                      centerToPin(item, currentRegion!);
                       setDirections(true);
                     }
                   }}
@@ -221,6 +227,7 @@ const MapScreen = () => {
         <>
           <MapMain
             mapRef={mapRef}
+            setCurrentRegion={setCurrentRegion}
             location={[currentLocation[0], currentLocation[1]]}>
             <Marker
               coordinate={{
@@ -235,7 +242,7 @@ const MapScreen = () => {
                   item={item}
                   onPress={() => {
                     if (Platform.OS === 'ios') {
-                      centerToPin(item);
+                      centerToPin(item, currentRegion);
                       setDirections(true);
                     }
                   }}
@@ -263,6 +270,7 @@ const MapScreen = () => {
         <>
           <MapMain
             mapRef={mapRef}
+            setCurrentRegion={setCurrentRegion}
             location={[currentLocation[0], currentLocation[1]]}>
             <Marker
               coordinate={{
