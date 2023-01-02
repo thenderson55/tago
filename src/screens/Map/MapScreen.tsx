@@ -16,7 +16,7 @@ import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 import theme from '../../theme';
 import BackButton from '../../components/Buttons/BackButton';
 import LoadingDots from '../../components/Animations/LoadingDots';
-import usePhotosStore from '../../store/usePhotosStore';
+import usePhotosStore, {PhotoType} from '../../store/usePhotosStore';
 import {HomeParamList} from '../../stacks/Home/HomeParamList';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {Avatar} from 'native-base';
@@ -96,13 +96,16 @@ const MapScreen = () => {
         animated: true,
       },
     );
+  };
 
-    // mapRef.current?.animateToRegion({
-    //   latitude: location![0],
-    //   longitude: location![1],
-    //   latitudeDelta: 0.0922,
-    //   longitudeDelta: 0.0421,
-    // });
+  const centerToPin = (item: PhotoType) => {
+    console.log('CENTER TO PIN', item);
+    mapRef.current?.animateToRegion({
+      latitude: item.location[0],
+      longitude: item.location[1],
+      latitudeDelta: 0.0,
+      longitudeDelta: 0.0,
+    });
   };
 
   // useEffect(() => {
@@ -183,14 +186,24 @@ const MapScreen = () => {
             <MapMarker
               item={route.params.newPhoto}
               index={-1}
-              onPress={() => setDirections(true)}
+              onPress={() => {
+                if (Platform.OS === 'ios') {
+                  centerToPin(route!.params!.newPhoto!);
+                  setDirections(true);
+                }
+              }}
             />
             {photos?.map((item, index) => {
               return (
                 <MapMarker
                   index={index}
                   item={item}
-                  onPress={() => setDirections(true)}
+                  onPress={() => {
+                    if (Platform.OS === 'ios') {
+                      centerToPin(item);
+                      setDirections(true);
+                    }
+                  }}
                 />
               );
             })}
@@ -220,7 +233,12 @@ const MapScreen = () => {
                 <MapMarker
                   index={index}
                   item={item}
-                  onPress={() => setDirections(true)}
+                  onPress={() => {
+                    if (Platform.OS === 'ios') {
+                      centerToPin(item);
+                      setDirections(true);
+                    }
+                  }}
                 />
               );
             })}

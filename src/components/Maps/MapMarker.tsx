@@ -20,7 +20,6 @@ function MapMarker(props: Props) {
     useNavigation();
   //FIXME: Key issue with markers, index is unique but throws error
   const {item, index, onPress} = props;
-  'MapMarker item', item;
   return (
     <Marker
       key={index}
@@ -29,6 +28,11 @@ function MapMarker(props: Props) {
         latitude: item.location[0],
         longitude: item.location[1],
       }}
+      onSelect={
+        event => console.log('onSelect', event.nativeEvent.coordinate)
+        // map.animateCamera()
+        // this.map.animateCamera({center: coordinate}, {duration: 2000})
+      }
       title={item.title}
       description={item.description}
       onPress={onPress}

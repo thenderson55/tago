@@ -81,7 +81,7 @@ function ModalInfo(props: Props) {
 
   const addInfoValidationSchema = Yup.object().shape({
     title: Yup.string().max(30, 'Maximun 30 characters'),
-    description: Yup.string().max(30, 'Maximun 250 characters'),
+    description: Yup.string().max(250, 'Maximun 250 characters'),
     newCategory: Yup.string().test({
       message: 'Category already exists',
       test: value => {
