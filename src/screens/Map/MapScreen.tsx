@@ -47,6 +47,7 @@ const MapScreen = () => {
   const [distance, setDistance] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [currentRegion, setCurrentRegion] = useState<Region>({} as Region);
+  const [currentPhoto, setCurrentPhoto] = useState<PhotoType>({} as PhotoType);
   // const [newPhoto, setNewPhoto] = useState<PlaceType>();
   const {photos, currentLocation, getCurrentLocation} = usePhotosStore();
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
@@ -62,21 +63,26 @@ const MapScreen = () => {
     getCurrentLocation();
   }, [getCurrentLocation]);
 
-  // const setDistanceAndDuration = (args: any) => {
-  //   console.log('DISTANCE AND DURATION', args);
-  //   if (args) {
-  //     setDistance(args.distance);
-  //     setDuration(args.duration);
-  //   }
-  // };
+  const setDistanceAndDuration = (args: any) => {
+    console.log('DISTANCE AND DURATION', args);
+    if (args) {
+      setDistance(args.distance);
+      setDuration(args.duration);
+    }
+  };
 
   const mapPadding = 50;
-  const traceRoute = () => {
-    // setDirections(!directions);
+  const traceRoute = (item: PhotoType) => {
+    setDirections(!directions);
+    setCurrentPhoto(item);
+    console.log('TRACE ROUTE');
     mapRef.current?.fitToCoordinates(
       [
         {latitude: currentLocation![0], longitude: currentLocation![1]},
-        {latitude: 56.3766, longitude: -4.0},
+        {
+          latitude: item.location[0],
+          longitude: item.location[1],
+        },
       ],
       {
         edgePadding: {
@@ -193,6 +199,7 @@ const MapScreen = () => {
             ]}>
             <MapMarker
               item={route.params.newPhoto}
+              traceRoute={traceRoute}
               index={-1}
               onPress={() => {
                 if (Platform.OS === 'ios') {
@@ -206,22 +213,22 @@ const MapScreen = () => {
                 <MapMarker
                   index={index}
                   item={item}
+                  traceRoute={traceRoute}
                   onPress={() => {
                     if (Platform.OS === 'ios') {
                       centerToPin(item, currentRegion!);
-                      setDirections(true);
                     }
                   }}
                 />
               );
             })}
-            {/* {directions && (
+            {directions && (
               <MapDirections
                 item={route.params.newPhoto}
                 mode="WALKING"
                 setDistanceAndDuration={setDistanceAndDuration}
               />
-            )} */}
+            )}
           </MapMain>
           {/* <SearchInput /> */}
         </>
@@ -242,29 +249,32 @@ const MapScreen = () => {
                 <MapMarker
                   index={index}
                   item={item}
+                  traceRoute={traceRoute}
                   onPress={() => {
                     if (Platform.OS === 'ios') {
                       centerToPin(item, currentRegion);
-                      setDirections(true);
                     }
                   }}
                 />
               );
             })}
-            {/* {directions && (
+            {directions && currentPhoto && (
               <MapViewDirections
                 origin={{
                   latitude: currentLocation[0],
                   longitude: currentLocation[1],
                 }}
-                destination={{latitude: 56.3766, longitude: -4.0}}
+                destination={{
+                  latitude: currentPhoto.location[0],
+                  longitude: currentPhoto.location[1],
+                }}
                 apikey={GOOGLE_MAPS_API_KEY}
                 strokeColor={theme.colors.magenta}
                 strokeWidth={3}
                 mode="WALKING"
                 onReady={setDistanceAndDuration}
               />
-            )} */}
+            )}
           </MapMain>
           {/* <SearchInput /> */}
         </>
@@ -312,11 +322,8 @@ const MapScreen = () => {
       </View>
       {Platform.OS === 'ios' && directions && (
         <View style={styles.directionsButton}>
-          <Button title="Directions" onPress={() => traceRoute()} />
-          <View>
-            <Text>Distance: {distance.toFixed(2)}</Text>
-            <Text>Duration: {Math.ceil(duration)} min</Text>
-          </View>
+          <Text>Distance: {distance.toFixed(2)}</Text>
+          <Text>Duration: {Math.ceil(duration)} min</Text>
         </View>
       )}
     </SafeAreaView>
@@ -359,7 +366,7 @@ const styles = StyleSheet.create({
   },
   directionsButton: {
     position: 'absolute',
-    bottom: '7%',
+    bottom: '8.2%',
     right: '7%',
     alignSelf: 'flex-end',
   },

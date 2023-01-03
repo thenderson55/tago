@@ -1,18 +1,20 @@
 import React from 'react';
-import {View, Text, StyleSheet, Platform} from 'react-native';
+import {View, Text, StyleSheet, Platform, TouchableOpacity} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {CalloutSubview} from 'react-native-maps';
 import {PhotoType} from '../../store/usePhotosStore';
 import theme from '../../theme';
 import {Svg, Image as ImageSvg} from 'react-native-svg';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 type Props = {
   item: PhotoType;
   onPress: () => void;
+  traceRoute: (item: PhotoType) => void;
 };
 
 const MapCard = (props: Props) => {
-  const {item, onPress} = props;
+  const {item, onPress, traceRoute} = props;
 
   return (
     <View>
@@ -43,6 +45,19 @@ const MapCard = (props: Props) => {
         <View style={styles.cardInfo}>
           <Text style={styles.cardCategory}>{item.category}</Text>
           <Text style={styles.cardTitle}>{item.title}</Text>
+          <Text style={styles.cardTitle}>{item.title}</Text>
+          <Text style={styles.cardTitle}>{item.title}</Text>
+          <Text style={styles.cardTitle}>{item.title}</Text>
+          {Platform.OS === 'ios' && (
+            <View style={styles.directionButton}>
+              <CalloutSubview
+                onPress={() => {
+                  traceRoute(item);
+                }}>
+                <Ionicons name={'code-working'} size={20} />
+              </CalloutSubview>
+            </View>
+          )}
         </View>
       </View>
     </View>
@@ -91,6 +106,11 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     color: theme.colors.black,
+  },
+  directionButton: {
+    // position: 'absolute',
+    // bottom: '7%',
+    alignSelf: 'flex-end',
   },
 });
 

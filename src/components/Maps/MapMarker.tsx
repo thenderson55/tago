@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, Platform} from 'react-native';
 import {Avatar} from 'native-base';
 import {Callout, Marker} from 'react-native-maps';
 import {PhotoType} from '../../store/usePhotosStore';
@@ -13,13 +13,14 @@ type Props = {
   item: PhotoType;
   index: number;
   onPress: () => void;
+  traceRoute: (item: PhotoType) => void;
 };
 
 function MapMarker(props: Props) {
   const navigation: NativeStackNavigationProp<PhotosParamList, 'Photo'> =
     useNavigation();
   //FIXME: Key issue with markers, index is unique but throws error
-  const {item, index, onPress} = props;
+  const {item, index, onPress, traceRoute} = props;
   return (
     <Marker
       key={index}
@@ -29,7 +30,12 @@ function MapMarker(props: Props) {
         longitude: item.location[1],
       }}
       onSelect={
-        event => console.log('onSelect', event.nativeEvent.coordinate)
+        event => console.log('onSelect', event)
+        // map.animateCamera()
+        // this.map.animateCamera({center: coordinate}, {duration: 2000})
+      }
+      onDeselect={
+        event => console.log('onDeselect', event)
         // map.animateCamera()
         // this.map.animateCamera({center: coordinate}, {duration: 2000})
       }
@@ -49,9 +55,16 @@ function MapMarker(props: Props) {
         <View style={styles.triangle} />
       </View>
       <Callout
+        style={{paddingTop: 50}}
         tooltip={true}
-        onPress={() => navigation.navigate('Photo', {item})}>
-        <MapCard item={item} onPress={() => console.log('iOS onPress only')} />
+        onPress={() =>
+          Platform.OS === 'android' && navigation.navigate('Photo', {item})
+        }>
+        <MapCard
+          traceRoute={traceRoute}
+          item={item}
+          onPress={() => navigation.navigate('Photo', {item})}
+        />
       </Callout>
     </Marker>
   );
