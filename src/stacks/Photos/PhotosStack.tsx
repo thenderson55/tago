@@ -2,7 +2,6 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {PhotosParamList} from './PhotosParamList';
 import PhotoScreen from '../../screens/Photos/PhotoScreen';
-import {PhotoType} from '../../store/usePhotosStore';
 import PhotosListScreen from '../../screens/Photos/PhotosListScreen';
 
 const Stack = createNativeStackNavigator<PhotosParamList>();
@@ -16,10 +15,9 @@ function PhotosStack() {
       initialRouteName="PhotosList">
       <Stack.Screen
         name="Photo"
-        // initialParams={{item: {} as PhotoType}}
-        options={{
-          header: () => null,
-        }}
+        options={({route}) => ({
+          title: route.params.item.title || '(no title)',
+        })}
         component={PhotoScreen}
       />
       <Stack.Screen

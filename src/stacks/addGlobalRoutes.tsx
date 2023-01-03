@@ -7,9 +7,9 @@ function addGlobalRoutes(Stack: any) {
     <>
       <Stack.Screen
         name="Photo"
-        // options={{
-        //   header: () => null,
-        // }}
+        options={({route}: {route: any}) => ({
+          title: route.params.item.title || '(no title)',
+        })}
         component={PhotoScreen}
       />
       <Stack.Screen
