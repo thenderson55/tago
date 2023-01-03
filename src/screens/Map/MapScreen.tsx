@@ -62,20 +62,6 @@ const MapScreen = () => {
     getCurrentLocation();
   }, [getCurrentLocation]);
 
-  useFocusEffect(
-    useCallback(() => {
-      mapRef.current?.animateToRegion(
-        {
-          latitude: currentLocation[0],
-          longitude: currentLocation[1],
-          latitudeDelta: initialMapValues.latitudeDelta,
-          longitudeDelta: initialMapValues.longitudeDelta,
-        },
-        200,
-      );
-    }, [currentLocation]),
-  );
-
   // const setDistanceAndDuration = (args: any) => {
   //   console.log('DISTANCE AND DURATION', args);
   //   if (args) {
@@ -101,6 +87,18 @@ const MapScreen = () => {
         },
         animated: true,
       },
+    );
+  };
+
+  const centerToLocation = () => {
+    mapRef.current?.animateToRegion(
+      {
+        latitude: currentLocation[0],
+        longitude: currentLocation[1],
+        latitudeDelta: initialMapValues.latitudeDelta,
+        longitudeDelta: initialMapValues.longitudeDelta,
+      },
+      200,
     );
   };
 
@@ -297,15 +295,20 @@ const MapScreen = () => {
           />
         </View>
       )}
-      <View style={styles.backButton}>
-        <BackButton map={true} />
+      <View style={styles.centerButton}>
+        <TouchableOpacity activeOpacity={1} onPress={() => centerToLocation()}>
+          <Ionicons name={'locate'} size={50} />
+        </TouchableOpacity>
       </View>
       <View style={styles.cameraButton}>
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => handleSelectPicture(setImageResponse, infoModalOpen)}>
-          <Ionicons name={'camera'} size={50} color={theme.colors.secondary} />
+          <Ionicons name={'camera'} size={50} />
         </TouchableOpacity>
+      </View>
+      <View style={styles.backButton}>
+        <BackButton map={true} />
       </View>
       {Platform.OS === 'ios' && directions && (
         <View style={styles.directionsButton}>
@@ -336,10 +339,19 @@ const styles = StyleSheet.create({
     // right: '7%',
     // alignSelf: 'flex-end',
   },
+  centerButton: {
+    position: 'absolute',
+    bottom: '17%',
+    left: '7%',
+    alignSelf: 'flex-start',
+    // bottom: '7%',
+    // right: '7%',
+    // alignSelf: 'flex-end',
+  },
   cameraButton: {
     position: 'absolute',
-    top: '3%',
-    right: '7%',
+    bottom: '7%',
+    // left: '7%',
     alignSelf: 'center',
     // bottom: '7%',
     // right: '7%',
