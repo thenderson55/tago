@@ -7,11 +7,17 @@ import addGlobalRoutes from './stacks/addGlobalRoutes';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import theme from './theme';
 import MapStack from './stacks/Map/MapStack';
+import useUserStore from './store/useUserStore';
+import {useNavigation} from '@react-navigation/native';
+import {StyleSheet, TouchableOpacity} from 'react-native';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function BottomTabs() {
+  const {setTabStatus} = useUserStore();
+  const navigation = useNavigation();
+
   return (
     <Tab.Navigator
       initialRouteName="HomeStack"
@@ -29,8 +35,34 @@ function BottomTabs() {
             // iconName = focused ? 'ios-list' : 'ios-list-outline';
           }
 
-          // You can return any component that you like here!
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return (
+            <TouchableOpacity
+              style={styles.tab}
+              onPress={() =>
+                route.name === 'MapStack'
+                  ? navigation.navigate('MapStack')
+                  : route.name === 'PhotosStack'
+                  ? (setTabStatus('PhotosStack'),
+                    navigation.navigate('PhotosStack'))
+                  : (setTabStatus('HomeStack'),
+                    navigation.navigate('HomeStack'))
+              }>
+              <Ionicons
+                name={iconName}
+                size={size}
+                color={color}
+                onPress={() =>
+                  route.name === 'MapStack'
+                    ? navigation.navigate('MapStack')
+                    : route.name === 'PhotosStack'
+                    ? (setTabStatus('PhotosStack'),
+                      navigation.navigate('PhotosStack'))
+                    : (setTabStatus('HomeStack'),
+                      navigation.navigate('HomeStack'))
+                }
+              />
+            </TouchableOpacity>
+          );
         },
         tabBarActiveTintColor: theme.colors.secondary,
         tabBarInactiveTintColor: theme.colors.grey,
@@ -78,5 +110,13 @@ function TabScreen() {
     </Stack.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  tab: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default TabScreen;

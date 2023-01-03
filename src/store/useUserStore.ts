@@ -10,7 +10,9 @@ export interface UserState {
   loading: boolean;
   error: string;
   errorAccount: string;
+  tabStatus: string;
   clearErrors: () => void;
+  setTabStatus: (tabStatus: string) => void;
   setUser: (user: User) => void;
   addUser: (id: string, username: string) => void;
   fetchUser: () => void;
@@ -21,25 +23,11 @@ export interface UserState {
 }
 
 const initialState = {
-  user: {
-    uid: '',
-    name: '',
-    emailVerified: false,
-    email: '',
-    phoneNumber: '',
-    photoURL: '',
-    providerId: '',
-    tenantId: '',
-    displayName: '',
-    refreshToken: '',
-    metadata: {
-      creationTime: '',
-      lastSignInTime: '',
-    },
-  },
+  user: {} as User,
   loading: false,
   error: '',
   errorAccount: '',
+  tabStatus: 'HomeStack',
 };
 
 const useUserStore = create<UserState>(set => ({
@@ -47,6 +35,7 @@ const useUserStore = create<UserState>(set => ({
   loading: initialState.loading,
   error: initialState.error,
   errorAccount: initialState.errorAccount,
+  tabStatus: initialState.tabStatus,
 
   clearErrors: async () => {
     console.log('Clearing errors');
@@ -59,6 +48,10 @@ const useUserStore = create<UserState>(set => ({
 
   setUser: async (user: User) => {
     set(state => ({...state, user}));
+  },
+
+  setTabStatus: async (tabStatus: string) => {
+    set(state => ({...state, tabStatus}));
   },
 
   fetchUser: async () => {
