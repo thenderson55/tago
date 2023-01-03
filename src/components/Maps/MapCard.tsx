@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, Text, StyleSheet, Platform, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Platform,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {CalloutSubview} from 'react-native-maps';
 import {PhotoType} from '../../store/usePhotosStore';
@@ -15,7 +22,7 @@ type Props = {
 
 const MapCard = (props: Props) => {
   const {item, onPress, traceRoute} = props;
-
+  console.log('Item: ', item);
   return (
     <View>
       <View style={styles.bubble}>
@@ -43,21 +50,30 @@ const MapCard = (props: Props) => {
           </View>
         )}
         <View style={styles.cardInfo}>
-          <Text style={styles.cardCategory}>{item.category}</Text>
-          <Text style={styles.cardTitle}>{item.title}</Text>
-          <Text style={styles.cardTitle}>{item.title}</Text>
-          <Text style={styles.cardTitle}>{item.title}</Text>
-          <Text style={styles.cardTitle}>{item.title}</Text>
-          {Platform.OS === 'ios' && (
-            <View style={styles.directionButton}>
-              <CalloutSubview
-                onPress={() => {
-                  traceRoute(item);
-                }}>
-                <Ionicons name={'code-working'} size={20} />
-              </CalloutSubview>
+          <View style={styles.directionWrapper}>
+            <Text style={styles.cardCategory} numberOfLines={1}>
+              {item.category}
+            </Text>
+          </View>
+          {Platform.OS === 'ios' && item.title && (
+            <View style={styles.directionWrapper}>
+              <Text style={styles.cardTitle}>{item.title}</Text>
             </View>
           )}
+          {Platform.OS === 'ios' && item.description && (
+            <View style={styles.directionWrapper}>
+              <Text style={styles.cardTitle} numberOfLines={1}>
+                {item.description}
+              </Text>
+            </View>
+          )}
+          <CalloutSubview
+            style={styles.directionIcon}
+            onPress={() => {
+              traceRoute(item);
+            }}>
+            <Ionicons name={'code-working'} size={25} />
+          </CalloutSubview>
         </View>
       </View>
     </View>
@@ -71,7 +87,7 @@ const styles = StyleSheet.create({
     // backgroundColor: theme.colors.magenta,
     borderRadius: 6,
     marginBottom: 5,
-    width: 250,
+    width: Dimensions.get('window').width * 0.7,
   },
   svgWrapper: {
     overflow: 'hidden',
@@ -79,8 +95,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   cardImg: {
-    height: 200,
-    width: 250,
+    height: Dimensions.get('window').height * 0.25,
+    width: Dimensions.get('window').width * 0.7,
     alignSelf: 'center',
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
@@ -104,13 +120,20 @@ const styles = StyleSheet.create({
     color: theme.colors.black,
     fontWeight: 'bold',
   },
+  directionWrapper: {
+    // backgroundColor: 'pink',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   cardTitle: {
     color: theme.colors.black,
+    width: '85%',
   },
-  directionButton: {
-    // position: 'absolute',
-    // bottom: '7%',
-    alignSelf: 'flex-end',
+  directionIcon: {
+    position: 'absolute',
+    right: 10,
+    bottom: 5,
   },
 });
 
