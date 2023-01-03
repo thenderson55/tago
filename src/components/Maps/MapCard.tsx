@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Platform,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+import {View, Text, StyleSheet, Platform, Dimensions} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {CalloutSubview} from 'react-native-maps';
 import {PhotoType} from '../../store/usePhotosStore';
@@ -39,7 +32,9 @@ const MapCard = (props: Props) => {
           </CalloutSubview>
         ) : (
           <View style={styles.svgWrapper}>
-            <Svg width={250} height={200}>
+            <Svg
+              width={Dimensions.get('window').width * 0.7}
+              height={Dimensions.get('window').height * 0.25}>
               <ImageSvg
                 width={'100%'}
                 height={'100%'}
@@ -55,25 +50,24 @@ const MapCard = (props: Props) => {
               {item.category}
             </Text>
           </View>
-          {Platform.OS === 'ios' && item.title && (
+          {item.title && (
             <View style={styles.directionWrapper}>
               <Text style={styles.cardTitle}>{item.title}</Text>
             </View>
           )}
-          {Platform.OS === 'ios' && item.description && (
-            <View style={styles.directionWrapper}>
-              <Text style={styles.cardTitle} numberOfLines={1}>
-                {item.description}
-              </Text>
-            </View>
+          {Platform.OS === 'ios' && (
+            <CalloutSubview
+              style={styles.directionIcon}
+              onPress={() => {
+                traceRoute(item);
+              }}>
+              <Ionicons
+                name={'code-working'}
+                size={25}
+                color={theme.colors.black}
+              />
+            </CalloutSubview>
           )}
-          <CalloutSubview
-            style={styles.directionIcon}
-            onPress={() => {
-              traceRoute(item);
-            }}>
-            <Ionicons name={'code-working'} size={25} />
-          </CalloutSubview>
         </View>
       </View>
     </View>
@@ -84,7 +78,6 @@ const styles = StyleSheet.create({
   bubble: {
     flexDirection: 'column',
     alignSelf: 'flex-start',
-    // backgroundColor: theme.colors.magenta,
     borderRadius: 6,
     marginBottom: 5,
     width: Dimensions.get('window').width * 0.7,
@@ -102,26 +95,30 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   cardInfo: {
+    width: Dimensions.get('window').width * 0.7,
     backgroundColor: theme.colors.white,
     padding: 10,
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
-    // borderTopColor: 'transparent',
-    // borderEndColor: theme.colors.lightGrey,
-    // borderStartColor: theme.colors.lightGrey,
     borderWidth: 1,
     borderBottomColor: theme.colors.lightGrey,
     borderLeftColor: theme.colors.lightGrey,
     borderRightColor: theme.colors.lightGrey,
-    // borderTopColor: theme.colors.white,
     borderTopWidth: 0,
+
+    // borderBottomWidth: 2,
+    // borderLeftWidth: 2,
+    // borderRightWidth: 2,
+    // borderTopColor: theme.colors.white,
+    // borderTopColor: 'transparent',
+    // borderEndColor: theme.colors.lightGrey,
+    // borderStartColor: theme.colors.lightGrey,
   },
   cardCategory: {
     color: theme.colors.black,
     fontWeight: 'bold',
   },
   directionWrapper: {
-    // backgroundColor: 'pink',
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',

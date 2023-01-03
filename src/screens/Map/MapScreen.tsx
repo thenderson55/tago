@@ -223,10 +223,20 @@ const MapScreen = () => {
               );
             })}
             {directions && (
-              <MapDirections
-                item={route.params.newPhoto}
+              <MapViewDirections
+                origin={{
+                  latitude: currentLocation[0],
+                  longitude: currentLocation[1],
+                }}
+                destination={{
+                  latitude: route.params.newPhoto.location[0],
+                  longitude: route.params.newPhoto.location[1],
+                }}
+                apikey={GOOGLE_MAPS_API_KEY}
+                strokeColor={theme.colors.magenta}
+                strokeWidth={3}
                 mode="WALKING"
-                setDistanceAndDuration={setDistanceAndDuration}
+                onReady={setDistanceAndDuration}
               />
             )}
           </MapMain>
@@ -307,24 +317,34 @@ const MapScreen = () => {
       )}
       <View style={styles.centerButton}>
         <TouchableOpacity activeOpacity={1} onPress={() => centerToLocation()}>
-          <Ionicons name={'locate'} size={50} />
+          <Ionicons
+            name={'locate-outline'}
+            size={50}
+            color={theme.colors.black}
+          />
         </TouchableOpacity>
       </View>
       <View style={styles.cameraButton}>
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => handleSelectPicture(setImageResponse, infoModalOpen)}>
-          <Ionicons name={'camera'} size={50} />
+          <Ionicons
+            name={'camera-outline'}
+            size={50}
+            color={theme.colors.black}
+          />
         </TouchableOpacity>
       </View>
       <View style={styles.backButton}>
         <BackButton map={true} />
       </View>
       {Platform.OS === 'ios' && directions && (
-        <View style={styles.directionsButton}>
+        <TouchableOpacity
+          style={styles.directionsButton}
+          onPress={() => setDirections(false)}>
           <Text>Distance: {distance.toFixed(2)}</Text>
           <Text>Duration: {Math.ceil(duration)} min</Text>
-        </View>
+        </TouchableOpacity>
       )}
     </SafeAreaView>
   );
