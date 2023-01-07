@@ -13,6 +13,7 @@ import Geolocation, {
 } from 'react-native-geolocation-service';
 
 export type PhotoType = {
+  id: string;
   ref: string;
   title: string;
   // TODO: Why below won't work?
@@ -47,7 +48,18 @@ export interface PhotoState {
     addCategory: (user: User, category: string) => void,
     navigation: NativeStackNavigationProp<HomeParamList>,
   ) => void;
-  editPhoto: (input: PhotoType) => void;
+  editPhoto: (
+    user: User,
+    input: {
+      id: string;
+      category: string;
+      title?: string;
+      description?: string;
+    },
+    modalClose: () => void,
+    addCategory: (user: User, category: string) => void,
+    setCurrentPhoto: Dispatch<SetStateAction<PhotoType>>,
+  ) => void;
   deletePhoto: (id: number) => void;
   fetchCategories: (userId: string) => void;
   addCategory: (user: User, category: string) => void;
@@ -82,7 +94,9 @@ const usePhotosStore = create<PhotoState>(set => ({
         .doc(userId)
         .collection('Photos')
         .get();
-      const photosMap = res.docs.map(item => item.data() as PhotoType);
+      const photosMap = res.docs.map(item => {
+        return {...(item.data() as PhotoType), id: item.id};
+      });
       // Make sure that the photo has location
       const filtered = photosMap.filter(item =>
         item.hasOwnProperty('location'),
@@ -99,7 +113,6 @@ const usePhotosStore = create<PhotoState>(set => ({
   getCurrentLocation: async () => {
     Geolocation.getCurrentPosition(
       (position: GeoPosition) => {
-        console.log('YOOOOO');
         // setLocation([position.coords.latitude, position.coords.longitude]);
         set(state => ({
           ...state,
@@ -306,21 +319,41 @@ const usePhotosStore = create<PhotoState>(set => ({
     }
   },
 
-  editPhoto: async input => {
-    set(state => ({...state, loading: true}));
+  editPhoto: async (user, input, modalClose, addCategory, setCurrentPhoto) => {
+    set(state => ({...state, upLoading: true}));
     try {
-      const res = await fetch(`https://jsonplaceholder.typicode.com/${input}`);
-      const users = await res.json();
-      set(state => ({...state, error: '', users}));
-    } catch (error: any) {
-      set(state => ({
+      await addCategory(user, input.category);
+      const res = await firestore()
+        .collection('Users')
+        .doc(user.uid)
+        .collection('Photos')
+        .doc(input.id)
+        .update({...input});
+      console.log('Res: ', res);
+      const doc = await firestore()
+        .collection('Users')
+        .doc(user.uid)
+        .collection('Photos')
+        .doc(input.id)
+        .get();
+      const replaceOldPhoto = (state: PhotoState) => {
+        const photos = state.photos as PhotoType[];
+        const index = photos.findIndex(photo => photo.id === input.id);
+        photos[index] = doc.data() as PhotoType;
+        return photos;
+      };
+      setCurrentPhoto(doc.data() as PhotoType);
+      set((state: PhotoState) => ({
         ...state,
-        error: error.message,
+        photos: [...replaceOldPhoto(state)],
+        upLoading: false,
       }));
-    } finally {
+      modalClose();
+    } catch (error) {
+      console.log('Add error: ', error);
       set(state => ({
         ...state,
-        loading: false,
+        upLoading: false,
       }));
     }
   },
