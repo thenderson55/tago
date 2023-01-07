@@ -23,8 +23,8 @@ import theme from '../../theme';
 function PhotoScreen() {
   const route: RouteProp<PhotosParamList, 'Photo'> = useRoute();
   const {item} = route.params;
-  console.log('PhotoScreen item', item);
-
+  // Need to do this to trigger the rerneder from the update modal and formik
+  const [currentPhoto, setCurrentPhoto] = useState(item);
   const [modalEditPhoto, setModalEditPhoto] = useState(false);
   const modalEditPhotoClose = () => {
     // clearErrors();
@@ -37,29 +37,34 @@ function PhotoScreen() {
 
   return (
     <View style={styles.container}>
-      {item && (
+      {currentPhoto && (
         <ScrollView contentContainerStyle={styles.scroll}>
           <ModalEditPhoto
-            photo={item}
+            photo={currentPhoto}
             modalBool={modalEditPhoto}
             modalClose={modalEditPhotoClose}
+            setCurrentPhoto={setCurrentPhoto}
           />
           <View>
             <FastImage
               style={styles.image}
               source={{
-                uri: item.url,
+                uri: currentPhoto.url,
                 priority: FastImage.priority.normal,
               }}
               resizeMode={FastImage.resizeMode.cover}
             />
           </View>
           <View style={styles.infoContainer}>
-            <Text style={styles.text}>Category: {item.category}</Text>
-            {item.title && <Text style={styles.text}>Title: {item.title}</Text>}
+            <Text style={styles.text}>Category: {currentPhoto.category}</Text>
+            {currentPhoto.title && (
+              <Text style={styles.text}>Title: {currentPhoto.title}</Text>
+            )}
 
-            {item.description && (
-              <Text style={styles.text}>Description: {item.description}</Text>
+            {currentPhoto.description && (
+              <Text style={styles.text}>
+                Description: {currentPhoto.description}
+              </Text>
             )}
             <View style={styles.dateWrapper}>
               <Text style={styles.text}>Created: </Text>
@@ -67,7 +72,7 @@ function PhotoScreen() {
                 unix
                 style={styles.text}
                 element={Text}
-                date={item.created}
+                date={currentPhoto.created}
                 format="DD/MM/YYYY"
               />
             </View>

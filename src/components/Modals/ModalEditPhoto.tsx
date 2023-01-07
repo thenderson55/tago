@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
 import {
   View,
   Modal,
@@ -7,38 +7,28 @@ import {
   Platform,
   StyleSheet,
   Text,
-  Dimensions,
 } from 'react-native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import theme from '../../theme';
 import InputForm from '../Inputs/InputForm';
-import {ImagePickerResponse} from 'react-native-image-picker';
-//@ts-ignore
-import ProgressBar from 'react-native-progress/Bar';
 import usePhotosStore, {PhotoType} from '../../store/usePhotosStore';
 import MainButton from '../Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
-// import {Picker} from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {categoryValues} from '../../utils/settings';
 import FormError from '../Erorrs/FormError';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeParamList} from '../../stacks/Home/HomeParamList';
-import {ItemClick} from 'native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types';
 
 interface Props {
   photo: PhotoType;
   modalBool: boolean;
   modalClose: () => void;
+  setCurrentPhoto: Dispatch<SetStateAction<PhotoType>>;
 }
 
 function ModalEditPhoto(props: Props) {
-  const {modalBool, modalClose, photo} = props;
-  const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
-  console.log('PhotoScreen item', photo);
-  const {categories, upLoading} = usePhotosStore();
+  const {modalBool, modalClose, photo, setCurrentPhoto} = props;
+  const {categories, upLoading, editPhoto, addCategory} = usePhotosStore();
   // const [selectedLanguage, setSelectedLanguage] = useState();
   const [open, setOpen] = useState(false);
   const [categoryAlreadyExists, setCategoryAlreadyExists] =
@@ -123,18 +113,19 @@ function ModalEditPhoto(props: Props) {
                 validationSchema={editInfoValidationSchema}
                 onSubmit={values => {
                   const input = {
+                    id: photo.id,
                     title: values.title,
                     description: values.description,
                     category: values.newCategory || categoryValue,
                   };
 
-                  // editPhoto(
-                  //   user,
-                  //   input,
-                  //   modalClose,
-                  //   addCategory,
-                  //   navigation,
-                  // );
+                  editPhoto(
+                    user,
+                    input,
+                    modalClose,
+                    addCategory,
+                    setCurrentPhoto,
+                  );
                 }}>
                 {({
                   values,
@@ -146,17 +137,6 @@ function ModalEditPhoto(props: Props) {
                   handleReset,
                 }) => (
                   <ScrollView>
-                    {/* <Picker
-                    selectedValue={values.category}
-                    onValueChange={handleChange('category')}>
-                    {categories.map(item => (
-                      <Picker.Item
-                        label={item.value.toString()}
-                        value={item.value.toString()}
-                        key={item.value.toString()}
-                      />
-                    ))}
-                  </Picker> */}
                     <Text style={styles.label}>Category</Text>
                     <DropDownPicker
                       style={styles.dropDown}
@@ -228,7 +208,7 @@ function ModalEditPhoto(props: Props) {
                       onPress={() => {
                         handleSubmit();
                       }}
-                      text="Add info"
+                      text="Edit info"
                       disabled={upLoading}
                       spinner={upLoading}
                     />
@@ -269,9 +249,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     height: 100,
     width: 100,
-    // marginVertical: 20,
-    // alignSelf: "center",
-    // fontFamily: Rounded mc+1
   },
   label: {
     color: theme.colors.black,
