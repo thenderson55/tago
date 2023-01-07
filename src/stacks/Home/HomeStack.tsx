@@ -17,9 +17,9 @@ function HomeStack() {
       initialRouteName="Home">
       <Stack.Screen
         name="Home"
-        // options={{
-        //   header: () => null,
-        // }}
+        options={{
+          header: () => null,
+        }}
         component={Home}
       />
       <Stack.Screen

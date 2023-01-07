@@ -64,6 +64,9 @@ function BottomTabs() {
             </TouchableOpacity>
           );
         },
+        tabBarLabelStyle: {
+          marginBottom: 2,
+        },
         tabBarActiveTintColor: theme.colors.secondary,
         tabBarInactiveTintColor: theme.colors.grey,
       })}>
@@ -116,6 +119,7 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    // paddingBottom: 10,
   },
 });
 
