@@ -12,6 +12,7 @@ import Geolocation, {
   GeoPosition,
 } from 'react-native-geolocation-service';
 import {PhotosParamList} from '../stacks/Photos/PhotosParamList';
+import auth from '@react-native-firebase/auth';
 
 export type PhotoType = {
   id: string;
@@ -62,7 +63,6 @@ export interface PhotoState {
     setCurrentPhoto: Dispatch<SetStateAction<PhotoType>>,
   ) => void;
   deletePhoto: (
-    user: User,
     input: {
       id: string;
       category: string;
@@ -368,12 +368,13 @@ const usePhotosStore = create<PhotoState>(set => ({
     }
   },
 
-  deletePhoto: async (user, input, modalClose, navigation) => {
+  deletePhoto: async (input, modalClose, navigation) => {
+    const user = await auth().currentUser;
     set(state => ({...state, upLoading: true}));
     try {
       await firestore()
         .collection('Users')
-        .doc(user.uid)
+        .doc(user!.uid)
         .collection('Photos')
         .doc(input.id)
         .delete();
@@ -392,7 +393,7 @@ const usePhotosStore = create<PhotoState>(set => ({
       modalClose();
       navigation.navigate('PhotosList');
     } catch (error) {
-      console.log('Add error: ', error);
+      console.log('Delete error: ', error);
       set(state => ({
         ...state,
         upLoading: false,

@@ -21,6 +21,7 @@ import FormError from '../Erorrs/FormError';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {PhotosParamList} from '../../stacks/Photos/PhotosParamList';
 import {useNavigation} from '@react-navigation/native';
+import ModalConfirmDeletePhoto from './ModalConfirmDeletePhoto';
 
 interface Props {
   photo: PhotoType;
@@ -33,8 +34,7 @@ function ModalEditPhoto(props: Props) {
   const navigation: NativeStackNavigationProp<PhotosParamList> =
     useNavigation();
   const {modalBool, modalClose, photo, setCurrentPhoto} = props;
-  const {categories, upLoading, editPhoto, addCategory, deletePhoto} =
-    usePhotosStore();
+  const {categories, upLoading, editPhoto, addCategory} = usePhotosStore();
   // const [selectedLanguage, setSelectedLanguage] = useState();
   const [open, setOpen] = useState(false);
   const [categoryAlreadyExists, setCategoryAlreadyExists] =
@@ -44,6 +44,14 @@ function ModalEditPhoto(props: Props) {
   const [categoryList, setCategoryList] =
     useState<{label: string; value: string}[]>();
   const {user} = useUserStore();
+
+  const [modalConfirm, setModalConfirm] = useState(false);
+  const modalConfirmClose = () => {
+    setModalConfirm(false);
+  };
+  const modalConfirmOpen = () => {
+    setModalConfirm(true);
+  };
 
   useEffect(() => {
     // Remove the default "Want To Go" since will add to the top
@@ -106,6 +114,13 @@ function ModalEditPhoto(props: Props) {
     <>
       {photo && (
         <Modal visible={modalBool} animationType="fade" transparent={true}>
+          <ModalConfirmDeletePhoto
+            modalBool={modalConfirm}
+            modalClose={modalConfirmClose}
+            photo={photo}
+            navigation={navigation}
+          />
+
           <SafeAreaView style={styles.safeView}>
             <View style={styles.modalView}>
               <Formik
@@ -233,10 +248,7 @@ function ModalEditPhoto(props: Props) {
                     <MainButton
                       style={{marginTop: 50}}
                       onPress={() => {
-                        deletePhoto(user, photo, modalClose, navigation);
-                        setCategoryAlreadyExists(false);
-                        setAddNewCategory(false);
-                        setCategoryValue(categoryValues.default);
+                        modalConfirmOpen();
                       }}
                       text="Delete photo"
                       disabled={upLoading}
