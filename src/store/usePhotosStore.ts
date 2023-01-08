@@ -70,6 +70,7 @@ export interface PhotoState {
       description?: string;
     },
     modalClose: () => void,
+    modalConfirmClose: () => void,
     navigation: NativeStackNavigationProp<PhotosParamList>,
   ) => void;
   fetchCategories: (userId: string) => void;
@@ -368,7 +369,7 @@ const usePhotosStore = create<PhotoState>(set => ({
     }
   },
 
-  deletePhoto: async (input, modalClose, navigation) => {
+  deletePhoto: async (input, modalClose, modalConfirmClose, navigation) => {
     const user = await auth().currentUser;
     set(state => ({...state, upLoading: true}));
     try {
@@ -391,6 +392,7 @@ const usePhotosStore = create<PhotoState>(set => ({
         upLoading: false,
       }));
       modalClose();
+      modalConfirmClose();
       navigation.navigate('PhotosList');
     } catch (error) {
       console.log('Delete error: ', error);

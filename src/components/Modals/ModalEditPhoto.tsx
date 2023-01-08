@@ -116,7 +116,8 @@ function ModalEditPhoto(props: Props) {
         <Modal visible={modalBool} animationType="fade" transparent={true}>
           <ModalConfirmDeletePhoto
             modalBool={modalConfirm}
-            modalClose={modalConfirmClose}
+            modalConfirmClose={modalConfirmClose}
+            modalClose={modalClose}
             photo={photo}
             navigation={navigation}
           />

@@ -10,20 +10,20 @@ import {
 } from 'react-native';
 import {PhotosParamList} from '../../stacks/Photos/PhotosParamList';
 import usePhotosStore, {PhotoType} from '../../store/usePhotosStore';
-import useUserStore from '../../store/useUserStore';
 import theme from '../../theme';
 import MainButton from '../Buttons/MainButton';
-import ResponseError from '../Erorrs/ResponseError';
+// import ResponseError from '../Erorrs/ResponseError';
 
 interface Props {
   modalBool: boolean;
   modalClose: () => void;
-  photo?: PhotoType;
-  navigation?: NativeStackNavigationProp<PhotosParamList>;
+  modalConfirmClose: () => void;
+  photo: PhotoType;
+  navigation: NativeStackNavigationProp<PhotosParamList>;
 }
 
 function ModalConfirmDeletePhoto(props: Props) {
-  const {modalBool, modalClose, photo, navigation} = props;
+  const {modalBool, modalClose, photo, navigation, modalConfirmClose} = props;
   const {upLoading, deletePhoto} = usePhotosStore();
   return (
     <Modal visible={modalBool} animationType="fade" transparent={true}>
@@ -41,7 +41,9 @@ function ModalConfirmDeletePhoto(props: Props) {
           <MainButton
             style={styles.button}
             onPress={() =>
-              photo && navigation && deletePhoto(photo, modalClose, navigation)
+              photo &&
+              navigation &&
+              deletePhoto(photo, modalClose, modalConfirmClose, navigation)
             }
             text="Delete"
             disabled={upLoading}
