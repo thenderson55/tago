@@ -1,4 +1,16 @@
 {
   "name": "tago",
-  "displayName": "tago"
+  "displayName": "tago",
+  "expo": {
+    "name": "tago",
+    "slug": "tago",
+    "version": "1.0.0",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "bundleIdentifier": "com.tago"
+    },
+    "android": {
+      "package": "com.tago"
+    }
+  }
 }

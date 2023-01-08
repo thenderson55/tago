@@ -1,4 +1,4 @@
-# Check out https://docs.codemagic.io/yaml/building-a-react-native-app/ for more information
+# Check out https://docs.codemagic.io/yaml-quick-start/building-a-react-native-app/ for more information
 # Please review and update values
 
 workflows:
@@ -10,7 +10,8 @@ workflows:
       android_signing:
         - keystore_reference
       groups:
-        - google_play # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS <-- Put your google-services.json)
+        - tago # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS <-- Put your google-services.json)
+        # - google_play # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS <-- Put your google-services.json)
       vars:
         PACKAGE_NAME: 'com.tago' # <-- Put your package name here e.g. com.domain.myapp
       node: v16.11.1
@@ -45,7 +46,9 @@ workflows:
           failure: true # To not receive a notification when a build fails
       google_play:
         credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
-        track: alpha # Any default or custom track that is not in ‘draft’ status
+        # track: alpha # Any default or custom track that is not in ‘draft’ status
+        track: internal
+        submit_as_draft: true
   react-native-ios:
     name: React Native iOS
     max_build_duration: 120
