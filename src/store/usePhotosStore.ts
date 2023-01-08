@@ -11,6 +11,7 @@ import Geolocation, {
   GeoError,
   GeoPosition,
 } from 'react-native-geolocation-service';
+import {PhotosParamList} from '../stacks/Photos/PhotosParamList';
 
 export type PhotoType = {
   id: string;
@@ -60,7 +61,17 @@ export interface PhotoState {
     addCategory: (user: User, category: string) => void,
     setCurrentPhoto: Dispatch<SetStateAction<PhotoType>>,
   ) => void;
-  deletePhoto: (id: number) => void;
+  deletePhoto: (
+    user: User,
+    input: {
+      id: string;
+      category: string;
+      title?: string;
+      description?: string;
+    },
+    modalClose: () => void,
+    navigation: NativeStackNavigationProp<PhotosParamList>,
+  ) => void;
   fetchCategories: (userId: string) => void;
   addCategory: (user: User, category: string) => void;
 }
@@ -323,13 +334,12 @@ const usePhotosStore = create<PhotoState>(set => ({
     set(state => ({...state, upLoading: true}));
     try {
       await addCategory(user, input.category);
-      const res = await firestore()
+      await firestore()
         .collection('Users')
         .doc(user.uid)
         .collection('Photos')
         .doc(input.id)
         .update({...input});
-      console.log('Res: ', res);
       const doc = await firestore()
         .collection('Users')
         .doc(user.uid)
@@ -358,21 +368,34 @@ const usePhotosStore = create<PhotoState>(set => ({
     }
   },
 
-  deletePhoto: async id => {
-    set(state => ({...state, loading: true}));
+  deletePhoto: async (user, input, modalClose, navigation) => {
+    set(state => ({...state, upLoading: true}));
     try {
-      const res = await fetch(`https://jsonplaceholder.typicode.com/${id}`);
-      const users = await res.json();
-      set(state => ({...state, error: '', users}));
-    } catch (error: any) {
-      set(state => ({
+      await firestore()
+        .collection('Users')
+        .doc(user.uid)
+        .collection('Photos')
+        .doc(input.id)
+        .delete();
+
+      const removeOldPhoto = (state: PhotoState) => {
+        const photos = state.photos as PhotoType[];
+        const index = photos.findIndex(photo => photo.id === input.id);
+        photos.splice(index, 1);
+        return photos;
+      };
+      set((state: PhotoState) => ({
         ...state,
-        error: error.message,
+        photos: [...removeOldPhoto(state)],
+        upLoading: false,
       }));
-    } finally {
+      modalClose();
+      navigation.navigate('PhotosList');
+    } catch (error) {
+      console.log('Add error: ', error);
       set(state => ({
         ...state,
-        loading: false,
+        upLoading: false,
       }));
     }
   },

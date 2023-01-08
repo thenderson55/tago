@@ -18,6 +18,9 @@ import useUserStore from '../../store/useUserStore';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {categoryValues} from '../../utils/settings';
 import FormError from '../Erorrs/FormError';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {PhotosParamList} from '../../stacks/Photos/PhotosParamList';
+import {useNavigation} from '@react-navigation/native';
 
 interface Props {
   photo: PhotoType;
@@ -27,8 +30,11 @@ interface Props {
 }
 
 function ModalEditPhoto(props: Props) {
+  const navigation: NativeStackNavigationProp<PhotosParamList> =
+    useNavigation();
   const {modalBool, modalClose, photo, setCurrentPhoto} = props;
-  const {categories, upLoading, editPhoto, addCategory} = usePhotosStore();
+  const {categories, upLoading, editPhoto, addCategory, deletePhoto} =
+    usePhotosStore();
   // const [selectedLanguage, setSelectedLanguage] = useState();
   const [open, setOpen] = useState(false);
   const [categoryAlreadyExists, setCategoryAlreadyExists] =
@@ -222,6 +228,17 @@ function ModalEditPhoto(props: Props) {
                         modalClose();
                       }}
                       text="Cancel"
+                      disabled={upLoading}
+                    />
+                    <MainButton
+                      style={{marginTop: 50}}
+                      onPress={() => {
+                        deletePhoto(user, photo, modalClose, navigation);
+                        setCategoryAlreadyExists(false);
+                        setAddNewCategory(false);
+                        setCategoryValue(categoryValues.default);
+                      }}
+                      text="Delete photo"
                       disabled={upLoading}
                     />
                   </ScrollView>
