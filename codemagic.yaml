@@ -9,7 +9,7 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       android_signing:
-        - tago
+        - keystore_tago
       groups:
         - tago # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS <-- Put your google-services.json)
         # - google_play # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS <-- Put your google-services.json)
