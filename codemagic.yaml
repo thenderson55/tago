@@ -1,4 +1,5 @@
 # Check out https://docs.codemagic.io/yaml-quick-start/building-a-react-native-app/ for more information
+# https://docs.codemagic.io/flutter-publishing/publishing-to-google-play/
 # Please review and update values
 
 workflows:
@@ -8,7 +9,7 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       android_signing:
-        - keystore_reference
+        - tago
       groups:
         - tago # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS <-- Put your google-services.json)
         # - google_play # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS <-- Put your google-services.json)
