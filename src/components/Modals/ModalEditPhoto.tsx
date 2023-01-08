@@ -39,7 +39,7 @@ function ModalEditPhoto(props: Props) {
   const [open, setOpen] = useState(false);
   const [categoryAlreadyExists, setCategoryAlreadyExists] =
     useState<boolean>(false);
-  const [categoryValue, setCategoryValue] = useState(categoryValues.default);
+  const [categoryValue, setCategoryValue] = useState(photo.category);
   const [addNewCategory, setAddNewCategory] = useState(false);
   const [categoryList, setCategoryList] =
     useState<{label: string; value: string}[]>();
@@ -72,15 +72,15 @@ function ModalEditPhoto(props: Props) {
   }, [categories]);
 
   useEffect(() => {
-    // Add the input fied for a new categiry if they select the addNew category
+    // Add the input fied for a new category if they select the addNew category
     categoryValue === categoryValues.addNew && setAddNewCategory(true);
   }, [categoryValue]);
 
   useEffect(() => {
     if (!addNewCategory) {
-      setCategoryValue(categoryValues.default);
+      setCategoryValue(photo.category);
     }
-  }, [addNewCategory]);
+  }, [addNewCategory, photo.category]);
 
   const editInfoValidationSchema = Yup.object().shape({
     title: Yup.string().max(30, 'Maximun 30 characters'),

@@ -24,9 +24,15 @@ function CardPhotoList({item}: {item: PhotoType}) {
         />
         <View style={styles.infoContainer}>
           <Text style={styles.category}>{item.category}</Text>
-          {item.title && <Text style={styles.title}>{item.title}</Text>}
+          {item.title && (
+            <Text numberOfLines={1} style={styles.title}>
+              {item.title}
+            </Text>
+          )}
           {item.description && (
-            <Text style={styles.description}>{item.description}</Text>
+            <Text numberOfLines={4} style={styles.description}>
+              {item.description}
+            </Text>
           )}
           <Moment
             unix
