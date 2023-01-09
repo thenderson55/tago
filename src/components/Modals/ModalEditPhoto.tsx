@@ -22,6 +22,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {PhotosParamList} from '../../stacks/Photos/PhotosParamList';
 import {useNavigation} from '@react-navigation/native';
 import ModalConfirmDeletePhoto from './ModalConfirmDeletePhoto';
+import InputTextArea from '../Inputs/InputTextArea';
 
 interface Props {
   photo: PhotoType;
@@ -161,6 +162,9 @@ function ModalEditPhoto(props: Props) {
                   <ScrollView>
                     <Text style={styles.label}>Category</Text>
                     <DropDownPicker
+                      textStyle={{
+                        fontSize: theme.fontSizes.medium,
+                      }}
                       style={styles.dropDown}
                       listMode="SCROLLVIEW"
                       placeholder="Select a Category"
@@ -212,7 +216,7 @@ function ModalEditPhoto(props: Props) {
                       spaceFiller={false}
                     />
 
-                    <InputForm
+                    <InputTextArea
                       label="Description (optional)"
                       value={values.description}
                       placeholder="Cheap Otoro"
@@ -299,6 +303,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 15,
     height: theme.sizes.formHeight + 4,
+    fontSize: theme.fontSizes.large,
   },
   modalView: {
     backgroundColor: 'white',

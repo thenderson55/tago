@@ -26,6 +26,7 @@ import FormError from '../Erorrs/FormError';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeParamList} from '../../stacks/Home/HomeParamList';
+import InputTextArea from '../Inputs/InputTextArea';
 
 interface Props {
   modalBool: boolean;
@@ -216,7 +217,7 @@ function ModalInfo(props: Props) {
                     spaceFiller={false}
                   />
 
-                  <InputForm
+                  <InputTextArea
                     label="Description (optional)"
                     value={values.description}
                     placeholder="Cheap Otoro"
