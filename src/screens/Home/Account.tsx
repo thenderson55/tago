@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {SafeAreaView, StyleSheet} from 'react-native';
+import {SafeAreaView, StyleSheet, Text} from 'react-native';
 import MainButton from '../../components/Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
 import useAuthStore from '../../store/useAuthStore';
@@ -10,7 +10,7 @@ import ModalUsername from '../../components/Modals/ModalUsername';
 import ModalPassword from '../../components/Modals/ModalPassword';
 
 function Account() {
-  const {loading, clearErrors} = useUserStore();
+  const {loading, clearErrors, user} = useUserStore();
   const {logOut} = useAuthStore();
 
   const [modalConfirm, setModalConfirm] = useState(false);
@@ -63,6 +63,7 @@ function Account() {
         modalBool={modalPassword}
         modalClose={modalPasswordClose}
       />
+      <Text style={styles.text}>Email: {user.email}</Text>
       <MainButton
         onPress={modalEmailOpen}
         text="Update Email"
@@ -98,6 +99,10 @@ const styles = StyleSheet.create({
   safeView: {
     flex: 1,
     margin: theme.margins.screen,
+  },
+  text: {
+    fontSize: theme.fontSizes.medium,
+    marginVertical: 10,
   },
 });
 

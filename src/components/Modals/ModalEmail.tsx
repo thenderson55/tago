@@ -23,66 +23,69 @@ interface Props {
 
 function ModalEmail(props: Props) {
   const {modalBool, modalClose} = props;
-  const {updateEmail, loading, errorAccount} = useUserStore();
+  const {updateEmail, loading, errorAccount, user} = useUserStore();
 
   return (
     <>
-      <Modal visible={modalBool} animationType="fade" transparent={true}>
-        <SafeAreaView style={styles.safeView}>
-          <View style={styles.modalView}>
-            <Formik
-              enableReinitialize={true}
-              initialValues={{
-                newEmail: '',
-              }}
-              validationSchema={updateEmailValidationSchema}
-              onSubmit={values => {
-                const newEmail = values.newEmail.trim();
-                updateEmail(newEmail, modalClose);
-              }}>
-              {({
-                values,
-                errors,
-                touched,
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                // handleReset,
-              }) => (
-                <ScrollView>
-                  <InputForm
-                    onChangeText={handleChange('newEmail')}
-                    onBlur={handleBlur('newEmail')}
-                    value={values.newEmail}
-                    placeholder="e.g tago@tago.com"
-                    label="New Email"
-                  />
-                  <FormError
-                    touched={touched.newEmail}
-                    message={errors.newEmail}
-                  />
-                  <MainButton
-                    style={{marginTop: 25}}
-                    onPress={() => handleSubmit()}
-                    disabled={loading}
-                    spinner={loading}
-                    text="Update Email">
-                    <ResponseError message={errorAccount} />
-                  </MainButton>
-                  <MainButton
-                    style={styles.button}
-                    onPress={() => {
-                      modalClose();
-                    }}
-                    text="Cancel"
-                    disabled={loading}
-                  />
-                </ScrollView>
-              )}
-            </Formik>
-          </View>
-        </SafeAreaView>
-      </Modal>
+      {user && (
+        <Modal visible={modalBool} animationType="fade" transparent={true}>
+          <SafeAreaView style={styles.safeView}>
+            <View style={styles.modalView}>
+              <Formik
+                enableReinitialize={true}
+                initialValues={{
+                  email: user?.email,
+                  newEmail: '',
+                }}
+                validationSchema={updateEmailValidationSchema}
+                onSubmit={values => {
+                  const newEmail = values.newEmail.trim();
+                  updateEmail(newEmail, modalClose);
+                }}>
+                {({
+                  values,
+                  errors,
+                  touched,
+                  handleChange,
+                  handleBlur,
+                  handleSubmit,
+                  // handleReset,
+                }) => (
+                  <ScrollView>
+                    <InputForm
+                      onChangeText={handleChange('newEmail')}
+                      onBlur={handleBlur('newEmail')}
+                      value={values.newEmail}
+                      placeholder={values.email!}
+                      label="New Email"
+                    />
+                    <FormError
+                      touched={touched.newEmail}
+                      message={errors.newEmail}
+                    />
+                    <MainButton
+                      style={{marginTop: 25}}
+                      onPress={() => handleSubmit()}
+                      disabled={loading}
+                      spinner={loading}
+                      text="Update Email">
+                      <ResponseError message={errorAccount} />
+                    </MainButton>
+                    <MainButton
+                      style={styles.button}
+                      onPress={() => {
+                        modalClose();
+                      }}
+                      text="Cancel"
+                      disabled={loading}
+                    />
+                  </ScrollView>
+                )}
+              </Formik>
+            </View>
+          </SafeAreaView>
+        </Modal>
+      )}
     </>
   );
 }

@@ -5,10 +5,13 @@ import {HomeParamList} from './HomeParamList';
 import Home from '../../screens/Home';
 import Graph from '../../screens/Home/Graph';
 import Account from '../../screens/Home/Account';
+import useUserStore from '../../store/useUserStore';
 
 const Stack = createNativeStackNavigator<HomeParamList>();
 
 function HomeStack() {
+  const {user} = useUserStore();
+
   return (
     <Stack.Navigator
       // screenOptions={{
@@ -29,7 +32,13 @@ function HomeStack() {
         }}
         component={Graph}
       />
-      <Stack.Screen name="Account" component={Account} />
+      <Stack.Screen
+        options={() => ({
+          title: user.displayName || user.email || 'Account',
+        })}
+        name="Account"
+        component={Account}
+      />
     </Stack.Navigator>
   );
 }

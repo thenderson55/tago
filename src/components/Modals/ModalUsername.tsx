@@ -15,6 +15,7 @@ import useUserStore from '../../store/useUserStore';
 import FormError from '../Erorrs/FormError';
 import {updateUsernameValidationSchema} from '../../utils/validations';
 import ResponseError from '../Erorrs/ResponseError';
+import {validatePluginLoadResult} from 'snowpack/lib/cjs/config';
 
 interface Props {
   modalBool: boolean;
@@ -23,66 +24,69 @@ interface Props {
 
 function ModalUsername(props: Props) {
   const {modalBool, modalClose} = props;
-  const {updateUsername, loading, errorAccount} = useUserStore();
+  const {updateUsername, loading, errorAccount, user} = useUserStore();
 
   return (
     <>
-      <Modal visible={modalBool} animationType="fade" transparent={true}>
-        <SafeAreaView style={styles.safeView}>
-          <View style={styles.modalView}>
-            <Formik
-              enableReinitialize={true}
-              initialValues={{
-                newUsername: '',
-              }}
-              validationSchema={updateUsernameValidationSchema}
-              onSubmit={values => {
-                const newUsername = values.newUsername.trim();
-                updateUsername(newUsername, modalClose);
-              }}>
-              {({
-                values,
-                errors,
-                touched,
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                // handleReset,
-              }) => (
-                <ScrollView>
-                  <InputForm
-                    onChangeText={handleChange('newUsername')}
-                    onBlur={handleBlur('newUsername')}
-                    value={values.newUsername}
-                    placeholder="e.g tago"
-                    label="New Username"
-                  />
-                  <FormError
-                    touched={touched.newUsername}
-                    message={errors.newUsername}
-                  />
-                  <MainButton
-                    style={{marginTop: 25}}
-                    onPress={() => handleSubmit()}
-                    disabled={loading}
-                    spinner={loading}
-                    text="Update Username">
-                    <ResponseError message={errorAccount} />
-                  </MainButton>
-                  <MainButton
-                    style={styles.button}
-                    onPress={() => {
-                      modalClose();
-                    }}
-                    text="Cancel"
-                    disabled={loading}
-                  />
-                </ScrollView>
-              )}
-            </Formik>
-          </View>
-        </SafeAreaView>
-      </Modal>
+      {user && (
+        <Modal visible={modalBool} animationType="fade" transparent={true}>
+          <SafeAreaView style={styles.safeView}>
+            <View style={styles.modalView}>
+              <Formik
+                enableReinitialize={true}
+                initialValues={{
+                  userName: user.displayName,
+                  newUsername: '',
+                }}
+                validationSchema={updateUsernameValidationSchema}
+                onSubmit={values => {
+                  const newUsername = values.newUsername.trim();
+                  updateUsername(newUsername, modalClose);
+                }}>
+                {({
+                  values,
+                  errors,
+                  touched,
+                  handleChange,
+                  handleBlur,
+                  handleSubmit,
+                  // handleReset,
+                }) => (
+                  <ScrollView>
+                    <InputForm
+                      onChangeText={handleChange('newUsername')}
+                      onBlur={handleBlur('newUsername')}
+                      value={values.newUsername}
+                      placeholder={values.userName!}
+                      label="New Username"
+                    />
+                    <FormError
+                      touched={touched.newUsername}
+                      message={errors.newUsername}
+                    />
+                    <MainButton
+                      style={{marginTop: 25}}
+                      onPress={() => handleSubmit()}
+                      disabled={loading}
+                      spinner={loading}
+                      text="Update Username">
+                      <ResponseError message={errorAccount} />
+                    </MainButton>
+                    <MainButton
+                      style={styles.button}
+                      onPress={() => {
+                        modalClose();
+                      }}
+                      text="Cancel"
+                      disabled={loading}
+                    />
+                  </ScrollView>
+                )}
+              </Formik>
+            </View>
+          </SafeAreaView>
+        </Modal>
+      )}
     </>
   );
 }
