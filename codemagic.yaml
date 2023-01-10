@@ -15,7 +15,7 @@ workflows:
         # - google_play # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS <-- Put your google-services.json)
       vars:
         PACKAGE_NAME: 'com.tago' # <-- Put your package name here e.g. com.domain.myapp
-      node: v16.11.1
+      node: v16.13.0
     scripts:
       - name: Install npm dependencies
         script: |
