@@ -28,6 +28,7 @@ import AuthStack from './src/stacks/Auth/AuthStack';
 import useUserStore from './src/store/useUserStore';
 import {NativeBaseProvider} from 'native-base';
 import TabScreen from './src/TabScreen';
+import {WithSplashScreen} from './src/screens/SplashScreen';
 
 const app = initializeApp(firebaseConfig);
 export const appStorage = getStorage(app);
@@ -42,9 +43,15 @@ const App = () => {
   // const isDarkMode = useColorScheme() === 'dark';
   const {setUser, user} = useUserStore();
   const [initializing, setInitializing] = useState(true);
+  const [isAppReady, setIsAppReady] = useState(false);
+
   // const backgroundStyle = {
   //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   // };
+
+  useEffect(() => {
+    setIsAppReady(true);
+  }, []);
 
   // Handle user state changes
   function onAuthStateChanged(currentUser: any) {
@@ -62,11 +69,13 @@ const App = () => {
   }, []);
 
   return (
-    <NavigationContainer ref={navigationRef}>
-      <NativeBaseProvider>
-        {!user ? <AuthStack /> : <TabScreen />}
-      </NativeBaseProvider>
-    </NavigationContainer>
+    <WithSplashScreen isAppReady={isAppReady}>
+      <NavigationContainer ref={navigationRef}>
+        <NativeBaseProvider>
+          {!user ? <AuthStack /> : <TabScreen />}
+        </NativeBaseProvider>
+      </NavigationContainer>
+    </WithSplashScreen>
   );
 };
 
