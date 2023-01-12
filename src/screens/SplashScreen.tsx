@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, StyleSheet, Text} from 'react-native';
+import {Animated, Dimensions, StyleSheet} from 'react-native';
 import theme from '../theme';
+
 // https://dev.to/lloyds-digital/how-to-add-a-splash-screen-to-a-react-native-app-the-easy-way-3ego
 
 export function WithSplashScreen({
@@ -107,12 +108,12 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: theme.colors.secondary,
     alignItems: 'center',
-    justifyContent: 'center',
   },
   image: {
     width: 250,
     height: 250,
     borderRadius: 125,
+    marginTop: Dimensions.get('window').height * 0.3,
   },
   fadingContainer: {
     padding: 20,

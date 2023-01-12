@@ -1,9 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {Dimensions, SafeAreaView, StyleSheet, View} from 'react-native';
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {ImagePickerResponse} from 'react-native-image-picker';
 // import Blob from './Blob';
 import ModalInfo from '../../components/Modals/ModalInfo';
-import MainButton from '../../components/Buttons/MainButton';
 import theme from '../../theme';
 import usePhotosStore from '../../store/usePhotosStore';
 import useUserStore from '../../store/useUserStore';
@@ -142,7 +147,7 @@ function Home() {
   // };
 
   return (
-    <SafeAreaView style={styles.safeView}>
+    <View style={styles.safeView}>
       <ModalInfo
         modalBool={infoModal}
         modalClose={infoModalClose}
@@ -150,22 +155,36 @@ function Home() {
         location={currentLocation}
       />
       <View>
-        <MainButton
-          style={{marginTop: 30}}
-          text="Take photo"
-          onPress={() => handleSelectPicture(setImageResponse, infoModalOpen)}
-        />
-        {/* <Button title="Graph" onPress={() => navigation.navigate('Graph')} /> */}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => handleSelectPicture(setImageResponse, infoModalOpen)}>
+          <Text style={styles.text}>TAKE PHOTO</Text>
+        </TouchableOpacity>
       </View>
       {/* <Blob /> */}
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   safeView: {
-    margin: theme.margins.screen,
+    flex: 1,
+    backgroundColor: theme.colors.secondary,
+    alignItems: 'center',
+  },
+  button: {
+    height: 250,
+    width: 250,
+    borderRadius: 125,
     backgroundColor: theme.colors.background,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: Dimensions.get('window').height * 0.3,
+  },
+  text: {
+    fontSize: 24,
+    color: theme.colors.secondary,
+    fontWeight: 'bold',
   },
 });
 
