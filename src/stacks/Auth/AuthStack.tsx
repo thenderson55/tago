@@ -4,6 +4,7 @@ import {AuthParamList} from './AuthParamList';
 import Login from '../../screens/Auth/Login';
 import SignUp from '../../screens/Auth/SignUp';
 import ForgotPassword from '../../screens/Auth/ForgotPassword';
+import PrivacyPolicyScreen from '../../screens/PrivacyPolicyScreen';
 
 const Stack = createNativeStackNavigator<AuthParamList>();
 
@@ -37,6 +38,11 @@ function AuthStack() {
         // })}
         // component={SignUpStack}
         component={SignUp}
+      />
+      <Stack.Screen
+        name="Privacy"
+        component={PrivacyPolicyScreen}
+        options={{title: 'Privacy Policy'}}
       />
     </Stack.Navigator>
   );

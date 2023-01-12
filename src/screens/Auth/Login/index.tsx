@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {Platform, SafeAreaView, View} from 'react-native';
+import {
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {Formik} from 'formik';
 import InputForm from '../../../components/Inputs/InputForm';
 import FormError from '../../../components/Erorrs/FormError';
@@ -25,10 +32,7 @@ function Login() {
   const [hidePassword, setHidePassword] = useState<boolean>(true);
 
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: theme.colors.muted,
-      }}>
+    <SafeAreaView style={styles.safeView}>
       <View
         style={{
           margin: theme.margins.screen,
@@ -120,8 +124,29 @@ function Login() {
           disabled={loading}
         />
       </View>
+      <TouchableOpacity
+        style={styles.privacy}
+        onPress={() => navigation.navigate('Privacy')}>
+        <Text style={styles.privacyText}>Privacy policy</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  safeView: {
+    backgroundColor: theme.colors.background,
+    flex: 1,
+  },
+  privacy: {
+    position: 'absolute',
+    bottom: '10%',
+    right: '10%',
+  },
+  privacyText: {
+    fontSize: 16,
+    color: theme.colors.black,
+  },
+});
 
 export default Login;
