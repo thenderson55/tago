@@ -10,6 +10,7 @@ import MapStack from './stacks/Map/MapStack';
 import useUserStore from './store/useUserStore';
 import {useNavigation} from '@react-navigation/native';
 import {StyleSheet, TouchableOpacity} from 'react-native';
+import AccountStack from './stacks/Account/AccountStack';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -33,6 +34,9 @@ function BottomTabs() {
           } else if (route.name === 'MapStack') {
             iconName = focused ? 'map' : 'map-outline';
             // iconName = focused ? 'ios-list' : 'ios-list-outline';
+          } else if (route.name === 'AccountStack') {
+            iconName = focused ? 'person-circle' : 'person-circle-outline';
+            // iconName = focused ? 'ios-list' : 'ios-list-outline';
           }
 
           return (
@@ -44,8 +48,11 @@ function BottomTabs() {
                   : route.name === 'PhotosStack'
                   ? (setTabStatus('PhotosStack'),
                     navigation.navigate('PhotosStack'))
-                  : (setTabStatus('HomeStack'),
+                  : route.name === 'HomeStack'
+                  ? (setTabStatus('HomeStack'),
                     navigation.navigate('HomeStack'))
+                  : (setTabStatus('AccountStack'),
+                    navigation.navigate('AccountStack'))
               }>
               <Ionicons
                 name={iconName}
@@ -57,8 +64,11 @@ function BottomTabs() {
                     : route.name === 'PhotosStack'
                     ? (setTabStatus('PhotosStack'),
                       navigation.navigate('PhotosStack'))
-                    : (setTabStatus('HomeStack'),
+                    : route.name === 'HomeStack'
+                    ? (setTabStatus('HomeStack'),
                       navigation.navigate('HomeStack'))
+                    : (setTabStatus('AccountStack'),
+                      navigation.navigate('AccountStack'))
                 }
               />
             </TouchableOpacity>
@@ -93,6 +103,14 @@ function BottomTabs() {
         options={{
           headerShown: false,
           tabBarLabel: 'Photos',
+        }}
+      />
+      <Tab.Screen
+        name="AccountStack"
+        component={AccountStack}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Account',
         }}
       />
     </Tab.Navigator>
