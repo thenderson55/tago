@@ -56,8 +56,6 @@ const useAuthStore = create<AuthState>(set => ({
         values.email,
         values.password,
       );
-      console.log('User account created & signed in!');
-      console.log('New ID: ', res.user.uid);
       // TODO: Add modal to await verification? Better to use the email link
       // console.log('FIREBASE_AUTH_DOMAIN: ', FIREBASE_AUTH_DOMAIN);
       //  await auth().currentUser!.sendEmailVerification({
@@ -88,10 +86,8 @@ const useAuthStore = create<AuthState>(set => ({
   emailLogin: async (email, password) => {
     set(state => ({...state, loading: true}));
     try {
-      const res = await auth().signInWithEmailAndPassword(email, password);
-      console.log('Zustand user account signed in!', res);
+      await auth().signInWithEmailAndPassword(email, password);
     } catch (error: any) {
-      console.log('Zustand error: ', error);
       const errorMessage = await firebaseErrorMessage(error);
       set(state => ({
         ...state,
@@ -165,8 +161,7 @@ const useAuthStore = create<AuthState>(set => ({
   forgotPassword: async email => {
     set(state => ({...state, loading: true}));
     try {
-      const res = await auth().sendPasswordResetEmail(email);
-      console.log('Please check your email...', res);
+      await auth().sendPasswordResetEmail(email);
       set(state => ({
         ...state,
         loading: false,
@@ -186,7 +181,6 @@ const useAuthStore = create<AuthState>(set => ({
   logOut: async () => {
     try {
       await auth().signOut();
-      console.log('Signed out!');
       set(state => ({
         ...state,
         loginError: '',

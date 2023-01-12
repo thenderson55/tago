@@ -15,7 +15,6 @@ type Props = {
 
 const MapCard = (props: Props) => {
   const {item, onPress, traceRoute} = props;
-  console.log('Item: ', item);
   return (
     <View>
       <View style={styles.bubble}>

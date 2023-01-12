@@ -29,16 +29,16 @@ function MapMarker(props: Props) {
         latitude: item.location[0],
         longitude: item.location[1],
       }}
-      onSelect={
-        event => console.log('onSelect', event)
-        // map.animateCamera()
-        // this.map.animateCamera({center: coordinate}, {duration: 2000})
-      }
-      onDeselect={
-        event => console.log('onDeselect', event)
-        // map.animateCamera()
-        // this.map.animateCamera({center: coordinate}, {duration: 2000})
-      }
+      // onSelect={
+      //   event => console.log('onSelect', event)
+      //   // map.animateCamera()
+      //   // this.map.animateCamera({center: coordinate}, {duration: 2000})
+      // }
+      // onDeselect={
+      //   event => console.log('onDeselect', event)
+      //   // map.animateCamera()
+      //   // this.map.animateCamera({center: coordinate}, {duration: 2000})
+      // }
       title={item.title}
       description={item.description}
       onPress={onPress}

@@ -43,8 +43,6 @@ function Home() {
     getPermssionsAndLocation();
   }, [getCurrentLocation]);
 
-  console.log('CURRENT LOCATION', currentLocation);
-
   useEffect(() => {
     if (user?.uid?.length > 1) {
       fetchCategories(user.uid);

@@ -16,7 +16,6 @@ function Map(props: Props) {
     <MapView
       ref={mapRef}
       onRegionChangeComplete={region => {
-        console.log('region', region);
         setCurrentRegion(region);
       }}
       // mapPadding={{

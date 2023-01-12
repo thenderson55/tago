@@ -15,7 +15,6 @@ function InputSearch() {
   // useEffect(() => {
   //   const placeByAutocomplete = async (input: string) => {
   //     const res = await getGoogleMapsPlaceByAutocomplete(input);
-  //     console.log('RES', res.data?.predictions[0].description);
   //   };
   //   placeByAutocomplete('Comr');
   // }, []);
