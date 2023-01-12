@@ -5,5 +5,6 @@ export type HomeParamList = {
   Graph: undefined;
   Account: undefined;
   Privacy: undefined;
+  Support: undefined;
   Map?: {newPhoto?: PhotoType};
 };

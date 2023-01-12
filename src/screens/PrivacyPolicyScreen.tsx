@@ -406,9 +406,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginVertical: 10,
   },
-  list: {
-    fontSize: 28,
-  },
 });
 
 export default PrivacyPolicyScreen;

@@ -61,8 +61,8 @@ export const Splash = ({isAppReady}: {isAppReady: boolean}) => {
     if (state === FADE_OUT) {
       Animated.timing(containerOpacity, {
         toValue: 0,
-        duration: 500, // Fade out duration
-        delay: 500, // Minimum time the logo will stay visible
+        duration: 1000, // Fade out duration
+        delay: 1000, // Minimum time the logo will stay visible
         useNativeDriver: true,
       }).start(() => {
         setState(HIDDEN);
@@ -110,8 +110,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 250,
+    height: 250,
     borderRadius: 125,
   },
   fadingContainer: {

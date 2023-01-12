@@ -129,6 +129,11 @@ function Login() {
         onPress={() => navigation.navigate('Privacy')}>
         <Text style={styles.privacyText}>Privacy policy</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.support}
+        onPress={() => navigation.navigate('Support')}>
+        <Text style={styles.privacyText}>Support</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -141,7 +146,14 @@ const styles = StyleSheet.create({
   privacy: {
     position: 'absolute',
     bottom: '10%',
-    right: '10%',
+    alignSelf: 'flex-end',
+    right: '7%',
+  },
+  support: {
+    position: 'absolute',
+    bottom: '10%',
+    alignSelf: 'flex-start',
+    left: '7%',
   },
   privacyText: {
     fontSize: 16,

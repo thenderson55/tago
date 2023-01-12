@@ -5,6 +5,7 @@ import Login from '../../screens/Auth/Login';
 import SignUp from '../../screens/Auth/SignUp';
 import ForgotPassword from '../../screens/Auth/ForgotPassword';
 import PrivacyPolicyScreen from '../../screens/PrivacyPolicyScreen';
+import SupportScreen from '../../screens/SupportScreen';
 
 const Stack = createNativeStackNavigator<AuthParamList>();
 
@@ -43,6 +44,11 @@ function AuthStack() {
         name="Privacy"
         component={PrivacyPolicyScreen}
         options={{title: 'Privacy Policy'}}
+      />
+      <Stack.Screen
+        name="Support"
+        component={SupportScreen}
+        options={{title: 'Support'}}
       />
     </Stack.Navigator>
   );

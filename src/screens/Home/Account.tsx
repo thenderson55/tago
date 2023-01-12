@@ -11,6 +11,7 @@ import ModalPassword from '../../components/Modals/ModalPassword';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeParamList} from '../../stacks/Home/HomeParamList';
+import {ScrollView} from 'native-base';
 
 function Account() {
   const {loading, clearErrors, user} = useUserStore();
@@ -57,46 +58,52 @@ function Account() {
 
   return (
     <SafeAreaView style={styles.safeView}>
-      <ModalConfirm modalBool={modalConfirm} modalClose={modalConfirmClose} />
-      <ModalEmail modalBool={modalEmail} modalClose={modalEmailClose} />
-      <ModalUsername
-        modalBool={modalUsername}
-        modalClose={modalUsernameClose}
-      />
-      <ModalPassword
-        modalBool={modalPassword}
-        modalClose={modalPasswordClose}
-      />
-      <Text style={styles.text}>Email: {user.email}</Text>
-      <MainButton
-        onPress={modalEmailOpen}
-        text="Update Email"
-        disabled={loading}
-        spinner={loading}
-      />
-      <MainButton
-        onPress={modalUsernameOpen}
-        text="Update Username"
-        disabled={loading}
-        spinner={loading}
-      />
-      <MainButton
-        onPress={modalPasswordOpen}
-        text="Update Password"
-        disabled={loading}
-        spinner={loading}
-      />
-      <MainButton onPress={logOut} text="Log Out" />
-      <MainButton
-        style={{marginTop: 50}}
-        onPress={modalConfirmOpen}
-        text="Delete User"
-        disabled={loading}
-      />
-      <MainButton
-        text="Privacy policy"
-        onPress={() => navigation.navigate('Privacy')}
-      />
+      <ScrollView>
+        <ModalConfirm modalBool={modalConfirm} modalClose={modalConfirmClose} />
+        <ModalEmail modalBool={modalEmail} modalClose={modalEmailClose} />
+        <ModalUsername
+          modalBool={modalUsername}
+          modalClose={modalUsernameClose}
+        />
+        <ModalPassword
+          modalBool={modalPassword}
+          modalClose={modalPasswordClose}
+        />
+        <Text style={styles.text}>Email: {user.email}</Text>
+        <MainButton
+          onPress={modalEmailOpen}
+          text="Update Email"
+          disabled={loading}
+          spinner={loading}
+        />
+        <MainButton
+          onPress={modalUsernameOpen}
+          text="Update Username"
+          disabled={loading}
+          spinner={loading}
+        />
+        <MainButton
+          onPress={modalPasswordOpen}
+          text="Update Password"
+          disabled={loading}
+          spinner={loading}
+        />
+        <MainButton onPress={logOut} text="Log Out" />
+        <MainButton
+          style={{marginTop: 50}}
+          onPress={modalConfirmOpen}
+          text="Delete User"
+          disabled={loading}
+        />
+        <MainButton
+          text="Privacy policy"
+          onPress={() => navigation.navigate('Privacy')}
+        />
+        <MainButton
+          text="Support"
+          onPress={() => navigation.navigate('Support')}
+        />
+      </ScrollView>
     </SafeAreaView>
   );
 }

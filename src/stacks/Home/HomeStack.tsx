@@ -7,6 +7,7 @@ import Graph from '../../screens/Home/Graph';
 import Account from '../../screens/Home/Account';
 import useUserStore from '../../store/useUserStore';
 import PrivacyPolicyScreen from '../../screens/PrivacyPolicyScreen';
+import SupportScreen from '../../screens/SupportScreen';
 
 const Stack = createNativeStackNavigator<HomeParamList>();
 
@@ -44,6 +45,11 @@ function HomeStack() {
         name="Privacy"
         component={PrivacyPolicyScreen}
         options={{title: 'Privacy Policy'}}
+      />
+      <Stack.Screen
+        name="Support"
+        component={SupportScreen}
+        options={{title: 'Support'}}
       />
     </Stack.Navigator>
   );
