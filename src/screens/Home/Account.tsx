@@ -8,10 +8,14 @@ import ModalConfirm from '../../components/Modals/ModalConfirm';
 import ModalEmail from '../../components/Modals/ModalEmail';
 import ModalUsername from '../../components/Modals/ModalUsername';
 import ModalPassword from '../../components/Modals/ModalPassword';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeParamList} from '../../stacks/Home/HomeParamList';
 
 function Account() {
   const {loading, clearErrors, user} = useUserStore();
   const {logOut} = useAuthStore();
+  const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
 
   const [modalConfirm, setModalConfirm] = useState(false);
   const modalConfirmClose = () => {
@@ -83,14 +87,16 @@ function Account() {
         spinner={loading}
       />
       <MainButton onPress={logOut} text="Log Out" />
-      {/* <View style={{marginTop: 'auto'}}> */}
       <MainButton
         style={{marginTop: 50}}
         onPress={modalConfirmOpen}
         text="Delete User"
         disabled={loading}
       />
-      {/* </View> */}
+      <MainButton
+        text="Privacy policy"
+        onPress={() => navigation.navigate('Privacy')}
+      />
     </SafeAreaView>
   );
 }
