@@ -89,14 +89,14 @@ export const Splash = ({isAppReady}: {isAppReady: boolean}) => {
       {/* <Text style={styles.fadingText}>Fading View!</Text> */}
       <Animated.Image
         source={{
-          uri: 'https://loremflickr.com/640/360',
+          uri: 'https://unsplash.it/640/425',
         }}
         fadeDuration={0}
         onLoad={() => {
           setState(FADE_IN_IMAGE);
         }}
         style={[styles.image, {opacity: imageOpacity}]}
-        resizeMode="contain"
+        resizeMode="cover"
       />
     </Animated.View>
   );
@@ -110,8 +110,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   image: {
-    width: 250,
-    height: 250,
+    width: 200,
+    height: 200,
+    borderRadius: 125,
   },
   fadingContainer: {
     padding: 20,
