@@ -1,12 +1,9 @@
 import React from 'react';
 import {ScrollView, StyleSheet, Text} from 'react-native';
+import {Strong} from '../components/HTML/Strong';
 import {UnorderedList} from '../components/HTML/UnorderedList';
 
 function PrivacyPolicyScreen() {
-  const Strong = (props: any) => (
-    <Text style={styles.bold}>{props.children}</Text>
-  );
-
   return (
     <ScrollView style={styles.view}>
       <Text style={styles.header}>Privacy Policy</Text>
@@ -431,9 +428,6 @@ const styles = StyleSheet.create({
   },
   list: {
     fontSize: 28,
-  },
-  bold: {
-    fontWeight: 'bold',
   },
 });
 
