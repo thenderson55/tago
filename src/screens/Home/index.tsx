@@ -1,18 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Dimensions, SafeAreaView, StyleSheet, View} from 'react-native';
-import auth, {firebase} from '@react-native-firebase/auth';
-import {
-  ImagePickerResponse,
-  CameraOptions,
-  launchCamera,
-  launchImageLibrary,
-} from 'react-native-image-picker';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeParamList} from '../../stacks/Home/HomeParamList';
+import {ImagePickerResponse} from 'react-native-image-picker';
 // import Blob from './Blob';
-import firestore from '@react-native-firebase/firestore';
-import storage, {FirebaseStorageTypes} from '@react-native-firebase/storage';
 import ModalInfo from '../../components/Modals/ModalInfo';
 import MainButton from '../../components/Buttons/MainButton';
 import theme from '../../theme';
@@ -21,7 +10,6 @@ import useUserStore from '../../store/useUserStore';
 import {handleSelectPicture, requestLocationPermission} from '../../utils';
 
 function Home() {
-  const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
   const {fetchPhotos, fetchCategories, getCurrentLocation, currentLocation} =
     usePhotosStore();
@@ -167,24 +155,7 @@ function Home() {
           text="Take photo"
           onPress={() => handleSelectPicture(setImageResponse, infoModalOpen)}
         />
-        <MainButton
-          text="Account"
-          onPress={() => navigation.navigate('Account')}
-        />
         {/* <Button title="Graph" onPress={() => navigation.navigate('Graph')} /> */}
-        {/* <MainButton text="GET DATA" onPress={getData} /> */}
-        {/*
-        <FastImage
-          style={{height: 300, marginTop: 50}}
-          source={{
-            // uri: 'https://firebasestorage.googleapis.com/v0/b/tago-d37a7.appspot.com/o/DuchessAgain.jpeg?alt=media&token=239ed376-3e18-4b0a-92ca-44c825f06b06',
-
-            uri: 'https://firebasestorage.googleapis.com/v0/b/tago-d37a7.appspot.com/o/rn_image_picker_lib_temp_61f4d80f-4de6-4deb-88ff-9b0801eabaf7.jpg?alt=media&token=9d174cc4-2825-4496-8d78-ffbb281f8894',
-            // headers: {Authorization: 'someAuthToken'},
-            priority: FastImage.priority.normal,
-          }}
-          resizeMode={FastImage.resizeMode.contain}
-        /> */}
       </View>
       {/* <Blob /> */}
     </SafeAreaView>
@@ -195,12 +166,6 @@ const styles = StyleSheet.create({
   safeView: {
     margin: theme.margins.screen,
     backgroundColor: theme.colors.background,
-  },
-  loadingDots: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: (Dimensions.get('window').height / 10) * 2,
   },
 });
 

@@ -13,7 +13,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeParamList} from '../../stacks/Home/HomeParamList';
 import {ScrollView} from 'native-base';
 
-function Account() {
+function AccountScreen() {
   const {loading, clearErrors, user} = useUserStore();
   const {logOut} = useAuthStore();
   const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
@@ -119,4 +119,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Account;
+export default AccountScreen;
