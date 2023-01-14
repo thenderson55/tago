@@ -45,11 +45,13 @@ const MapScreen = () => {
   // const {newPhoto} = route?.params;
   const [directions, setDirections] = useState<boolean>(false);
   const [distance, setDistance] = useState<number>(0);
+  const [location, setLocation] = useState<number[]>();
   const [duration, setDuration] = useState<number>(0);
   const [currentRegion, setCurrentRegion] = useState<Region>({} as Region);
   const [currentPhoto, setCurrentPhoto] = useState<PhotoType>({} as PhotoType);
   // const [newPhoto, setNewPhoto] = useState<PlaceType>();
-  const {photos, currentLocation, getCurrentLocation} = usePhotosStore();
+  // const {photos, currentLocation, getCurrentLocation} = usePhotosStore();
+  const {photos} = usePhotosStore();
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
   const [infoModal, setInfoModal] = useState(false);
   const infoModalClose = () => {
@@ -59,9 +61,21 @@ const MapScreen = () => {
     setInfoModal(true);
   };
 
-  useEffect(() => {
-    getCurrentLocation();
-  }, [getCurrentLocation]);
+  useFocusEffect(
+    useCallback(() => {
+      Geolocation.getCurrentPosition(
+        (position: GeoPosition) => {
+          setLocation([position.coords.latitude, position.coords.longitude]);
+        },
+        error => {
+          // See error code charts below.
+          console.log(error.code, error.message);
+          return [0, 0];
+        },
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      );
+    }, []),
+  );
 
   const setDistanceAndDuration = (args: any) => {
     console.log('DISTANCE AND DURATION', args);
@@ -78,7 +92,7 @@ const MapScreen = () => {
     console.log('TRACE ROUTE');
     mapRef.current?.fitToCoordinates(
       [
-        {latitude: currentLocation![0], longitude: currentLocation![1]},
+        {latitude: location![0], longitude: location![1]},
         {
           latitude: item.location[0],
           longitude: item.location[1],
@@ -96,15 +110,26 @@ const MapScreen = () => {
     );
   };
 
-  const centerToLocation = () => {
-    mapRef.current?.animateToRegion(
-      {
-        latitude: currentLocation[0],
-        longitude: currentLocation[1],
-        latitudeDelta: initialMapValues.latitudeDelta,
-        longitudeDelta: initialMapValues.longitudeDelta,
+  const centerToLocation = async () => {
+    Geolocation.getCurrentPosition(
+      (position: GeoPosition) => {
+        mapRef.current?.animateToRegion(
+          {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            latitudeDelta: initialMapValues.latitudeDelta,
+            longitudeDelta: initialMapValues.longitudeDelta,
+          },
+          200,
+        );
+        setLocation([position.coords.latitude, position.coords.longitude]);
       },
-      200,
+      error => {
+        // See error code charts below.
+        console.log(error.code, error.message);
+        return [0, 0];
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
   };
 
@@ -182,12 +207,14 @@ const MapScreen = () => {
   //   Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE;
   return (
     <SafeAreaView style={styles.safeView}>
-      <ModalInfo
-        modalBool={infoModal}
-        modalClose={infoModalClose}
-        imageResponse={imageResponse!}
-        location={currentLocation}
-      />
+      {location?.length && (
+        <ModalInfo
+          modalBool={infoModal}
+          modalClose={infoModalClose}
+          imageResponse={imageResponse!}
+          location={location}
+        />
+      )}
       {route?.params?.newPhoto?.location ? (
         <>
           <MapMain
@@ -222,11 +249,11 @@ const MapScreen = () => {
                 />
               );
             })}
-            {directions && (
+            {directions && location?.length && (
               <MapViewDirections
                 origin={{
-                  latitude: currentLocation[0],
-                  longitude: currentLocation[1],
+                  latitude: location[0],
+                  longitude: location[1],
                 }}
                 destination={{
                   latitude: route.params.newPhoto.location[0],
@@ -242,16 +269,16 @@ const MapScreen = () => {
           </MapMain>
           {/* <SearchInput /> */}
         </>
-      ) : photos?.length > 0 && currentLocation?.length ? (
+      ) : photos?.length > 0 && location?.length ? (
         <>
           <MapMain
             mapRef={mapRef}
             setCurrentRegion={setCurrentRegion}
-            location={[currentLocation[0], currentLocation[1]]}>
+            location={[location[0], location[1]]}>
             <Marker
               coordinate={{
-                latitude: currentLocation[0],
-                longitude: currentLocation[1],
+                latitude: location[0],
+                longitude: location[1],
               }}
             />
             {photos.map((item, index) => {
@@ -268,11 +295,11 @@ const MapScreen = () => {
                 />
               );
             })}
-            {directions && currentPhoto && (
+            {directions && currentPhoto && location?.length && (
               <MapViewDirections
                 origin={{
-                  latitude: currentLocation[0],
-                  longitude: currentLocation[1],
+                  latitude: location[0],
+                  longitude: location[1],
                 }}
                 destination={{
                   latitude: currentPhoto.location[0],
@@ -288,16 +315,16 @@ const MapScreen = () => {
           </MapMain>
           {/* <SearchInput /> */}
         </>
-      ) : currentLocation?.length ? (
+      ) : location?.length ? (
         <>
           <MapMain
             mapRef={mapRef}
             setCurrentRegion={setCurrentRegion}
-            location={[currentLocation[0], currentLocation[1]]}>
+            location={[location[0], location[1]]}>
             <Marker
               coordinate={{
-                latitude: currentLocation[0],
-                longitude: currentLocation[1],
+                latitude: location[0],
+                longitude: location[1],
               }}
               // pinColor={theme.colors.magenta}
             />

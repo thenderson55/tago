@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, TouchableOpacity} from 'react-native';
 import theme from '../../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import useUserStore from '../../store/useUserStore';
 
 type Props = {
