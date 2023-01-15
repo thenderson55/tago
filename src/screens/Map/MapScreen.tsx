@@ -1,11 +1,10 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
   View,
   Dimensions,
   Platform,
-  Button,
   Text,
   TouchableOpacity,
 } from 'react-native';
@@ -19,7 +18,6 @@ import LoadingDots from '../../components/Animations/LoadingDots';
 import usePhotosStore, {PhotoType} from '../../store/usePhotosStore';
 import {HomeParamList} from '../../stacks/Home/HomeParamList';
 import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
-import {Avatar} from 'native-base';
 import {
   getGoogleMapsPlaceByAutocomplete,
   handleSelectPicture,
@@ -254,22 +252,25 @@ const MapScreen = () => {
           location={location}
         />
       )}
-      {route?.params?.newPhoto?.location ? (
+      {route?.params?.newPhoto && photos?.length > 0 && location?.length ? (
         <>
           <MapMain
             mapRef={mapRef}
             setCurrentRegion={setCurrentRegion}
-            location={[
-              route.params.newPhoto.location[0],
-              route.params.newPhoto.location[1],
-            ]}>
+            location={[photos[0].location[0], photos[0].location[1]]}>
+            <Marker
+              coordinate={{
+                latitude: location[0],
+                longitude: location[1],
+              }}
+            />
             <MapMarker
-              item={route.params.newPhoto}
+              item={photos[0]}
               traceRoute={traceRoute}
               index={-1}
               onPress={() => {
                 if (Platform.OS === 'ios') {
-                  centerToPin(route!.params!.newPhoto!, currentRegion);
+                  centerToPin(photos[0], currentRegion);
                   setDirections(true);
                 }
               }}
@@ -288,15 +289,15 @@ const MapScreen = () => {
                 />
               );
             })}
-            {directions && location?.length && (
+            {directions && (
               <MapViewDirections
                 origin={{
                   latitude: location[0],
                   longitude: location[1],
                 }}
                 destination={{
-                  latitude: route.params.newPhoto.location[0],
-                  longitude: route.params.newPhoto.location[1],
+                  latitude: photos[0].location[0],
+                  longitude: photos[0].location[1],
                 }}
                 apikey={GOOGLE_MAPS_API_KEY}
                 strokeColor={theme.colors.magenta}

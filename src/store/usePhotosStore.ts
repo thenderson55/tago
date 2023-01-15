@@ -283,10 +283,11 @@ const usePhotosStore = create<PhotoState>(set => ({
             .collection('Photos')
             .doc(res.id)
             .get();
+          const newPhoto = {...(doc.data() as PhotoType), id: doc.id};
           set((state: PhotoState) => ({
             ...state,
             transferProgress: 1,
-            photos: [...(state.photos as PhotoType[]), doc.data() as PhotoType],
+            photos: [newPhoto, ...(state.photos as PhotoType[])],
           }));
 
           set(state => ({
@@ -298,7 +299,8 @@ const usePhotosStore = create<PhotoState>(set => ({
 
           modalClose();
           navigation.navigate('Map', {
-            newPhoto: doc.data() as PhotoType,
+            // newPhoto: doc.data() as PhotoType,
+            newPhoto: true,
           });
         });
       }
@@ -382,7 +384,6 @@ const usePhotosStore = create<PhotoState>(set => ({
         .collection('Photos')
         .doc(input.id)
         .delete();
-
       const removeOldPhoto = (state: PhotoState) => {
         const photos = state.photos as PhotoType[];
         const index = photos.findIndex(photo => photo.id === input.id);
@@ -396,7 +397,7 @@ const usePhotosStore = create<PhotoState>(set => ({
       }));
       modalClose();
       modalConfirmClose();
-      navigation.navigate('PhotosList');
+      navigation.goBack();
     } catch (error) {
       console.log('Delete error: ', error);
       set(state => ({

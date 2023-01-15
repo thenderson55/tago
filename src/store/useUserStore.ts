@@ -4,6 +4,8 @@ import firestore from '@react-native-firebase/firestore';
 import {User} from 'firebase/auth';
 import auth from '@react-native-firebase/auth';
 import {firebaseErrorMessage} from '../utils';
+import {PhotoType} from './usePhotosStore';
+import storage from '@react-native-firebase/storage';
 
 export interface UserState {
   user: User;
@@ -174,6 +176,19 @@ const useUserStore = create<UserState>(set => ({
     const user = await auth().currentUser;
     if (user) {
       try {
+        const res = await firestore()
+          .collection('Users')
+          .doc(user.uid)
+          .collection('Photos')
+          .get();
+        const photosMap = res.docs.map(item => {
+          return {...(item.data() as PhotoType), id: item.id};
+        });
+        photosMap.forEach(async photo => {
+          const deleted = await storage().ref(photo.ref).delete();
+          console.log('Image deleted from bucket: ', deleted);
+        });
+
         await firestore().collection('Users').doc(user.uid).delete();
         if (user.displayName) {
           await firestore()
