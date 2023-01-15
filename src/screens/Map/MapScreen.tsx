@@ -74,6 +74,45 @@ const MapScreen = () => {
         },
         {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
       );
+      let watchID: number = 0;
+      const watchLocation = async () => {
+        await requestLocationPermission();
+        try {
+          watchID = Geolocation.watchPosition(
+            (position: GeoPosition) => {
+              console.log('Watch Location:', position);
+              setLocation([
+                position.coords.latitude,
+                position.coords.longitude,
+              ]);
+              return;
+            },
+            error => {
+              // See error code charts below.
+              console.log(error.code, error.message);
+              setLocation([]);
+              return;
+            },
+            {
+              enableHighAccuracy: true,
+              interval: 5000,
+              fastestInterval: 5000,
+              distanceFilter: 0,
+            },
+          );
+          console.log('WATCH ID', watchID);
+        } catch (error) {
+          console.log('Location Watch Error', error);
+        }
+      };
+      watchLocation();
+      console.log('WATCH ID', watchID);
+      return () => {
+        // FIXME: watchID not being returned in above function
+        // stopObserving works somwtimes but throws yellow box error
+        Geolocation.clearWatch(watchID);
+        Geolocation.stopObserving();
+      };
     }, []),
   );
 
@@ -146,44 +185,44 @@ const MapScreen = () => {
     );
   };
 
-  useEffect(() => {
-    let watchID: number = 0;
-    const watchLocation = async () => {
-      await requestLocationPermission();
-      try {
-        watchID = Geolocation.watchPosition(
-          (position: GeoPosition) => {
-            // console.log('Watch Location:', position);
-            setLocation([position.coords.latitude, position.coords.longitude]);
-            return;
-          },
-          error => {
-            // See error code charts below.
-            console.log(error.code, error.message);
-            setLocation([]);
-            return;
-          },
-          {
-            enableHighAccuracy: true,
-            interval: 5000,
-            fastestInterval: 5000,
-            distanceFilter: 10,
-          },
-        );
-        console.log('WATCH ID', watchID);
-      } catch (error) {
-        console.log('Location Watch Error', error);
-      }
-    };
-    watchLocation();
-    console.log('WATCH ID', watchID);
-    return () => {
-      // FIXME: watchID not being returned in above function
-      // stopObserving works somwtimes but throws yellow box error
-      Geolocation.clearWatch(watchID);
-      Geolocation.stopObserving();
-    };
-  }, []);
+  // useEffect(() => {
+  //   let watchID: number = 0;
+  //   const watchLocation = async () => {
+  //     await requestLocationPermission();
+  //     try {
+  //       watchID = Geolocation.watchPosition(
+  //         (position: GeoPosition) => {
+  //           console.log('Watch Location:', position);
+  //           setLocation([position.coords.latitude, position.coords.longitude]);
+  //           return;
+  //         },
+  //         error => {
+  //           // See error code charts below.
+  //           console.log(error.code, error.message);
+  //           setLocation([]);
+  //           return;
+  //         },
+  //         {
+  //           enableHighAccuracy: true,
+  //           interval: 5000,
+  //           fastestInterval: 5000,
+  //           distanceFilter: 0,
+  //         },
+  //       );
+  //       console.log('WATCH ID', watchID);
+  //     } catch (error) {
+  //       console.log('Location Watch Error', error);
+  //     }
+  //   };
+  //   watchLocation();
+  //   console.log('WATCH ID', watchID);
+  //   return () => {
+  //     // FIXME: watchID not being returned in above function
+  //     // stopObserving works somwtimes but throws yellow box error
+  //     Geolocation.clearWatch(watchID);
+  //     Geolocation.stopObserving();
+  //   };
+  // }, []);
 
   // const directionsButton = () => {
   //   const lat = location[0];

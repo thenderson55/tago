@@ -66,6 +66,7 @@ export interface PhotoState {
     input: {
       id: string;
       category: string;
+      ref: string;
       title?: string;
       description?: string;
     },
@@ -373,6 +374,8 @@ const usePhotosStore = create<PhotoState>(set => ({
     const user = await auth().currentUser;
     set(state => ({...state, upLoading: true}));
     try {
+      const deleted = await storage().ref(input.ref).delete();
+      console.log('Image deleted from bucket: ', deleted);
       await firestore()
         .collection('Users')
         .doc(user!.uid)
