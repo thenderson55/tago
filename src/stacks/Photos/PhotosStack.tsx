@@ -3,6 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {PhotosParamList} from './PhotosParamList';
 import PhotoScreen from '../../screens/Photos/PhotoScreen';
 import PhotosListScreen from '../../screens/Photos/PhotosListScreen';
+import theme from '../../theme';
 
 const Stack = createNativeStackNavigator<PhotosParamList>();
 
@@ -17,6 +18,14 @@ function PhotosStack() {
         name="Photo"
         options={({route}) => ({
           title: route.params.item.title || '(no title)',
+          // headerStyle: {
+          //   backgroundColor: theme.colors.secondary,
+          // },
+          // headerTintColor: theme.colors.white,
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontSize: 20,
+          },
         })}
         component={PhotoScreen}
       />
