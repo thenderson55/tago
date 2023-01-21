@@ -1,5 +1,5 @@
 import {PermissionsAndroid, Platform} from 'react-native';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 // @ts-ignore
 import Qs from 'qs';
 import {GOOGLE_MAPS_API_KEY} from '@env';
@@ -140,6 +140,7 @@ export const handleSelectPicture = async (
   setImageResponse: (
     value: React.SetStateAction<ImagePickerResponse | undefined>,
   ) => void,
+  setImageLocation: (location: number[]) => void,
   infoModalOpen: () => void,
 ) => {
   console.log('handleSelectPicture');
@@ -168,8 +169,21 @@ export const handleSelectPicture = async (
     } else if (response.errorMessage) {
       console.log('ImagePicker Error Message: ', response.errorMessage);
     } else {
-      setImageResponse(response);
-      infoModalOpen();
+      // Get the location of the image
+      Geolocation.getCurrentPosition(
+        (position: GeoPosition) => {
+          setImageResponse(response);
+          setImageLocation([
+            position.coords.latitude,
+            position.coords.longitude,
+          ]);
+          infoModalOpen();
+        },
+        error => {
+          console.log(error.code, error.message);
+        },
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      );
     }
   });
 };

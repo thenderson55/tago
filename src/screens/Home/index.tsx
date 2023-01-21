@@ -16,8 +16,8 @@ import {handleSelectPicture, requestLocationPermission} from '../../utils';
 
 function Home() {
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
-  const {fetchPhotos, fetchCategories, getCurrentLocation, currentLocation} =
-    usePhotosStore();
+  const [imageLocation, setImageLocation] = useState<number[]>();
+  const {fetchPhotos, fetchCategories, getCurrentLocation} = usePhotosStore();
   const {user} = useUserStore();
 
   const [infoModal, setInfoModal] = useState(false);
@@ -152,12 +152,18 @@ function Home() {
         modalBool={infoModal}
         modalClose={infoModalClose}
         imageResponse={imageResponse!}
-        location={currentLocation}
+        location={imageLocation}
       />
       <View>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => handleSelectPicture(setImageResponse, infoModalOpen)}>
+          onPress={() =>
+            handleSelectPicture(
+              setImageResponse,
+              setImageLocation,
+              infoModalOpen,
+            )
+          }>
           <Text style={styles.text}>TAKE PHOTO</Text>
         </TouchableOpacity>
       </View>

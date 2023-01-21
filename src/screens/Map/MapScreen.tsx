@@ -44,6 +44,7 @@ const MapScreen = () => {
   const [directions, setDirections] = useState<boolean>(false);
   const [distance, setDistance] = useState<number>(0);
   const [location, setLocation] = useState<number[]>();
+  const [imageLocation, setImageLocation] = useState<number[]>();
   const [duration, setDuration] = useState<number>(0);
   const [currentRegion, setCurrentRegion] = useState<Region>({} as Region);
   const [currentPhoto, setCurrentPhoto] = useState<PhotoType>({} as PhotoType);
@@ -95,7 +96,7 @@ const MapScreen = () => {
               enableHighAccuracy: true,
               interval: 5000,
               fastestInterval: 5000,
-              distanceFilter: 0,
+              distanceFilter: 10,
             },
           );
           console.log('WATCH ID', watchID);
@@ -123,13 +124,13 @@ const MapScreen = () => {
   };
 
   const mapPadding = 50;
-  const traceRoute = (item: PhotoType) => {
+  const traceRoute = (item: PhotoType, currentLocation: number[]) => {
     setDirections(!directions);
     setCurrentPhoto(item);
     console.log('TRACE ROUTE');
     mapRef.current?.fitToCoordinates(
       [
-        {latitude: location![0], longitude: location![1]},
+        {latitude: currentLocation[0], longitude: currentLocation[1]},
         {
           latitude: item.location[0],
           longitude: item.location[1],
@@ -249,7 +250,7 @@ const MapScreen = () => {
           modalBool={infoModal}
           modalClose={infoModalClose}
           imageResponse={imageResponse!}
-          location={location}
+          location={imageLocation!}
         />
       )}
       {route?.params?.newPhoto && photos?.length > 0 && location?.length ? (
@@ -266,7 +267,7 @@ const MapScreen = () => {
             />
             <MapMarker
               item={photos[0]}
-              traceRoute={traceRoute}
+              traceRoute={() => traceRoute(photos[0], location)}
               index={-1}
               onPress={() => {
                 if (Platform.OS === 'ios') {
@@ -280,7 +281,7 @@ const MapScreen = () => {
                 <MapMarker
                   index={index}
                   item={item}
-                  traceRoute={traceRoute}
+                  traceRoute={() => traceRoute(item, location)}
                   onPress={() => {
                     if (Platform.OS === 'ios') {
                       centerToPin(item, currentRegion!);
@@ -326,7 +327,7 @@ const MapScreen = () => {
                 <MapMarker
                   index={index}
                   item={item}
-                  traceRoute={traceRoute}
+                  traceRoute={() => traceRoute(item, location)}
                   onPress={() => {
                     if (Platform.OS === 'ios') {
                       centerToPin(item, currentRegion);
@@ -394,7 +395,13 @@ const MapScreen = () => {
       <View style={styles.cameraButton}>
         <TouchableOpacity
           activeOpacity={1}
-          onPress={() => handleSelectPicture(setImageResponse, infoModalOpen)}>
+          onPress={() =>
+            handleSelectPicture(
+              setImageResponse,
+              setImageLocation,
+              infoModalOpen,
+            )
+          }>
           <Ionicons
             name={'camera-outline'}
             size={50}

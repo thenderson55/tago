@@ -13,7 +13,7 @@ type Props = {
   item: PhotoType;
   index: number;
   onPress: () => void;
-  traceRoute: (item: PhotoType) => void;
+  traceRoute: () => void;
 };
 
 function MapMarker(props: Props) {
