@@ -10,13 +10,14 @@ import ModalUsername from '../../components/Modals/ModalUsername';
 import ModalPassword from '../../components/Modals/ModalPassword';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeParamList} from '../../stacks/Home/HomeParamList';
 import {ScrollView} from 'native-base';
+import {AccountParamList} from '../../stacks/Account/AccountParamList';
 
 function AccountScreen() {
   const {loading, clearErrors, user} = useUserStore();
   const {logOut} = useAuthStore();
-  const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
+  const navigation: NativeStackNavigationProp<AccountParamList> =
+    useNavigation();
 
   const [modalConfirm, setModalConfirm] = useState(false);
   const modalConfirmClose = () => {
@@ -88,6 +89,10 @@ function AccountScreen() {
           disabled={loading}
           spinner={loading}
         />
+        <MainButton
+          text="Settings"
+          onPress={() => navigation.navigate('Settings')}
+        />
         <MainButton onPress={logOut} text="Log Out" />
         <MainButton
           style={{marginTop: 50}}
@@ -95,6 +100,7 @@ function AccountScreen() {
           text="Delete User"
           disabled={loading}
         />
+
         <MainButton
           text="Privacy policy"
           onPress={() => navigation.navigate('Privacy')}

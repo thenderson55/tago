@@ -6,6 +6,7 @@ import PrivacyPolicyScreen from '../../screens/PrivacyPolicyScreen';
 import SupportScreen from '../../screens/SupportScreen';
 import AccountScreen from '../../screens/Account/AccountScreen';
 import theme from '../../theme';
+import SettingsScreen from '../../screens/Account/SettingsScreen';
 
 const Stack = createNativeStackNavigator<AccountParamList>();
 
@@ -28,6 +29,21 @@ function AccountStack() {
         })}
         name="Account"
         component={AccountScreen}
+      />
+      <Stack.Screen
+        options={() => ({
+          title: 'Settings',
+          headerStyle: {
+            backgroundColor: theme.colors.secondary,
+          },
+          headerTintColor: theme.colors.white,
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontSize: 20,
+          },
+        })}
+        name="Settings"
+        component={SettingsScreen}
       />
       <Stack.Screen
         name="Privacy"
