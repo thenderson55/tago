@@ -3,4 +3,5 @@ export type SettingsParamList = {
   Settings: undefined;
   Privacy: undefined;
   Support: undefined;
+  EditCategories: undefined;
 };

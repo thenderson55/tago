@@ -7,6 +7,7 @@ import SupportScreen from '../../screens/SupportScreen';
 import AccountScreen from '../../screens/Settings/AccountScreen';
 import theme from '../../theme';
 import SettingsScreen from '../../screens/Settings/SettingsScreen';
+import EditCategoriesScreen from '../../screens/Settings/EditCategoriesScreen';
 
 const Stack = createNativeStackNavigator<SettingsParamList>();
 
@@ -29,6 +30,21 @@ function SettingsStack() {
         })}
         name="Settings"
         component={SettingsScreen}
+      />
+      <Stack.Screen
+        options={() => ({
+          title: 'Edit Categories',
+          headerStyle: {
+            backgroundColor: theme.colors.secondary,
+          },
+          headerTintColor: theme.colors.white,
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontSize: 20,
+          },
+        })}
+        name="EditCategories"
+        component={EditCategoriesScreen}
       />
       <Stack.Screen
         options={() => ({

@@ -1,39 +1,22 @@
-import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, Text} from 'react-native';
+import React from 'react';
+import {SafeAreaView, StyleSheet} from 'react-native';
 import MainButton from '../../components/Buttons/MainButton';
-import useUserStore from '../../store/useUserStore';
 import theme from '../../theme';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScrollView} from 'native-base';
-import ModalCategories from '../../components/Modals/ModalCategories';
 import {SettingsParamList} from '../../stacks/Settings/SettingsParamList';
 
 function SettingsScreen() {
-  const {loading, clearErrors, user} = useUserStore();
   const navigation: NativeStackNavigationProp<SettingsParamList> =
     useNavigation();
-
-  const [modalCategories, setModalCategories] = useState(false);
-  const modalCategoriesClose = () => {
-    setModalCategories(false);
-  };
-  const modalCategoriesOpen = () => {
-    setModalCategories(true);
-  };
 
   return (
     <SafeAreaView style={styles.safeView}>
       <ScrollView>
-        <ModalCategories
-          modalBool={modalCategories}
-          modalClose={modalCategoriesClose}
-        />
         <MainButton
-          onPress={modalCategoriesOpen}
           text="Edit Categories"
-          disabled={loading}
-          spinner={loading}
+          onPress={() => navigation.navigate('EditCategories')}
         />
         <MainButton
           text="Account"
