@@ -24,6 +24,7 @@ interface ThemeStyles {
   };
   fontSizes: {
     small: number;
+    label: number;
     medium: number;
     large: number;
   };
@@ -91,6 +92,7 @@ const theme: ThemeStyles = {
   },
   fontSizes: {
     small: 12,
+    label: 14,
     medium: 16,
     large: 24,
   },

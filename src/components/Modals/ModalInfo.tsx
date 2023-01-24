@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
   label: {
     color: theme.colors.black,
     marginBottom: 9,
-    fontSize: theme.fontSizes.small,
+    fontSize: theme.fontSizes.label,
     marginTop: theme.margins.mediumTop,
   },
   error: {
