@@ -27,7 +27,7 @@ import {useNavigation} from '@react-navigation/native';
 function EditCategoriesScreen() {
   const navigation: NativeStackNavigationProp<PhotosParamList> =
     useNavigation();
-  const {categories, upLoading, editPhoto, addCategory} = usePhotosStore();
+  const {categories, upLoading, editCategory, addCategory} = usePhotosStore();
   const [categoryValue, setCategoryValue] = useState('');
   const [selectedItem, setSelectedItem] = useState<ItemType<ValueType>>();
   const [editOpen, setEditOpen] = useState<boolean>(false);
@@ -114,7 +114,12 @@ function EditCategoriesScreen() {
                 const input = {
                   categories: values.categories,
                 };
-                console.log('Input', selectedItem);
+
+                editCategory(
+                  user,
+                  selectedItem?.label as string,
+                  selectedItem?.value as string,
+                );
               }}>
               {({
                 values,

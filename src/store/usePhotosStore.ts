@@ -76,6 +76,8 @@ export interface PhotoState {
   ) => void;
   fetchCategories: (userId: string) => void;
   addCategory: (user: User, category: string) => void;
+  editCategory: (user: User, category: string, updatedCategory: string) => void;
+  deleteCategory: (user: User, category: string) => void;
 }
 
 const initialState = {
@@ -184,6 +186,141 @@ const usePhotosStore = create<PhotoState>(set => ({
   },
 
   addCategory: async (user: User, category: string) => {
+    set(state => ({...state, loading: true}));
+    try {
+      const categories = usePhotosStore.getState().categories;
+      const filtered = categories.filter(item => {
+        return item !== categoryValues.default;
+      });
+      const categoresToLowercase = filtered.map(item => {
+        return item.toLowerCase();
+      });
+      console.log({categoresToLowercase});
+      if (!categoresToLowercase.includes(category.toLowerCase())) {
+        firestore()
+          .collection('Users')
+          .doc(user.uid)
+          .collection('Categories')
+          .doc(category)
+          .set({name: category});
+
+        const doc = await firestore()
+          .collection('Users')
+          .doc(user.uid)
+          .collection('Categories')
+          .doc(category)
+          .get();
+        doc.id === category &&
+          set(state => ({
+            ...state,
+            categories: [...categories, category],
+          }));
+      } else {
+        return;
+      }
+    } catch (error) {
+      console.log('Add cat error: ', error);
+      set(state => ({
+        ...state,
+        loading: false,
+      }));
+    } finally {
+      set(state => ({
+        ...state,
+        loading: false,
+      }));
+    }
+  },
+
+  editCategory: async (
+    user: User,
+    oldCategory: string,
+    updatedCategory: string,
+  ) => {
+    set(state => ({...state, loading: true}));
+    try {
+      const categories = usePhotosStore.getState().categories;
+      const photos = usePhotosStore.getState().photos;
+      const filtered = categories.filter(item => {
+        return item !== categoryValues.default;
+      });
+      const categoresToLowercase = filtered.map(item => {
+        return item.toLowerCase();
+      });
+      if (categoresToLowercase.includes(oldCategory.toLowerCase())) {
+        // Delete old document, create new one, fetch new one
+        await firestore()
+          .collection('Users')
+          .doc(user.uid)
+          .collection('Categories')
+          .doc(oldCategory)
+          .delete();
+
+        await firestore()
+          .collection('Users')
+          .doc(user.uid)
+          .collection('Categories')
+          .doc(updatedCategory)
+          .set({name: updatedCategory});
+
+        const doc = await firestore()
+          .collection('Users')
+          .doc(user.uid)
+          .collection('Categories')
+          .doc(updatedCategory)
+          .get();
+
+        // Update photos category
+        const photosToUpdate = photos.filter(item => {
+          return item.category === oldCategory;
+        });
+        // Update each photo
+        await Promise.all(
+          photosToUpdate.map(item => {
+            return firestore()
+              .collection('Users')
+              .doc(user.uid)
+              .collection('Photos')
+              .doc(item.id)
+              .update({category: updatedCategory});
+          }),
+        );
+
+        // If db update is successful, update photos and categories in state
+        const updatedPhotos = photos.map(item => {
+          if (item.category === oldCategory) {
+            return {...item, category: updatedCategory};
+          } else {
+            return item;
+          }
+        });
+        const updatedCategories = categories.map(item => {
+          if (item === oldCategory) {
+            return updatedCategory;
+          } else {
+            return item;
+          }
+        });
+        doc.id === updatedCategory &&
+          set(state => ({
+            ...state,
+            categories: updatedCategories,
+            photos: updatedPhotos,
+            loading: false,
+          }));
+      } else {
+        return;
+      }
+    } catch (error) {
+      console.log('Edit cat error: ', error);
+      set(state => ({
+        ...state,
+        loading: false,
+      }));
+    }
+  },
+
+  deleteCategory: async (user: User, category: string) => {
     set(state => ({...state, loading: true}));
     try {
       const categories = usePhotosStore.getState().categories;

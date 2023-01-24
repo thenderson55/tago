@@ -54,7 +54,6 @@ const InputForm = (props: Props) => {
     setSelectedItem,
     handleReset,
   } = props;
-  console.log('Props', props);
   return (
     <>
       {label && <Text style={styles.label}>{label}</Text>}
