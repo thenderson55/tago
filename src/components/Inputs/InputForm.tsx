@@ -54,6 +54,7 @@ const InputForm = (props: Props) => {
     setSelectedItem,
     handleReset,
   } = props;
+  console.log('Props', props);
   return (
     <>
       {label && <Text style={styles.label}>{label}</Text>}
@@ -81,6 +82,8 @@ const InputForm = (props: Props) => {
         {cancel && cancelClose && setCategoryValue && handleReset && (
           <TouchableOpacity
             onPress={() => {
+              console.log('boooo');
+
               cancelClose(false);
               setCategoryValue(categoryValues.default);
               handleReset();
@@ -96,6 +99,7 @@ const InputForm = (props: Props) => {
         {cancel && cancelClose && setSelectedItem && handleReset && (
           <TouchableOpacity
             onPress={() => {
+              console.log('ioio');
               cancelClose(false);
               setSelectedItem({});
               handleReset();

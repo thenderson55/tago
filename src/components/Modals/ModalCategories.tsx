@@ -48,7 +48,7 @@ function ModalCategories(props: Props) {
   const [addNewCategory, setAddNewCategory] = useState(false);
   const [categoryList, setCategoryList] =
     useState<{label: string; value: string}[]>();
-  console.log('CATEGORIES', categoryList);
+  // console.log('CATEGORIES', categoryList);
 
   const {user} = useUserStore();
 
@@ -124,6 +124,7 @@ function ModalCategories(props: Props) {
                   const input = {
                     categories: values.categories,
                   };
+                  console.log('Input', selectedItem);
                 }}>
                 {({
                   values,
@@ -149,17 +150,20 @@ function ModalCategories(props: Props) {
                       setOpen={setOpen}
                       setValue={setCategoryValue}
                       onSelectItem={item => {
-                        console.log(item);
-
-                        setSelectedItem(item);
-                        setEditOpen(true);
+                        console.log('YOOOO', item);
+                        if (item.value === '+ Add New Category') {
+                          setAddNewCategory(true);
+                        } else {
+                          setSelectedItem(item);
+                          setEditOpen(true);
+                        }
                       }}
                       // setItems={handleChange('category')}
                     />
                     {editOpen && (
                       <>
                         <InputForm
-                          label="New Category"
+                          label="Edit Category"
                           value={(selectedItem?.value as string) || ''}
                           placeholder={
                             (selectedItem?.label as string) ||
@@ -187,14 +191,14 @@ function ModalCategories(props: Props) {
                     {addNewCategory && (
                       <>
                         <InputForm
-                          label="New Category"
+                          label="Add New Category"
                           value={values.newCategory}
                           placeholder="Bangkok"
                           onChangeText={handleChange('newCategory')}
                           onBlur={handleBlur('newCategory')}
                           cancel={true}
                           cancelClose={setAddNewCategory}
-                          // setCategoryValue={setCategoryValue}
+                          setCategoryValue={setCategoryValue}
                           handleReset={handleReset}
                         />
                         <FormError
@@ -226,22 +230,37 @@ function ModalCategories(props: Props) {
                       message={errors.description}
                       spaceFiller={false}
                     /> */}
-
-                    <MainButton
-                      style={{marginTop: 30}}
-                      onPress={() => {
-                        handleSubmit();
-                      }}
-                      text="Edit info"
-                      disabled={upLoading}
-                      spinner={upLoading}
-                    />
+                    {(addNewCategory || editOpen) && (
+                      <>
+                        <MainButton
+                          style={{marginTop: 30}}
+                          onPress={() => {
+                            handleSubmit();
+                          }}
+                          text={
+                            addNewCategory ? 'Add Category' : 'Edit Category'
+                          }
+                          disabled={upLoading}
+                          spinner={upLoading}
+                        />
+                        <MainButton
+                          style={{marginTop: 10}}
+                          onPress={() => {
+                            handleSubmit();
+                          }}
+                          text="Delete Category"
+                          disabled={upLoading}
+                          spinner={upLoading}
+                        />
+                      </>
+                    )}
                     <MainButton
                       style={{marginTop: 10}}
                       onPress={() => {
                         handleReset();
                         setCategoryAlreadyExists(false);
                         setAddNewCategory(false);
+                        setEditOpen(false);
                         // setCategoryValue(categoryValues.default);
                         modalClose();
                       }}
