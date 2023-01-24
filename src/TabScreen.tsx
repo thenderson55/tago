@@ -10,7 +10,7 @@ import MapStack from './stacks/Map/MapStack';
 import useUserStore from './store/useUserStore';
 import {useNavigation} from '@react-navigation/native';
 import {StyleSheet, TouchableOpacity} from 'react-native';
-import AccountStack from './stacks/Account/AccountStack';
+import SettingsStack from './stacks/Settings/SettingsStack';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,7 +34,7 @@ function BottomTabs() {
           } else if (route.name === 'MapStack') {
             iconName = focused ? 'map' : 'map-outline';
             // iconName = focused ? 'ios-list' : 'ios-list-outline';
-          } else if (route.name === 'AccountStack') {
+          } else if (route.name === 'SettingsStack') {
             iconName = focused ? 'person-circle' : 'person-circle-outline';
             // iconName = focused ? 'ios-list' : 'ios-list-outline';
           }
@@ -51,8 +51,8 @@ function BottomTabs() {
                   : route.name === 'HomeStack'
                   ? (setTabStatus('HomeStack'),
                     navigation.navigate('HomeStack'))
-                  : (setTabStatus('AccountStack'),
-                    navigation.navigate('AccountStack'))
+                  : (setTabStatus('SettingsStack'),
+                    navigation.navigate('SettingsStack'))
               }>
               <Ionicons
                 name={iconName}
@@ -67,8 +67,8 @@ function BottomTabs() {
                     : route.name === 'HomeStack'
                     ? (setTabStatus('HomeStack'),
                       navigation.navigate('HomeStack'))
-                    : (setTabStatus('AccountStack'),
-                      navigation.navigate('AccountStack'))
+                    : (setTabStatus('SettingsStack'),
+                      navigation.navigate('SettingsStack'))
                 }
               />
             </TouchableOpacity>
@@ -106,11 +106,11 @@ function BottomTabs() {
         }}
       />
       <Tab.Screen
-        name="AccountStack"
-        component={AccountStack}
+        name="SettingsStack"
+        component={SettingsStack}
         options={{
           headerShown: false,
-          tabBarLabel: 'Account',
+          tabBarLabel: 'Settijngs',
         }}
       />
     </Tab.Navigator>

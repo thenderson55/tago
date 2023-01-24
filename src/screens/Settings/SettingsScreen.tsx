@@ -5,13 +5,14 @@ import useUserStore from '../../store/useUserStore';
 import theme from '../../theme';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeParamList} from '../../stacks/Home/HomeParamList';
 import {ScrollView} from 'native-base';
 import ModalCategories from '../../components/Modals/ModalCategories';
+import {SettingsParamList} from '../../stacks/Settings/SettingsParamList';
 
 function SettingsScreen() {
   const {loading, clearErrors, user} = useUserStore();
-  const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
+  const navigation: NativeStackNavigationProp<SettingsParamList> =
+    useNavigation();
 
   const [modalCategories, setModalCategories] = useState(false);
   const modalCategoriesClose = () => {
@@ -33,6 +34,18 @@ function SettingsScreen() {
           text="Edit Categories"
           disabled={loading}
           spinner={loading}
+        />
+        <MainButton
+          text="Account"
+          onPress={() => navigation.navigate('Account')}
+        />
+        <MainButton
+          text="Privacy policy"
+          onPress={() => navigation.navigate('Privacy')}
+        />
+        <MainButton
+          text="Support"
+          onPress={() => navigation.navigate('Support')}
         />
       </ScrollView>
     </SafeAreaView>

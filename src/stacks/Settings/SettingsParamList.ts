@@ -1,4 +1,4 @@
-export type AccountParamList = {
+export type SettingsParamList = {
   Account: undefined;
   Settings: undefined;
   Privacy: undefined;

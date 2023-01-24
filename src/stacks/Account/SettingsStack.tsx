@@ -1,35 +1,20 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {AccountParamList} from './AccountParamList';
+import {SettingsParamList} from './SettingsParamList';
 import useUserStore from '../../store/useUserStore';
 import PrivacyPolicyScreen from '../../screens/PrivacyPolicyScreen';
 import SupportScreen from '../../screens/SupportScreen';
-import AccountScreen from '../../screens/Account/AccountScreen';
+import AccountScreen from '../../screens/Settings/AccountScreen';
 import theme from '../../theme';
-import SettingsScreen from '../../screens/Account/SettingsScreen';
+import SettingsScreen from '../../screens/Settings/SettingsScreen';
 
-const Stack = createNativeStackNavigator<AccountParamList>();
+const Stack = createNativeStackNavigator<SettingsParamList>();
 
-function AccountStack() {
+function SettingsStack() {
   const {user} = useUserStore();
 
   return (
-    <Stack.Navigator initialRouteName="Account">
-      <Stack.Screen
-        options={() => ({
-          title: user.displayName || user.email || 'Account',
-          headerStyle: {
-            backgroundColor: theme.colors.secondary,
-          },
-          headerTintColor: theme.colors.white,
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 20,
-          },
-        })}
-        name="Account"
-        component={AccountScreen}
-      />
+    <Stack.Navigator initialRouteName="Settings">
       <Stack.Screen
         options={() => ({
           title: 'Settings',
@@ -46,6 +31,21 @@ function AccountStack() {
         component={SettingsScreen}
       />
       <Stack.Screen
+        options={() => ({
+          title: user.displayName || user.email || 'Account',
+          headerStyle: {
+            backgroundColor: theme.colors.secondary,
+          },
+          headerTintColor: theme.colors.white,
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontSize: 20,
+          },
+        })}
+        name="Account"
+        component={AccountScreen}
+      />
+      <Stack.Screen
         name="Privacy"
         component={PrivacyPolicyScreen}
         options={{title: 'Privacy Policy'}}
@@ -59,4 +59,4 @@ function AccountStack() {
   );
 }
 
-export default AccountStack;
+export default SettingsStack;
