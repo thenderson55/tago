@@ -15,7 +15,10 @@ import InputForm from '../Inputs/InputForm';
 import usePhotosStore, {PhotoType} from '../../store/usePhotosStore';
 import MainButton from '../Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
-import DropDownPicker from 'react-native-dropdown-picker';
+import DropDownPicker, {
+  ItemType,
+  ValueType,
+} from 'react-native-dropdown-picker';
 import {categoryValues} from '../../utils/settings';
 import FormError from '../Erorrs/FormError';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -34,6 +37,10 @@ function ModalCategories(props: Props) {
     useNavigation();
   const {modalBool, modalClose} = props;
   const {categories, upLoading, editPhoto, addCategory} = usePhotosStore();
+  const [categoryValue, setCategoryValue] = useState('');
+  const [selectedItem, setSelectedItem] = useState<ItemType<ValueType>>();
+  const [editOpen, setEditOpen] = useState<boolean>(false);
+  console.log('Selected', selectedItem);
   // const [selectedLanguage, setSelectedLanguage] = useState();
   const [open, setOpen] = useState(false);
   const [categoryAlreadyExists, setCategoryAlreadyExists] =
@@ -41,6 +48,8 @@ function ModalCategories(props: Props) {
   const [addNewCategory, setAddNewCategory] = useState(false);
   const [categoryList, setCategoryList] =
     useState<{label: string; value: string}[]>();
+  console.log('CATEGORIES', categoryList);
+
   const {user} = useUserStore();
 
   const [modalConfirm, setModalConfirm] = useState(false);
@@ -99,7 +108,7 @@ function ModalCategories(props: Props) {
 
   return (
     <>
-      {categories && (
+      {categoryList && (
         <Modal visible={modalBool} animationType="fade" transparent={true}>
           <SafeAreaView style={styles.safeView}>
             <View style={styles.modalView}>
@@ -107,6 +116,7 @@ function ModalCategories(props: Props) {
                 enableReinitialize={true}
                 initialValues={{
                   categories: categories,
+                  category: '',
                   newCategory: '',
                 }}
                 validationSchema={editInfoValidationSchema}
@@ -125,8 +135,8 @@ function ModalCategories(props: Props) {
                   handleReset,
                 }) => (
                   <ScrollView>
-                    <Text style={styles.label}>Category</Text>
-                    {/* <DropDownPicker
+                    <Text style={styles.label}>Categories</Text>
+                    <DropDownPicker
                       textStyle={{
                         fontSize: theme.fontSizes.medium,
                       }}
@@ -134,30 +144,66 @@ function ModalCategories(props: Props) {
                       listMode="SCROLLVIEW"
                       placeholder="Select a Category"
                       open={open}
-                      value={categories || categoryValues.default}
+                      value={categoryList[0] || categoryValues.default}
                       items={categoryList!}
                       setOpen={setOpen}
-                      // setValue={setCategoryValue}
+                      setValue={setCategoryValue}
+                      onSelectItem={item => {
+                        console.log(item);
+
+                        setSelectedItem(item);
+                        setEditOpen(true);
+                      }}
                       // setItems={handleChange('category')}
-                    /> */}
-                    {addNewCategory && (
-                      <InputForm
-                        label="New Category"
-                        value={values.newCategory}
-                        placeholder="Bangkok"
-                        onChangeText={handleChange('newCategory')}
-                        onBlur={handleBlur('newCategory')}
-                        cancel={true}
-                        cancelClose={setAddNewCategory}
-                        // setCategoryValue={setCategoryValue}
-                        handleReset={handleReset}
-                      />
-                    )}
-                    <FormError
-                      touched={touched.newCategory}
-                      message={errors.newCategory}
-                      spaceFiller={false}
                     />
+                    {editOpen && (
+                      <>
+                        <InputForm
+                          label="New Category"
+                          value={(selectedItem?.value as string) || ''}
+                          placeholder={
+                            (selectedItem?.label as string) ||
+                            categoryList[0].value
+                          }
+                          onChangeText={e =>
+                            setSelectedItem({
+                              label: selectedItem?.label,
+                              value: e,
+                            })
+                          }
+                          onBlur={handleBlur('newCategory')}
+                          cancel={true}
+                          cancelClose={setEditOpen}
+                          setSelectedItem={setSelectedItem}
+                          handleReset={handleReset}
+                        />
+                        <FormError
+                          touched={touched.newCategory}
+                          message={errors.newCategory}
+                          spaceFiller={false}
+                        />
+                      </>
+                    )}
+                    {addNewCategory && (
+                      <>
+                        <InputForm
+                          label="New Category"
+                          value={values.newCategory}
+                          placeholder="Bangkok"
+                          onChangeText={handleChange('newCategory')}
+                          onBlur={handleBlur('newCategory')}
+                          cancel={true}
+                          cancelClose={setAddNewCategory}
+                          // setCategoryValue={setCategoryValue}
+                          handleReset={handleReset}
+                        />
+                        <FormError
+                          touched={touched.newCategory}
+                          message={errors.newCategory}
+                          spaceFiller={false}
+                        />
+                      </>
+                    )}
 
                     {/* From the double check in store */}
                     {categoryAlreadyExists && (
