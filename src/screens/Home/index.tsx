@@ -13,6 +13,7 @@ import theme from '../../theme';
 import usePhotosStore from '../../store/usePhotosStore';
 import useUserStore from '../../store/useUserStore';
 import {handleSelectPicture, requestLocationPermission} from '../../utils';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 function Home() {
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
@@ -164,7 +165,7 @@ function Home() {
               infoModalOpen,
             )
           }>
-          <Text style={styles.text}>TAKE PHOTO</Text>
+          <Ionicons name={'camera'} size={100} color={theme.colors.secondary} />
         </TouchableOpacity>
       </View>
       {/* <Blob /> */}
@@ -186,11 +187,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Dimensions.get('window').height * 0.3,
-  },
-  text: {
-    fontSize: 24,
-    color: theme.colors.secondary,
-    fontWeight: 'bold',
   },
 });
 

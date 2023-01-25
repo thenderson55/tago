@@ -13,6 +13,7 @@ import Geolocation, {
 } from 'react-native-geolocation-service';
 import {PhotosParamList} from '../stacks/Photos/PhotosParamList';
 import auth from '@react-native-firebase/auth';
+import PhotosListScreen from '../screens/Photos/PhotosListScreen';
 
 export type PhotoType = {
   id: string;
@@ -323,6 +324,7 @@ const usePhotosStore = create<PhotoState>(set => ({
   deleteCategory: async (user: User, category: string) => {
     set(state => ({...state, loading: true}));
     try {
+      const photos = usePhotosStore.getState().photos;
       const categories = usePhotosStore.getState().categories;
       const filtered = categories.filter(item => {
         return item !== categoryValues.default;
@@ -331,35 +333,43 @@ const usePhotosStore = create<PhotoState>(set => ({
         return item.toLowerCase();
       });
       console.log({categoresToLowercase});
-      if (!categoresToLowercase.includes(category.toLowerCase())) {
+      if (categoresToLowercase.includes(category.toLowerCase())) {
         firestore()
           .collection('Users')
           .doc(user.uid)
           .collection('Categories')
           .doc(category)
-          .set({name: category});
+          .delete();
 
-        const doc = await firestore()
-          .collection('Users')
-          .doc(user.uid)
-          .collection('Categories')
-          .doc(category)
-          .get();
-        doc.id === category &&
-          set(state => ({
-            ...state,
-            categories: [...categories, category],
-          }));
+        // Delete all photos with that category
+        const photosToDelete = photos.filter(item => {
+          return item.category === category;
+        });
+        await Promise.all(
+          photosToDelete.map(item => {
+            return firestore()
+              .collection('Users')
+              .doc(user.uid)
+              .collection('Photos')
+              .doc(item.id)
+              .delete();
+          }),
+        );
+
+        // Remove category from category array and update state
+        const updatedCategories = categories.filter(item => {
+          return item !== category;
+        });
+        set(state => ({
+          ...state,
+          categories: updatedCategories,
+          loading: false,
+        }));
       } else {
         return;
       }
     } catch (error) {
       console.log('Add cat error: ', error);
-      set(state => ({
-        ...state,
-        loading: false,
-      }));
-    } finally {
       set(state => ({
         ...state,
         loading: false,

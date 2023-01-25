@@ -143,7 +143,6 @@ export const handleSelectPicture = async (
   setImageLocation: (location: number[]) => void,
   infoModalOpen: () => void,
 ) => {
-  console.log('handleSelectPicture');
   const options: CameraOptions = {
     // includeExtra: true,
     mediaType: 'photo',

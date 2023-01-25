@@ -1,12 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  ScrollView,
-  SafeAreaView,
-  Platform,
-  StyleSheet,
-  Text,
-} from 'react-native';
+import {View, ScrollView, SafeAreaView, StyleSheet, Text} from 'react-native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import theme from '../../theme';
@@ -20,26 +13,20 @@ import DropDownPicker, {
 } from 'react-native-dropdown-picker';
 import {categoryValues} from '../../utils/settings';
 import FormError from '..//../components/Erorrs/FormError';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {PhotosParamList} from '../../stacks/Photos/PhotosParamList';
 import {useNavigation} from '@react-navigation/native';
 
 function EditCategoriesScreen() {
-  const navigation: NativeStackNavigationProp<PhotosParamList> =
-    useNavigation();
-  const {categories, upLoading, editCategory, addCategory} = usePhotosStore();
-  const [categoryValue, setCategoryValue] = useState('');
+  useNavigation();
+  const {categories, editCategory, loading, addCategory} = usePhotosStore();
+  const [categoryValue, setCategoryValue] = useState(categoryValues.default);
   const [selectedItem, setSelectedItem] = useState<ItemType<ValueType>>();
   const [editOpen, setEditOpen] = useState<boolean>(false);
-  console.log('Selected', selectedItem);
-  // const [selectedLanguage, setSelectedLanguage] = useState();
   const [open, setOpen] = useState(false);
   const [categoryAlreadyExists, setCategoryAlreadyExists] =
     useState<boolean>(false);
   const [addNewCategory, setAddNewCategory] = useState(false);
   const [categoryList, setCategoryList] =
     useState<{label: string; value: string}[]>();
-  // console.log('CATEGORIES', categoryList);
 
   const {user} = useUserStore();
 
@@ -111,15 +98,16 @@ function EditCategoriesScreen() {
               }}
               validationSchema={editInfoValidationSchema}
               onSubmit={values => {
-                const input = {
-                  categories: values.categories,
-                };
-
-                editCategory(
-                  user,
-                  selectedItem?.label as string,
-                  selectedItem?.value as string,
-                );
+                // TODO: handle label if updating same category multiple times in current state
+                editOpen
+                  ? editCategory(
+                      user,
+                      selectedItem?.label as string,
+                      selectedItem?.value as string,
+                    )
+                  : addNewCategory
+                  ? addCategory(user, values.newCategory)
+                  : null;
               }}>
               {({
                 values,
@@ -131,30 +119,31 @@ function EditCategoriesScreen() {
                 handleReset,
               }) => (
                 <ScrollView>
-                  <Text style={styles.label}>Categories</Text>
-                  <DropDownPicker
-                    textStyle={{
-                      fontSize: theme.fontSizes.medium,
-                    }}
-                    style={styles.dropDown}
-                    listMode="SCROLLVIEW"
-                    placeholder="Select a Category"
-                    open={open}
-                    value={categoryList[0] || categoryValues.default}
-                    items={categoryList!}
-                    setOpen={setOpen}
-                    setValue={setCategoryValue}
-                    onSelectItem={item => {
-                      console.log('YOOOO', item);
-                      if (item.value === '+ Add New Category') {
-                        setAddNewCategory(true);
-                      } else {
-                        setSelectedItem(item);
-                        setEditOpen(true);
-                      }
-                    }}
-                    // setItems={handleChange('category')}
-                  />
+                  <View style={styles.dropDownWrapper}>
+                    <DropDownPicker
+                      textStyle={{
+                        fontSize: theme.fontSizes.medium,
+                      }}
+                      style={styles.dropDown}
+                      listMode="SCROLLVIEW"
+                      placeholder="Select a Category"
+                      open={open}
+                      value={categoryValue}
+                      items={categoryList!}
+                      setOpen={setOpen}
+                      setValue={setCategoryValue}
+                      onSelectItem={item => {
+                        if (item.value === '+ Add New Category') {
+                          setEditOpen(false);
+                          setAddNewCategory(true);
+                        } else {
+                          setAddNewCategory(false);
+                          setSelectedItem(item);
+                          setEditOpen(true);
+                        }
+                      }}
+                    />
+                  </View>
                   {editOpen && (
                     <>
                       <InputForm
@@ -170,11 +159,7 @@ function EditCategoriesScreen() {
                             value: e,
                           })
                         }
-                        onBlur={handleBlur('newCategory')}
-                        cancel={true}
-                        cancelClose={setEditOpen}
-                        setSelectedItem={setSelectedItem}
-                        handleReset={handleReset}
+                        // onBlur={handleBlur('newCategory')}
                       />
                       <FormError
                         touched={touched.newCategory}
@@ -210,19 +195,6 @@ function EditCategoriesScreen() {
                       <Text style={styles.error}>Category already exists</Text>
                     </View>
                   )}
-
-                  {/* <InputTextArea
-                      label="Description (optional)"
-                      value={values.description}
-                      placeholder="Cheap Otoro"
-                      onChangeText={handleChange('description')}
-                      onBlur={handleBlur('description')}
-                    />
-                    <FormError
-                      touched={touched.description}
-                      message={errors.description}
-                      spaceFiller={false}
-                    /> */}
                   {(addNewCategory || editOpen) && (
                     <>
                       <MainButton
@@ -231,32 +203,37 @@ function EditCategoriesScreen() {
                           handleSubmit();
                         }}
                         text={addNewCategory ? 'Add Category' : 'Edit Category'}
-                        disabled={upLoading}
-                        spinner={upLoading}
+                        disabled={loading}
+                        spinner={loading}
                       />
-                      <MainButton
-                        style={{marginTop: 10}}
-                        onPress={() => {
-                          handleSubmit();
-                        }}
-                        text="Delete Category"
-                        disabled={upLoading}
-                        spinner={upLoading}
-                      />
+                      {editOpen && (
+                        <MainButton
+                          style={{marginTop: 10}}
+                          onPress={() => {
+                            handleSubmit();
+                          }}
+                          text="Delete Category"
+                          disabled={loading}
+                          spinner={loading}
+                        />
+                      )}
                     </>
                   )}
-                  <MainButton
-                    style={{marginTop: 10}}
-                    onPress={() => {
-                      handleReset();
-                      setCategoryAlreadyExists(false);
-                      setAddNewCategory(false);
-                      setEditOpen(false);
-                      // setCategoryValue(categoryValues.default);
-                    }}
-                    text="Cancel"
-                    disabled={upLoading}
-                  />
+                  {(addNewCategory || editOpen) && (
+                    <MainButton
+                      style={{marginTop: 10}}
+                      onPress={() => {
+                        handleReset();
+                        setCategoryAlreadyExists(false);
+                        setAddNewCategory(false);
+                        setEditOpen(false);
+                        setSelectedItem({});
+                        setCategoryValue(categoryValues.default);
+                      }}
+                      text="Cancel"
+                      disabled={loading}
+                    />
+                  )}
                 </ScrollView>
               )}
             </Formik>
@@ -291,6 +268,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     height: 20,
     marginTop: 5,
+  },
+  dropDownWrapper: {
+    marginTop: 30,
+    zIndex: 10,
+    elevation: 10,
   },
   dropDown: {
     backgroundColor: 'white',

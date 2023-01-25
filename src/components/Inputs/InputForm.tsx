@@ -12,11 +12,10 @@ import {
 import theme from '../../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {categoryValues} from '../../utils/settings';
-import {ItemType, ValueType} from 'react-native-dropdown-picker';
 
 type Props = {
   onChangeText: (text: string) => void;
-  onBlur: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+  onBlur?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
   value: string;
   placeholder: string;
   label?: string;
@@ -29,9 +28,9 @@ type Props = {
   cancel?: boolean;
   cancelClose?: React.Dispatch<React.SetStateAction<boolean>>;
   setCategoryValue?: React.Dispatch<React.SetStateAction<string>>;
-  setSelectedItem?: React.Dispatch<
-    React.SetStateAction<ItemType<ValueType> | undefined>
-  >;
+  // setSelectedItem?: React.Dispatch<
+  //   React.SetStateAction<ItemType<ValueType> | undefined>
+  // >;
   handleReset?: (e?: React.SyntheticEvent<any, Event> | undefined) => void;
 };
 
@@ -51,7 +50,7 @@ const InputForm = (props: Props) => {
     cancel,
     cancelClose,
     setCategoryValue,
-    setSelectedItem,
+    // setSelectedItem,
     handleReset,
   } = props;
   return (
@@ -81,8 +80,6 @@ const InputForm = (props: Props) => {
         {cancel && cancelClose && setCategoryValue && handleReset && (
           <TouchableOpacity
             onPress={() => {
-              console.log('boooo');
-
               cancelClose(false);
               setCategoryValue(categoryValues.default);
               handleReset();
@@ -95,7 +92,7 @@ const InputForm = (props: Props) => {
             />
           </TouchableOpacity>
         )}
-        {cancel && cancelClose && setSelectedItem && handleReset && (
+        {/* {cancel && cancelClose && setSelectedItem && handleReset && (
           <TouchableOpacity
             onPress={() => {
               console.log('ioio');
@@ -110,7 +107,7 @@ const InputForm = (props: Props) => {
               color={theme.colors.black}
             />
           </TouchableOpacity>
-        )}
+        )} */}
       </View>
     </>
   );
