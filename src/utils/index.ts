@@ -144,9 +144,12 @@ export const handleSelectPicture = async (
   infoModalOpen: () => void,
 ) => {
   const options: CameraOptions = {
-    // includeExtra: true,
     mediaType: 'photo',
-    // saveToPhotos: true,
+    saveToPhotos: true,
+    presentationStyle: 'fullScreen',
+    maxWidth: 500,
+    maxHeight: 500,
+    // includeExtra: true,
     // title: '',
     // takePhotoButtonTitle: '写真を撮る',
     // chooseFromLibraryButtonTitle: 'ギャラリーから写真を選択する',
@@ -155,8 +158,6 @@ export const handleSelectPicture = async (
     //   cameraRoll: true,
     //   waitUntilSaved: true,
     // },
-    maxWidth: 500,
-    maxHeight: 500,
     // allowsEditing: true,
     // noData: true,
   };
