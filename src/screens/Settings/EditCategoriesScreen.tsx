@@ -100,12 +100,12 @@ function EditCategoriesScreen() {
               }}
               validationSchema={editInfoValidationSchema}
               onSubmit={values => {
-                // TODO: handle label if updating same category multiple times in current state
-                editOpen
+                editCurrentCategory
                   ? editCategory(
                       user,
                       selectedItem?.label as string,
                       selectedItem?.value as string,
+                      setEditCurrentCategory,
                     )
                   : addNewCategory
                   ? addCategory(user, values.newCategory)
@@ -138,6 +138,10 @@ function EditCategoriesScreen() {
                         if (item.value === '+ Add New Category') {
                           setEditCurrentCategory(false);
                           setAddNewCategory(true);
+                        } else if (item.value === categoryValues.default) {
+                          setEditCurrentCategory(false);
+                          setAddNewCategory(false);
+                          return;
                         } else {
                           setAddNewCategory(false);
                           setSelectedItem(item);

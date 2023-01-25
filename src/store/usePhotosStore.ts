@@ -76,7 +76,12 @@ export interface PhotoState {
   ) => void;
   fetchCategories: (userId: string) => void;
   addCategory: (user: User, category: string) => void;
-  editCategory: (user: User, category: string, updatedCategory: string) => void;
+  editCategory: (
+    user: User,
+    category: string,
+    updatedCategory: string,
+    setEditCurrentCategory: Dispatch<SetStateAction<boolean>>,
+  ) => void;
   deleteCategory: (
     user: User,
     category: string,
@@ -242,6 +247,7 @@ const usePhotosStore = create<PhotoState>(set => ({
     user: User,
     oldCategory: string,
     updatedCategory: string,
+    setEditCurrentCategory,
   ) => {
     set(state => ({...state, loading: true}));
     try {
@@ -314,6 +320,7 @@ const usePhotosStore = create<PhotoState>(set => ({
             photos: updatedPhotos,
             loading: false,
           }));
+        setEditCurrentCategory(false);
       } else {
         return;
       }
