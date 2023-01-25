@@ -4,7 +4,7 @@ import MainButton from '../../components/Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
 import useAuthStore from '../../store/useAuthStore';
 import theme from '../../theme';
-import ModalConfirm from '../../components/Modals/ModalConfirm';
+import ModalConfirmDeleteUser from '../../components/Modals/ModalConfirmDeleteUser';
 import ModalEmail from '../../components/Modals/ModalEmail';
 import ModalUsername from '../../components/Modals/ModalUsername';
 import ModalPassword from '../../components/Modals/ModalPassword';
@@ -55,7 +55,10 @@ function AccountScreen() {
   return (
     <SafeAreaView style={styles.safeView}>
       <ScrollView>
-        <ModalConfirm modalBool={modalConfirm} modalClose={modalConfirmClose} />
+        <ModalConfirmDeleteUser
+          modalBool={modalConfirm}
+          modalClose={modalConfirmClose}
+        />
         <ModalEmail modalBool={modalEmail} modalClose={modalEmailClose} />
         <ModalUsername
           modalBool={modalUsername}

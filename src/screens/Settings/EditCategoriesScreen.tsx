@@ -14,13 +14,15 @@ import DropDownPicker, {
 import {categoryValues} from '../../utils/settings';
 import FormError from '..//../components/Erorrs/FormError';
 import {useNavigation} from '@react-navigation/native';
+import ModalConfirmDeleteCategory from '../../components/Modals/ModalConfirmDeleteCategory';
 
 function EditCategoriesScreen() {
   useNavigation();
   const {categories, editCategory, loading, addCategory} = usePhotosStore();
   const [categoryValue, setCategoryValue] = useState(categoryValues.default);
   const [selectedItem, setSelectedItem] = useState<ItemType<ValueType>>();
-  const [editOpen, setEditOpen] = useState<boolean>(false);
+  const [editCurrentCategory, setEditCurrentCategory] =
+    useState<boolean>(false);
   const [open, setOpen] = useState(false);
   const [categoryAlreadyExists, setCategoryAlreadyExists] =
     useState<boolean>(false);
@@ -134,17 +136,17 @@ function EditCategoriesScreen() {
                       setValue={setCategoryValue}
                       onSelectItem={item => {
                         if (item.value === '+ Add New Category') {
-                          setEditOpen(false);
+                          setEditCurrentCategory(false);
                           setAddNewCategory(true);
                         } else {
                           setAddNewCategory(false);
                           setSelectedItem(item);
-                          setEditOpen(true);
+                          setEditCurrentCategory(true);
                         }
                       }}
                     />
                   </View>
-                  {editOpen && (
+                  {editCurrentCategory && (
                     <>
                       <InputForm
                         label="Edit Category"
@@ -195,7 +197,7 @@ function EditCategoriesScreen() {
                       <Text style={styles.error}>Category already exists</Text>
                     </View>
                   )}
-                  {(addNewCategory || editOpen) && (
+                  {(addNewCategory || editCurrentCategory) && (
                     <>
                       <MainButton
                         style={{marginTop: 30}}
@@ -206,27 +208,34 @@ function EditCategoriesScreen() {
                         disabled={loading}
                         spinner={loading}
                       />
-                      {editOpen && (
+                      {editCurrentCategory && (
                         <MainButton
                           style={{marginTop: 10}}
                           onPress={() => {
-                            handleSubmit();
+                            modalConfirmOpen();
                           }}
                           text="Delete Category"
                           disabled={loading}
                           spinner={loading}
                         />
                       )}
+                      <ModalConfirmDeleteCategory
+                        modalBool={modalConfirm}
+                        modalConfirmClose={modalConfirmClose}
+                        user={user}
+                        category={selectedItem!.value as string}
+                        setEditCurrentCategory={setEditCurrentCategory}
+                      />
                     </>
                   )}
-                  {(addNewCategory || editOpen) && (
+                  {(addNewCategory || editCurrentCategory) && (
                     <MainButton
                       style={{marginTop: 10}}
                       onPress={() => {
                         handleReset();
                         setCategoryAlreadyExists(false);
                         setAddNewCategory(false);
-                        setEditOpen(false);
+                        setEditCurrentCategory(false);
                         setSelectedItem({});
                         setCategoryValue(categoryValues.default);
                       }}

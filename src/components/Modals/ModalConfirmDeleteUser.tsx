@@ -17,7 +17,7 @@ interface Props {
   modalClose: () => void;
 }
 
-function ModalConfirm(props: Props) {
+function ModalConfirmDeleteUser(props: Props) {
   const {modalBool, modalClose} = props;
   const {deleteUser, loading, errorAccount} = useUserStore();
   return (
@@ -74,4 +74,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModalConfirm;
+export default ModalConfirmDeleteUser;

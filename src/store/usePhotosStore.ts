@@ -13,7 +13,6 @@ import Geolocation, {
 } from 'react-native-geolocation-service';
 import {PhotosParamList} from '../stacks/Photos/PhotosParamList';
 import auth from '@react-native-firebase/auth';
-import PhotosListScreen from '../screens/Photos/PhotosListScreen';
 
 export type PhotoType = {
   id: string;
@@ -71,14 +70,20 @@ export interface PhotoState {
       title?: string;
       description?: string;
     },
-    modalClose: () => void,
-    modalConfirmClose: () => void,
-    navigation: NativeStackNavigationProp<PhotosParamList>,
+    modalClose?: () => void,
+    modalConfirmClose?: () => void,
+    navigation?: NativeStackNavigationProp<PhotosParamList>,
   ) => void;
   fetchCategories: (userId: string) => void;
   addCategory: (user: User, category: string) => void;
   editCategory: (user: User, category: string, updatedCategory: string) => void;
-  deleteCategory: (user: User, category: string) => void;
+  deleteCategory: (
+    user: User,
+    category: string,
+    deletePhoto: (input: {id: string; category: string; ref: string}) => void,
+    modalConfirmClose: () => void,
+    setEditCurrentCategory: Dispatch<SetStateAction<boolean>>,
+  ) => void;
 }
 
 const initialState = {
@@ -321,7 +326,13 @@ const usePhotosStore = create<PhotoState>(set => ({
     }
   },
 
-  deleteCategory: async (user: User, category: string) => {
+  deleteCategory: async (
+    user,
+    category,
+    deletePhoto,
+    modalConfirmClose,
+    setEditCurrentCategory,
+  ) => {
     set(state => ({...state, loading: true}));
     try {
       const photos = usePhotosStore.getState().photos;
@@ -347,24 +358,25 @@ const usePhotosStore = create<PhotoState>(set => ({
         });
         await Promise.all(
           photosToDelete.map(item => {
-            return firestore()
-              .collection('Users')
-              .doc(user.uid)
-              .collection('Photos')
-              .doc(item.id)
-              .delete();
+            return deletePhoto(item);
           }),
         );
 
-        // Remove category from category array and update state
+        // Remove category from category array and photo from photos and update state
         const updatedCategories = categories.filter(item => {
           return item !== category;
+        });
+        const updatedPhotos = photos.filter(item => {
+          return item.category !== category;
         });
         set(state => ({
           ...state,
           categories: updatedCategories,
+          photos: updatedPhotos,
           loading: false,
         }));
+        setEditCurrentCategory(false);
+        modalConfirmClose();
       } else {
         return;
       }
@@ -542,9 +554,9 @@ const usePhotosStore = create<PhotoState>(set => ({
         photos: [...removeOldPhoto(state)],
         upLoading: false,
       }));
-      modalClose();
-      modalConfirmClose();
-      navigation.goBack();
+      modalClose && modalClose();
+      modalConfirmClose && modalConfirmClose();
+      navigation && navigation.goBack();
     } catch (error) {
       console.log('Delete error: ', error);
       set(state => ({
