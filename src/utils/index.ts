@@ -170,7 +170,7 @@ export const handleSelectPicture = async (
       console.log('ImagePicker Error Message: ', response.errorMessage);
     } else {
       // Get the location of the image
-      Geolocation.getCurrentPosition(
+      await Geolocation.getCurrentPosition(
         (position: GeoPosition) => {
           setImageResponse(response);
           setImageLocation([
@@ -182,7 +182,16 @@ export const handleSelectPicture = async (
         error => {
           console.log(error.code, error.message);
         },
-        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+        {
+          accuracy: {
+            android: 'high',
+            ios: 'best',
+          },
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 10000,
+          distanceFilter: 0,
+        },
       );
     }
   });

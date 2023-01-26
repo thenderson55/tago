@@ -135,7 +135,7 @@ function ModalInfo(props: Props) {
                   category: values.newCategory || categoryValue,
                   location,
                 };
-
+                // FIXME: Accidentally adding "+ Add New Category" to the db
                 addPhoto(
                   user,
                   imageResponse,

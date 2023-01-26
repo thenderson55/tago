@@ -54,6 +54,7 @@ const MapScreen = () => {
   const {photos} = usePhotosStore();
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
   const [infoModal, setInfoModal] = useState(false);
+  // FIXME: Flickering imagaes/avation on map
   const infoModalClose = () => {
     setInfoModal(false);
   };
@@ -316,6 +317,7 @@ const MapScreen = () => {
         <>
           <MapMain
             mapRef={mapRef}
+            mapType={mapType}
             setCurrentRegion={setCurrentRegion}
             location={[location[0], location[1]]}>
             <Marker
@@ -362,6 +364,7 @@ const MapScreen = () => {
         <>
           <MapMain
             mapRef={mapRef}
+            mapType={mapType}
             setCurrentRegion={setCurrentRegion}
             location={[location[0], location[1]]}>
             <Marker
