@@ -8,7 +8,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import MapView, {Marker, Region} from 'react-native-maps';
+import MapView, {MapType, Marker, Region} from 'react-native-maps';
 //@ts-ignore
 import {GOOGLE_MAPS_API_KEY} from '@env';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
@@ -44,6 +44,7 @@ const MapScreen = () => {
   const [directions, setDirections] = useState<boolean>(false);
   const [distance, setDistance] = useState<number>(0);
   const [location, setLocation] = useState<number[]>();
+  const [mapType, setMapType] = useState<MapType>('standard');
   const [imageLocation, setImageLocation] = useState<number[]>();
   const [duration, setDuration] = useState<number>(0);
   const [currentRegion, setCurrentRegion] = useState<Region>({} as Region);
@@ -258,6 +259,7 @@ const MapScreen = () => {
           <MapMain
             mapRef={mapRef}
             setCurrentRegion={setCurrentRegion}
+            mapType={mapType}
             location={[photos[0].location[0], photos[0].location[1]]}>
             <Marker
               coordinate={{
@@ -383,6 +385,21 @@ const MapScreen = () => {
           />
         </View>
       )}
+      <View style={styles.mapTypeButton}>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            mapType === 'standard'
+              ? setMapType('satellite')
+              : setMapType('standard');
+          }}>
+          <Ionicons
+            name={mapType === 'satellite' ? 'earth' : 'trail-sign-outline'}
+            size={50}
+            color={theme.colors.black}
+          />
+        </TouchableOpacity>
+      </View>
       <View style={styles.centerButton}>
         <TouchableOpacity activeOpacity={1} onPress={() => centerToLocation()}>
           <Ionicons
@@ -392,6 +409,7 @@ const MapScreen = () => {
           />
         </TouchableOpacity>
       </View>
+
       <View style={styles.cameraButton}>
         <TouchableOpacity
           activeOpacity={1}
@@ -434,6 +452,15 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     bottom: '7%',
+    left: '7%',
+    alignSelf: 'flex-start',
+    // bottom: '7%',
+    // right: '7%',
+    // alignSelf: 'flex-end',
+  },
+  mapTypeButton: {
+    position: 'absolute',
+    bottom: '27%',
     left: '7%',
     alignSelf: 'flex-start',
     // bottom: '7%',

@@ -1,23 +1,25 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
-import MapView, {PROVIDER_GOOGLE, Region} from 'react-native-maps';
+import MapView, {MapType, PROVIDER_GOOGLE, Region} from 'react-native-maps';
 import {initialMapValues} from '../../utils/settings';
 
 type Props = {
   children: React.ReactNode;
   location: number[];
   mapRef: React.RefObject<MapView>;
+  mapType: MapType;
   setCurrentRegion: (regon: Region) => void;
 };
 
 function Map(props: Props) {
-  const {children, location, mapRef, setCurrentRegion} = props;
+  const {children, location, mapRef, setCurrentRegion, mapType} = props;
   return (
     <MapView
       ref={mapRef}
       onRegionChangeComplete={region => {
         setCurrentRegion(region);
       }}
+      mapType={mapType}
       // mapPadding={{
       //   top: 50,
       //   right: 0,
