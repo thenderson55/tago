@@ -274,18 +274,29 @@ const MapScreen = () => {
               }}
             />
             <MapMarker
-              item={route.params.photo || photos[0]}
-              traceRoute={() =>
-                traceRoute(route.params?.photo || photos[0], location)
-              }
+              item={photos[0]}
+              traceRoute={() => traceRoute(photos[0], location)}
               index={-1}
               onPress={() => {
                 if (Platform.OS === 'ios') {
-                  centerToPin(route.params?.photo || photos[0], currentRegion);
+                  centerToPin(photos[0], currentRegion);
                   setDirections(true);
                 }
               }}
             />
+            {route.params.photo && (
+              <MapMarker
+                item={route.params.photo}
+                traceRoute={() => traceRoute(route.params?.photo!, location)}
+                index={-1}
+                onPress={() => {
+                  if (Platform.OS === 'ios') {
+                    centerToPin(route.params?.photo!, currentRegion);
+                    setDirections(true);
+                  }
+                }}
+              />
+            )}
             {photos?.slice(1).map((item, index) => {
               return (
                 <MapMarker
