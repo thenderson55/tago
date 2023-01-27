@@ -13,6 +13,7 @@ import Geolocation, {
 } from 'react-native-geolocation-service';
 import {PhotosParamList} from '../stacks/Photos/PhotosParamList';
 import auth from '@react-native-firebase/auth';
+import {MapType} from 'react-native-maps';
 
 export type PhotoType = {
   id: string;
@@ -39,9 +40,11 @@ export interface PhotoState {
   transferProgress: number;
   error: string;
   geoError: GeoError;
+  mapType: MapType;
   fetchPhotos: (userId: string) => void;
   fetchPhoto: (id: number) => void;
   getCurrentLocation: () => void;
+  setMapType: (mapType: MapType) => void;
   addPhoto: (
     user: User,
     response: ImagePickerResponse,
@@ -99,6 +102,7 @@ const initialState = {
   upLoading: false,
   error: '',
   geoError: {} as GeoError,
+  mapType: 'standard' as MapType,
   transferProgress: 0,
 };
 
@@ -110,6 +114,7 @@ const usePhotosStore = create<PhotoState>(set => ({
   upLoading: initialState.upLoading,
   error: initialState.error,
   geoError: initialState.geoError,
+  mapType: initialState.mapType,
   transferProgress: initialState.transferProgress,
   // transferFinished: initialState.transferFinished,
 
@@ -160,6 +165,17 @@ const usePhotosStore = create<PhotoState>(set => ({
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
+  },
+
+  setMapType: mapType => {
+    try {
+      set(state => ({...state, mapType}));
+    } catch (error: any) {
+      set(state => ({
+        ...state,
+        error: error,
+      }));
+    }
   },
 
   fetchPhoto: async id => {

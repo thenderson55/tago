@@ -35,11 +35,11 @@ function PhotosListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight,
+    // marginTop: StatusBar.currentHeight,
     backgroundColor: theme.colors.secondary,
   },
   listContent: {
-    paddingTop: 15,
+    paddingTop: 25,
     paddingBottom: 50,
   },
 });

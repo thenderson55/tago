@@ -406,7 +406,11 @@ const MapScreen = () => {
           <Ionicons
             name={mapType === 'satellite' ? 'earth' : 'trail-sign-outline'}
             size={50}
-            color={theme.colors.black}
+            color={
+              mapType === 'satellite'
+                ? theme.colors.secondary
+                : theme.colors.black
+            }
           />
         </TouchableOpacity>
       </View>
@@ -415,7 +419,11 @@ const MapScreen = () => {
           <Ionicons
             name={'locate-outline'}
             size={50}
-            color={theme.colors.black}
+            color={
+              mapType === 'satellite'
+                ? theme.colors.secondary
+                : theme.colors.black
+            }
           />
         </TouchableOpacity>
       </View>
@@ -433,12 +441,16 @@ const MapScreen = () => {
           <Ionicons
             name={'camera-outline'}
             size={50}
-            color={theme.colors.black}
+            color={
+              mapType === 'satellite'
+                ? theme.colors.secondary
+                : theme.colors.black
+            }
           />
         </TouchableOpacity>
       </View>
       <View style={styles.backButton}>
-        <BackButton map={true} />
+        <BackButton map={true} mapType={mapType} />
       </View>
       {Platform.OS === 'ios' && directions && (
         <TouchableOpacity
