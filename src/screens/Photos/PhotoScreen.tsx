@@ -1,4 +1,5 @@
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useState} from 'react';
 import Moment from 'react-moment';
 import {
@@ -21,6 +22,8 @@ import theme from '../../theme';
 // };
 
 function PhotoScreen() {
+  const navigation: NativeStackNavigationProp<PhotosParamList> =
+    useNavigation();
   const route: RouteProp<PhotosParamList, 'Photo'> = useRoute();
   const {item} = route.params;
   // Need to do this to trigger the rerneder from the update modal and formik
@@ -88,6 +91,21 @@ function PhotoScreen() {
               />
             </TouchableOpacity>
           </View>
+          <View style={styles.mapButton}>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() =>
+                navigation.navigate('Map', {
+                  photo: currentPhoto,
+                })
+              }>
+              <Ionicons
+                name={'enter-outline'}
+                size={50}
+                color={theme.colors.black}
+              />
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       )}
     </View>
@@ -125,6 +143,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: '7%',
     right: '7%',
+  },
+  mapButton: {
+    position: 'absolute',
+    bottom: '7%',
+    left: '7%',
   },
 });
 

@@ -255,13 +255,18 @@ const MapScreen = () => {
           location={imageLocation!}
         />
       )}
-      {route?.params?.newPhoto && photos?.length > 0 && location?.length ? (
+      {(route?.params?.newPhoto || route?.params?.photo) &&
+      photos?.length > 0 &&
+      location?.length ? (
         <>
           <MapMain
             mapRef={mapRef}
             setCurrentRegion={setCurrentRegion}
             mapType={mapType}
-            location={[photos[0].location[0], photos[0].location[1]]}>
+            location={[
+              route.params.photo?.location[0] || photos[0].location[0],
+              route.params.photo?.location[1] || photos[0].location[1],
+            ]}>
             <Marker
               coordinate={{
                 latitude: location[0],
@@ -269,17 +274,19 @@ const MapScreen = () => {
               }}
             />
             <MapMarker
-              item={photos[0]}
-              traceRoute={() => traceRoute(photos[0], location)}
+              item={route.params.photo || photos[0]}
+              traceRoute={() =>
+                traceRoute(route.params?.photo || photos[0], location)
+              }
               index={-1}
               onPress={() => {
                 if (Platform.OS === 'ios') {
-                  centerToPin(photos[0], currentRegion);
+                  centerToPin(route.params?.photo || photos[0], currentRegion);
                   setDirections(true);
                 }
               }}
             />
-            {photos?.map((item, index) => {
+            {photos?.slice(1).map((item, index) => {
               return (
                 <MapMarker
                   index={index}

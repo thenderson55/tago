@@ -110,7 +110,7 @@ function BottomTabs() {
         component={SettingsStack}
         options={{
           headerShown: false,
-          tabBarLabel: 'Settijngs',
+          tabBarLabel: 'Settings',
         }}
       />
     </Tab.Navigator>
