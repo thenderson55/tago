@@ -4,46 +4,66 @@ import React from 'react';
 import Moment from 'react-moment';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import FastImage from 'react-native-fast-image';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {PhotosParamList} from '../../stacks/Photos/PhotosParamList';
 import {PhotoType} from '../../store/usePhotosStore';
 import theme from '../../theme';
 
 function CardPhotoList({item}: {item: PhotoType}) {
-  const navigation: NativeStackNavigationProp<PhotosParamList, 'Photo'> =
+  const navigation: NativeStackNavigationProp<PhotosParamList> =
     useNavigation();
   return (
-    <TouchableOpacity onPress={() => navigation.navigate('Photo', {item})}>
-      <View style={styles.item}>
-        <FastImage
-          style={styles.img}
-          source={{
-            uri: item.url,
-            priority: FastImage.priority.normal,
-          }}
-          resizeMode={FastImage.resizeMode.cover}
-        />
-        <View style={styles.infoContainer}>
-          <Text style={styles.category}>{item.category}</Text>
-          {item.title && (
-            <Text numberOfLines={1} style={styles.title}>
-              {item.title}
-            </Text>
-          )}
-          {item.description && (
-            <Text numberOfLines={4} style={styles.description}>
-              {item.description}
-            </Text>
-          )}
-          <Moment
-            unix
-            style={styles.date}
-            element={Text}
-            date={item.created}
-            format="DD/MM/YYYY"
-          />
-        </View>
-      </View>
-    </TouchableOpacity>
+    <>
+      {item && (
+        <TouchableOpacity onPress={() => navigation.navigate('Photo', {item})}>
+          <View style={styles.item}>
+            <FastImage
+              style={styles.img}
+              source={{
+                uri: item.url,
+                priority: FastImage.priority.normal,
+              }}
+              resizeMode={FastImage.resizeMode.cover}
+            />
+            <View style={styles.infoContainer}>
+              <Text style={styles.category}>{item.category}</Text>
+              {item.title && (
+                <Text numberOfLines={1} style={styles.title}>
+                  {item.title}
+                </Text>
+              )}
+              {item.description && (
+                <Text numberOfLines={4} style={styles.description}>
+                  {item.description}
+                </Text>
+              )}
+              <Moment
+                unix
+                style={styles.date}
+                element={Text}
+                date={item.created}
+                format="DD/MM/YYYY"
+              />
+            </View>
+            <View style={styles.mapButton}>
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={() =>
+                  navigation.navigate('Map', {
+                    photo: item,
+                  })
+                }>
+                <Ionicons
+                  name={'enter-outline'}
+                  size={40}
+                  color={theme.colors.black}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableOpacity>
+      )}
+    </>
   );
 }
 const styles = StyleSheet.create({
@@ -84,6 +104,11 @@ const styles = StyleSheet.create({
     marginRight: 5,
     marginTop: 5,
     color: theme.colors.darkGrey,
+  },
+  mapButton: {
+    position: 'absolute',
+    bottom: '7%',
+    right: '7%',
   },
 });
 

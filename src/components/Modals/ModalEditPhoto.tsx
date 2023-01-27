@@ -137,9 +137,9 @@ function ModalEditPhoto(props: Props) {
                 onSubmit={values => {
                   const input = {
                     id: photo.id,
-                    title: values.title,
-                    description: values.description,
-                    category: values.newCategory || categoryValue,
+                    title: values.title.trim(),
+                    description: values.description.trim(),
+                    category: values.newCategory.trim() || categoryValue,
                   };
 
                   editPhoto(

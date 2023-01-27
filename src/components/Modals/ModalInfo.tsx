@@ -130,9 +130,9 @@ function ModalInfo(props: Props) {
                           'rn_image_picker_lib_temp_',
                           '',
                         ),
-                  title: values.title,
-                  description: values.description,
-                  category: values.newCategory || categoryValue,
+                  title: values.title.trim(),
+                  description: values.description.trim(),
+                  category: values.newCategory.trim() || categoryValue,
                   location,
                 };
                 // FIXME: Accidentally adding "+ Add New Category" to the db
