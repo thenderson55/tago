@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
+  Animated,
   Dimensions,
   StyleSheet,
   Text,
@@ -14,13 +15,26 @@ import usePhotosStore from '../../store/usePhotosStore';
 import useUserStore from '../../store/useUserStore';
 import {handleSelectPicture, requestLocationPermission} from '../../utils';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useFocusEffect} from '@react-navigation/native';
+
+const FADE_IN_IMAGE = 'Fade in image';
+const FADE_OUT = 'Fade out';
 
 function Home() {
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
   const [imageLocation, setImageLocation] = useState<number[]>();
-  const {fetchPhotos, fetchCategories, getCurrentLocation} = usePhotosStore();
+  const [photo, setPhoto] = useState<boolean>(true);
+  const [uri, setUri] = useState<string>();
+  const {fetchPhotos, fetchCategories, getCurrentLocation, randomImage} =
+    usePhotosStore();
   const {user} = useUserStore();
-
+  const containerOpacity = useRef(new Animated.Value(1)).current;
+  const imageOpacity = useRef(new Animated.Value(0)).current;
+  const buttonOpacity = useRef(new Animated.Value(0)).current;
+  console.log('buttonOpacity', buttonOpacity);
+  const [state, setState] = useState<typeof FADE_IN_IMAGE | typeof FADE_OUT>(
+    FADE_IN_IMAGE,
+  );
   const [infoModal, setInfoModal] = useState(false);
   const infoModalClose = () => {
     setInfoModal(false);
@@ -43,6 +57,57 @@ function Home() {
       fetchPhotos(user.uid);
     }
   }, [user?.uid, fetchCategories, fetchPhotos]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (state === FADE_IN_IMAGE) {
+        Animated.timing(containerOpacity, {
+          toValue: 1,
+          // duration: 250, // Fade out duration
+          useNativeDriver: true,
+        }).start();
+        Animated.timing(imageOpacity, {
+          toValue: 1,
+          // duration: 250, // Fade in duration
+          useNativeDriver: true,
+        }).start();
+      }
+    }, [imageOpacity, state, containerOpacity]),
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      Animated.timing(buttonOpacity, {
+        toValue: 0,
+        useNativeDriver: true,
+      }).start();
+      setPhoto(true);
+      setUri(`https://unsplash.it/640/425?/random/?sig=${Math.random()}`);
+      setState(FADE_IN_IMAGE);
+      setTimeout(() => {
+        setState(FADE_OUT);
+      }, 1000);
+    }, [buttonOpacity]),
+  );
+
+  useEffect(() => {
+    if (state === FADE_OUT) {
+      Animated.timing(containerOpacity, {
+        toValue: 0,
+        duration: 400, // Fade out duration
+        delay: 250, // Minimum time the logo will stay visible
+        useNativeDriver: true,
+      }).start(() => {
+        setPhoto(false);
+      });
+      Animated.timing(buttonOpacity, {
+        toValue: 1,
+        duration: 400, // Fade in duration
+        delay: 600,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [containerOpacity, state, buttonOpacity]);
 
   // const listFilesAndDirectories = (
   //   reference: FirebaseStorageTypes.Reference,
@@ -153,9 +218,47 @@ function Home() {
         modalBool={infoModal}
         modalClose={infoModalClose}
         imageResponse={imageResponse!}
-        location={imageLocation}
+        location={imageLocation!}
       />
-      <View>
+      {randomImage ? (
+        <>
+          {photo && (
+            <Animated.View style={{opacity: containerOpacity}}>
+              <Animated.Image
+                source={{
+                  uri: uri,
+                }}
+                fadeDuration={0}
+                onLoad={() => {
+                  setState(FADE_IN_IMAGE);
+                }}
+                style={[styles.image, {opacity: imageOpacity}]}
+                resizeMode="cover"
+              />
+            </Animated.View>
+          )}
+          <Animated.View
+            style={{
+              opacity: buttonOpacity,
+            }}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() =>
+                handleSelectPicture(
+                  setImageResponse,
+                  setImageLocation,
+                  infoModalOpen,
+                )
+              }>
+              <Ionicons
+                name={'camera'}
+                size={100}
+                color={theme.colors.secondary}
+              />
+            </TouchableOpacity>
+          </Animated.View>
+        </>
+      ) : (
         <TouchableOpacity
           style={styles.button}
           onPress={() =>
@@ -167,7 +270,7 @@ function Home() {
           }>
           <Ionicons name={'camera'} size={100} color={theme.colors.secondary} />
         </TouchableOpacity>
-      </View>
+      )}
       {/* <Blob /> */}
     </View>
   );
@@ -178,6 +281,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.secondary,
     alignItems: 'center',
+  },
+  image: {
+    width: 250,
+    height: 250,
+    borderRadius: 125,
+    marginTop: Dimensions.get('window').height * 0.3,
   },
   button: {
     height: 250,

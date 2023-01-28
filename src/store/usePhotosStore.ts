@@ -37,6 +37,7 @@ export interface PhotoState {
   categories: string[];
   loading: boolean;
   upLoading: boolean;
+  randomImage: boolean;
   transferProgress: number;
   error: string;
   geoError: GeoError;
@@ -100,6 +101,7 @@ const initialState = {
   categories: [],
   loading: false,
   upLoading: false,
+  randomImage: false,
   error: '',
   geoError: {} as GeoError,
   mapType: 'standard' as MapType,
@@ -112,6 +114,7 @@ const usePhotosStore = create<PhotoState>(set => ({
   categories: initialState.categories,
   loading: initialState.loading,
   upLoading: initialState.upLoading,
+  randomImage: initialState.randomImage,
   error: initialState.error,
   geoError: initialState.geoError,
   mapType: initialState.mapType,
@@ -170,6 +173,18 @@ const usePhotosStore = create<PhotoState>(set => ({
   setMapType: mapType => {
     try {
       set(state => ({...state, mapType}));
+    } catch (error: any) {
+      set(state => ({
+        ...state,
+        error: error,
+      }));
+    }
+  },
+
+  setRandomImage: () => {
+    const randomBool = usePhotosStore.getState().randomImage;
+    try {
+      set(state => ({...state, randomImage: !randomBool}));
     } catch (error: any) {
       set(state => ({
         ...state,
