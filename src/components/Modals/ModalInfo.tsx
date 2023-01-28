@@ -20,13 +20,13 @@ import usePhotosStore, {PhotoType} from '../../store/usePhotosStore';
 import MainButton from '../Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
 // import {Picker} from '@react-native-picker/picker';
-import DropDownPicker from 'react-native-dropdown-picker';
 import {categoryValues} from '../../utils/settings';
 import FormError from '../Erorrs/FormError';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeParamList} from '../../stacks/Home/HomeParamList';
 import InputTextArea from '../Inputs/InputTextArea';
+import DropDown from '../Selects/DropDown';
 
 interface Props {
   modalBool: boolean;
@@ -167,15 +167,14 @@ function ModalInfo(props: Props) {
                     ))}
                   </Picker> */}
                   <Text style={styles.label}>Category</Text>
-                  <DropDownPicker
-                    style={styles.dropDown}
-                    listMode="SCROLLVIEW"
+                  <DropDown
                     placeholder="Select a Category"
                     open={open}
                     value={categoryValue || categoryValues.default}
                     items={categoryList!}
                     setOpen={setOpen}
                     setValue={setCategoryValue}
+                    onSelect={false}
                     // setItems={handleChange('category')}
                   />
                   {addNewCategory && (

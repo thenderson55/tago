@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 8,
-    marginHorizontal: 16,
+    // marginHorizontal: 16,
     borderRadius: 8,
   },
   img: {

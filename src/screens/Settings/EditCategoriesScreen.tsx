@@ -7,20 +7,21 @@ import InputForm from '../../components/Inputs/InputForm';
 import usePhotosStore from '../../store/usePhotosStore';
 import MainButton from '../../components/Buttons/MainButton';
 import useUserStore from '../../store/useUserStore';
-import DropDownPicker, {
-  ItemType,
-  ValueType,
-} from 'react-native-dropdown-picker';
+import {ItemType, ValueType} from 'react-native-dropdown-picker';
 import {categoryValues} from '../../utils/settings';
 import FormError from '..//../components/Erorrs/FormError';
 import {useNavigation} from '@react-navigation/native';
 import ModalConfirmDeleteCategory from '../../components/Modals/ModalConfirmDeleteCategory';
+import DropDown from '../../components/Selects/DropDown';
 
 function EditCategoriesScreen() {
   useNavigation();
   const {categories, editCategory, loading, addCategory} = usePhotosStore();
   const [categoryValue, setCategoryValue] = useState(categoryValues.default);
-  const [selectedItem, setSelectedItem] = useState<ItemType<ValueType>>();
+  const [selectedItem, setSelectedItem] = useState<ItemType<ValueType>>({
+    label: 'Want To Go',
+    value: categoryValues.default,
+  });
   const [editCurrentCategory, setEditCurrentCategory] =
     useState<boolean>(false);
   const [open, setOpen] = useState(false);
@@ -122,32 +123,17 @@ function EditCategoriesScreen() {
               }) => (
                 <ScrollView>
                   <View style={styles.dropDownWrapper}>
-                    <DropDownPicker
-                      textStyle={{
-                        fontSize: theme.fontSizes.medium,
-                      }}
-                      style={styles.dropDown}
-                      listMode="SCROLLVIEW"
+                    <DropDown
                       placeholder="Select a Category"
                       open={open}
                       value={categoryValue}
                       items={categoryList!}
                       setOpen={setOpen}
                       setValue={setCategoryValue}
-                      onSelectItem={item => {
-                        if (item.value === '+ Add New Category') {
-                          setEditCurrentCategory(false);
-                          setAddNewCategory(true);
-                        } else if (item.value === categoryValues.default) {
-                          setEditCurrentCategory(false);
-                          setAddNewCategory(false);
-                          return;
-                        } else {
-                          setAddNewCategory(false);
-                          setSelectedItem(item);
-                          setEditCurrentCategory(true);
-                        }
-                      }}
+                      onSelect={true}
+                      setEditCurrentCategory={setEditCurrentCategory}
+                      setAddNewCategory={setAddNewCategory}
+                      setSelectedItem={setSelectedItem}
                     />
                   </View>
                   {editCurrentCategory && (
@@ -286,15 +272,6 @@ const styles = StyleSheet.create({
     marginTop: 30,
     zIndex: 10,
     elevation: 10,
-  },
-  dropDown: {
-    backgroundColor: 'white',
-    color: theme.colors.black,
-    borderColor: theme.colors.black,
-    borderWidth: 2,
-    borderRadius: 15,
-    height: theme.sizes.formHeight + 4,
-    fontSize: theme.fontSizes.large,
   },
   modalView: {
     backgroundColor: 'white',
