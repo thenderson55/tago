@@ -6,11 +6,12 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScrollView} from 'native-base';
 import {SettingsParamList} from '../../stacks/Settings/SettingsParamList';
+import usePhotosStore from '../../store/usePhotosStore';
 
 function SettingsScreen() {
   const navigation: NativeStackNavigationProp<SettingsParamList> =
     useNavigation();
-
+  const {setRandomImage, randomImage} = usePhotosStore();
   return (
     <SafeAreaView style={styles.safeView}>
       <ScrollView>
@@ -29,6 +30,10 @@ function SettingsScreen() {
         <MainButton
           text="Support"
           onPress={() => navigation.navigate('Support')}
+        />
+        <MainButton
+          text={randomImage ? 'Hide Random Image' : 'Show Random Image'}
+          onPress={() => setRandomImage()}
         />
       </ScrollView>
     </SafeAreaView>

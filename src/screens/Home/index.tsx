@@ -3,7 +3,6 @@ import {
   Animated,
   Dimensions,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -31,7 +30,7 @@ function Home() {
   const containerOpacity = useRef(new Animated.Value(1)).current;
   const imageOpacity = useRef(new Animated.Value(0)).current;
   const buttonOpacity = useRef(new Animated.Value(0)).current;
-  console.log('buttonOpacity', buttonOpacity);
+
   const [state, setState] = useState<typeof FADE_IN_IMAGE | typeof FADE_OUT>(
     FADE_IN_IMAGE,
   );

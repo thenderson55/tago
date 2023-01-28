@@ -45,6 +45,7 @@ export interface PhotoState {
   fetchPhotos: (userId: string) => void;
   fetchPhoto: (id: number) => void;
   getCurrentLocation: () => void;
+  setRandomImage: () => void;
   setMapType: (mapType: MapType) => void;
   addPhoto: (
     user: User,
@@ -101,7 +102,7 @@ const initialState = {
   categories: [],
   loading: false,
   upLoading: false,
-  randomImage: false,
+  randomImage: true,
   error: '',
   geoError: {} as GeoError,
   mapType: 'standard' as MapType,
