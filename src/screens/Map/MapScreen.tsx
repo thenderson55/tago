@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -61,6 +61,10 @@ const MapScreen = () => {
   const infoModalOpen = () => {
     setInfoModal(true);
   };
+
+  // useEffect(() => {
+  //   setCurrentPhoto(route.params?.photo!);
+  // }, [route.params?.photo]);
 
   useFocusEffect(
     useCallback(() => {
@@ -127,6 +131,8 @@ const MapScreen = () => {
 
   const mapPadding = 50;
   const traceRoute = (item: PhotoType, currentLocation: number[]) => {
+    console.log('"currentLocation"', currentLocation);
+    console.log('"item"', item.location);
     setDirections(!directions);
     setCurrentPhoto(item);
     console.log('TRACE ROUTE');
@@ -273,17 +279,19 @@ const MapScreen = () => {
                 longitude: location[1],
               }}
             />
-            <MapMarker
-              item={photos[0]}
-              traceRoute={() => traceRoute(photos[0], location)}
-              index={-1}
-              onPress={() => {
-                if (Platform.OS === 'ios') {
-                  centerToPin(photos[0], currentRegion);
-                  setDirections(true);
-                }
-              }}
-            />
+            {!route.params.photo && (
+              <MapMarker
+                item={photos[0]}
+                traceRoute={() => traceRoute(photos[0], location)}
+                index={-1}
+                onPress={() => {
+                  if (Platform.OS === 'ios') {
+                    centerToPin(photos[0], currentRegion);
+                    setDirections(true);
+                  }
+                }}
+              />
+            )}
             {route.params.photo && (
               <MapMarker
                 item={route.params.photo}
@@ -318,8 +326,12 @@ const MapScreen = () => {
                   longitude: location[1],
                 }}
                 destination={{
-                  latitude: photos[0].location[0],
-                  longitude: photos[0].location[1],
+                  latitude: route.params.photo?.location[0]
+                    ? route.params.photo.location[0]
+                    : photos[0].location[0],
+                  longitude: route.params.photo?.location[1]
+                    ? route.params.photo.location[1]
+                    : photos[0].location[1],
                 }}
                 apikey={GOOGLE_MAPS_API_KEY}
                 strokeColor={theme.colors.magenta}
@@ -467,8 +479,24 @@ const MapScreen = () => {
         <TouchableOpacity
           style={styles.directionsButton}
           onPress={() => setDirections(false)}>
-          <Text>Distance: {distance.toFixed(2)}</Text>
-          <Text>Duration: {Math.ceil(duration)} min</Text>
+          <Text
+            style={{
+              color:
+                mapType === 'satellite'
+                  ? theme.colors.secondary
+                  : theme.colors.black,
+            }}>
+            Distance: {distance.toFixed(2)}
+          </Text>
+          <Text
+            style={{
+              color:
+                mapType === 'satellite'
+                  ? theme.colors.secondary
+                  : theme.colors.black,
+            }}>
+            Duration: {Math.ceil(duration)} min
+          </Text>
         </TouchableOpacity>
       )}
     </SafeAreaView>
