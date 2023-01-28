@@ -18,10 +18,10 @@ function PhotosStack() {
         name="Photo"
         options={({route}) => ({
           title: route.params.item.title || '(no title)',
-          // headerStyle: {
-          //   backgroundColor: theme.colors.secondary,
-          // },
-          // headerTintColor: theme.colors.white,
+          headerStyle: {
+            backgroundColor: theme.colors.secondary,
+          },
+          headerTintColor: theme.colors.white,
           headerTitleStyle: {
             fontWeight: 'bold',
             fontSize: 20,

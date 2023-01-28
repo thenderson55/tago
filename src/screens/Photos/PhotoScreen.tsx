@@ -70,7 +70,7 @@ function PhotoScreen() {
               </Text>
             )}
             <View style={styles.dateWrapper}>
-              <Text style={styles.text}>Created: </Text>
+              <Text style={styles.text}>Taken on: </Text>
               <Moment
                 unix
                 style={styles.text}
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   },
   scroll: {
     flex: 1,
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.secondary,
     // paddingBottom: 50,
   },
   image: {
@@ -130,6 +130,9 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     padding: 10,
+    backgroundColor: theme.colors.white,
+    borderRadius: 15,
+    margin: 10,
   },
   text: {
     color: theme.colors.black,
