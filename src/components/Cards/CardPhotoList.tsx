@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React from 'react';
+import React, {useState} from 'react';
 import Moment from 'react-moment';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import FastImage from 'react-native-fast-image';
@@ -8,15 +8,24 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {PhotosParamList} from '../../stacks/Photos/PhotosParamList';
 import {PhotoType} from '../../store/usePhotosStore';
 import theme from '../../theme';
+import ImageView from 'react-native-image-viewing';
 
 function CardPhotoList({item}: {item: PhotoType}) {
   const navigation: NativeStackNavigationProp<PhotosParamList> =
     useNavigation();
+
+  const [visible, setIsVisible] = useState(false);
   return (
     <>
+      <ImageView
+        images={[{uri: item.url}]}
+        imageIndex={0}
+        visible={visible}
+        onRequestClose={() => setIsVisible(false)}
+      />
       {item && (
-        <TouchableOpacity onPress={() => navigation.navigate('Photo', {item})}>
-          <View style={styles.item}>
+        <View style={styles.item}>
+          <TouchableOpacity onPress={() => setIsVisible(true)}>
             <FastImage
               style={styles.img}
               source={{
@@ -25,7 +34,12 @@ function CardPhotoList({item}: {item: PhotoType}) {
               }}
               resizeMode={FastImage.resizeMode.cover}
             />
-            <View style={styles.infoContainer}>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.infoContainer}
+            onPress={() => navigation.navigate('Photo', {item})}>
+            <View>
               <Text style={styles.category}>{item.category}</Text>
               {item.title && (
                 <Text numberOfLines={1} style={styles.title}>
@@ -60,8 +74,8 @@ function CardPhotoList({item}: {item: PhotoType}) {
                 />
               </TouchableOpacity>
             </View>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
       )}
     </>
   );
@@ -72,9 +86,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.white,
     height: 150,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     marginVertical: 8,
-    // marginHorizontal: 16,
     borderRadius: 8,
   },
   img: {
@@ -86,7 +98,10 @@ const styles = StyleSheet.create({
   infoContainer: {
     flex: 1,
     flexDirection: 'column',
+    backgroundColor: theme.colors.background,
     padding: 10,
+    borderBottomRightRadius: 8,
+    borderTopRightRadius: 8,
   },
   category: {
     fontSize: theme.fontSizes.medium,
