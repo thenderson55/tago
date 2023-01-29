@@ -16,15 +16,15 @@ function CardPhotoList({item}: {item: PhotoType}) {
 
   const [visible, setIsVisible] = useState(false);
   return (
-    <>
-      <ImageView
-        images={[{uri: item.url}]}
-        imageIndex={0}
-        visible={visible}
-        onRequestClose={() => setIsVisible(false)}
-      />
+    <View style={styles.container}>
       {item && (
         <View style={styles.item}>
+          <ImageView
+            images={[{uri: item.url}]}
+            imageIndex={0}
+            visible={visible}
+            onRequestClose={() => setIsVisible(false)}
+          />
           <TouchableOpacity onPress={() => setIsVisible(true)}>
             <FastImage
               style={styles.img}
@@ -77,28 +77,35 @@ function CardPhotoList({item}: {item: PhotoType}) {
           </TouchableOpacity>
         </View>
       )}
-    </>
+    </View>
   );
 }
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    marginVertical: 8,
+    borderRadius: 8,
+    backgroundColor: theme.colors.white,
+    borderWidth: 2,
+    borderColor: theme.colors.black,
+  },
   item: {
     flex: 1,
     backgroundColor: theme.colors.white,
     height: 150,
     flexDirection: 'row',
-    marginVertical: 8,
     borderRadius: 8,
   },
   img: {
     height: 150,
     width: 150,
-    borderBottomLeftRadius: 8,
-    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 6,
+    borderTopLeftRadius: 6,
   },
   infoContainer: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.white,
     padding: 10,
     borderBottomRightRadius: 8,
     borderTopRightRadius: 8,
