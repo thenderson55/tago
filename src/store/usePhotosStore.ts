@@ -102,7 +102,7 @@ const initialState = {
   categories: [],
   loading: false,
   upLoading: false,
-  randomImage: true,
+  randomImage: false,
   error: '',
   geoError: {} as GeoError,
   mapType: 'standard' as MapType,
