@@ -33,7 +33,6 @@ export type CategoryType = {
 
 export interface PhotoState {
   photos: PhotoType[];
-  currentLocation: number[];
   categories: string[];
   loading: boolean;
   upLoading: boolean;
@@ -44,7 +43,6 @@ export interface PhotoState {
   mapType: MapType;
   fetchPhotos: (userId: string) => void;
   fetchPhoto: (id: number) => void;
-  getCurrentLocation: () => void;
   setRandomImage: () => void;
   setMapType: (mapType: MapType) => void;
   addPhoto: (
@@ -98,7 +96,6 @@ export interface PhotoState {
 
 const initialState = {
   photos: [],
-  currentLocation: [],
   categories: [],
   loading: false,
   upLoading: false,
@@ -111,7 +108,6 @@ const initialState = {
 
 const usePhotosStore = create<PhotoState>(set => ({
   photos: initialState.photos,
-  currentLocation: initialState.currentLocation,
   categories: initialState.categories,
   loading: initialState.loading,
   upLoading: initialState.upLoading,
@@ -143,32 +139,6 @@ const usePhotosStore = create<PhotoState>(set => ({
         error: error,
       }));
     }
-  },
-
-  getCurrentLocation: async () => {
-    Geolocation.getCurrentPosition(
-      (position: GeoPosition) => {
-        // setLocation([position.coords.latitude, position.coords.longitude]);
-        set(state => ({
-          ...state,
-          currentLocation: [
-            position.coords.latitude,
-            position.coords.longitude,
-          ],
-        }));
-        return;
-      },
-      error => {
-        // See error code charts below.
-        console.log(error.code, error.message);
-        set(state => ({
-          ...state,
-          geoError: error,
-        }));
-        return;
-      },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    );
   },
 
   setMapType: mapType => {

@@ -32,15 +32,17 @@ interface Props {
   modalBool: boolean;
   modalClose: () => void;
   imageResponse: ImagePickerResponse;
-  location: number[];
+  // location: number[];
 }
 
 function ModalInfo(props: Props) {
-  const {modalBool, modalClose, imageResponse, location} = props;
+  const {modalBool, modalClose, imageResponse} = props;
   const navigation: NativeStackNavigationProp<HomeParamList> = useNavigation();
 
   const {addCategory, addPhoto, transferProgress, categories, upLoading} =
     usePhotosStore();
+  const {user, userLocation} = useUserStore();
+
   // const [selectedLanguage, setSelectedLanguage] = useState();
   const [open, setOpen] = useState(false);
   const [categoryAlreadyExists, setCategoryAlreadyExists] =
@@ -49,7 +51,6 @@ function ModalInfo(props: Props) {
   const [addNewCategory, setAddNewCategory] = useState(false);
   const [categoryList, setCategoryList] =
     useState<{label: string; value: string}[]>();
-  const {user} = useUserStore();
 
   useEffect(() => {
     // Remove the default "Want To Go" since will add to the top
@@ -133,7 +134,7 @@ function ModalInfo(props: Props) {
                   title: values.title.trim(),
                   description: values.description.trim(),
                   category: values.newCategory.trim() || categoryValue,
-                  location,
+                  location: userLocation,
                 };
                 // FIXME: Accidentally adding "+ Add New Category" to the db
                 addPhoto(

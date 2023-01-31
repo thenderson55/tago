@@ -140,7 +140,7 @@ export const handleSelectPicture = async (
   setImageResponse: (
     value: React.SetStateAction<ImagePickerResponse | undefined>,
   ) => void,
-  setImageLocation: (location: number[]) => void,
+  // setImageLocation: (location: number[]) => void,
   infoModalOpen: () => void,
 ) => {
   const options: CameraOptions = {
@@ -169,30 +169,33 @@ export const handleSelectPicture = async (
     } else if (response.errorMessage) {
       console.log('ImagePicker Error Message: ', response.errorMessage);
     } else {
-      // Get the location of the image
-      await Geolocation.getCurrentPosition(
-        (position: GeoPosition) => {
-          setImageResponse(response);
-          setImageLocation([
-            position.coords.latitude,
-            position.coords.longitude,
-          ]);
-          infoModalOpen();
-        },
-        error => {
-          console.log(error.code, error.message);
-        },
-        {
-          accuracy: {
-            android: 'high',
-            ios: 'best',
-          },
-          enableHighAccuracy: true,
-          timeout: 15000,
-          maximumAge: 10000,
-          distanceFilter: 0,
-        },
-      );
+      setImageResponse(response);
+      infoModalOpen();
+
+      // // Get the location of the image
+      // await Geolocation.getCurrentPosition(
+      //   (position: GeoPosition) => {
+      //     setImageResponse(response);
+      //     setImageLocation([
+      //       position.coords.latitude,
+      //       position.coords.longitude,
+      //     ]);
+      //     infoModalOpen();
+      //   },
+      //   error => {
+      //     console.log(error.code, error.message);
+      //   },
+      //   {
+      //     accuracy: {
+      //       android: 'high',
+      //       ios: 'best',
+      //     },
+      //     enableHighAccuracy: true,
+      //     timeout: 15000,
+      //     maximumAge: 10000,
+      //     distanceFilter: 0,
+      //   },
+      // );
     }
   });
 };

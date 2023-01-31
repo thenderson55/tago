@@ -9,6 +9,7 @@ import storage from '@react-native-firebase/storage';
 
 export interface UserState {
   user: User;
+  userLocation: number[];
   loading: boolean;
   error: string;
   errorAccount: string;
@@ -16,8 +17,8 @@ export interface UserState {
   clearErrors: () => void;
   setTabStatus: (tabStatus: string) => void;
   setUser: (user: User) => void;
+  setUserLocation: (location: number[]) => void;
   addUser: (id: string, username: string) => void;
-  fetchUser: () => void;
   deleteUser: (modalClose: () => void) => void;
   updatePassword: (newPassword: string, modalClose: () => void) => void;
   updateEmail: (newEmail: string, modalClose: () => void) => void;
@@ -26,6 +27,7 @@ export interface UserState {
 
 const initialState = {
   user: {} as User,
+  userLocation: [],
   loading: false,
   error: '',
   errorAccount: '',
@@ -34,12 +36,13 @@ const initialState = {
 
 const useUserStore = create<UserState>(set => ({
   user: initialState.user,
+  userLocation: initialState.userLocation,
   loading: initialState.loading,
   error: initialState.error,
   errorAccount: initialState.errorAccount,
   tabStatus: initialState.tabStatus,
 
-  clearErrors: async () => {
+  clearErrors: () => {
     console.log('Clearing errors');
     set(state => ({
       ...state,
@@ -48,31 +51,20 @@ const useUserStore = create<UserState>(set => ({
     }));
   },
 
-  setUser: async (user: User) => {
+  setUser: (user: User) => {
     set(state => ({...state, user}));
   },
 
-  setTabStatus: async (tabStatus: string) => {
-    set(state => ({...state, tabStatus}));
+  setUserLocation: location => {
+    console.log('setUserLocation', location);
+    set(state => ({
+      ...state,
+      userLocation: location,
+    }));
   },
 
-  fetchUser: async () => {
-    set(state => ({...state, loading: true}));
-    try {
-      const res = await fetch('https://jsonplaceholder.typicode.com/users');
-      const users = await res.json();
-      set(state => ({...state, error: '', users}));
-    } catch (error: any) {
-      set(state => ({
-        ...state,
-        error: error.message,
-      }));
-    } finally {
-      set(state => ({
-        ...state,
-        loading: false,
-      }));
-    }
+  setTabStatus: (tabStatus: string) => {
+    set(state => ({...state, tabStatus}));
   },
 
   // In our example we only need to fetch the users, but you'd probably want to define other methods here

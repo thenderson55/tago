@@ -33,6 +33,7 @@ import {ImagePickerResponse} from 'react-native-image-picker';
 import ModalInfo from '../../components/Modals/ModalInfo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {initialMapValues} from '../../utils/settings';
+import useUserStore from '../../store/useUserStore';
 // https://www.youtube.com/watch?v=jvIQQ4ID2JY
 // https://www.youtube.com/watch?v=4N-8RTeQ1fA&ab_channel=PradipDebnath
 // https://www.codedaily.io/tutorials/Build-a-Map-with-Custom-Animated-Markers-and-Region-Focus-when-Content-is-Scrolled-in-React-Native
@@ -40,12 +41,13 @@ import {initialMapValues} from '../../utils/settings';
 const MapScreen = () => {
   const route: RouteProp<HomeParamList, 'Map'> = useRoute();
   const mapRef = useRef<MapView>(null);
-  // const {newPhoto} = route?.params;
+  const {photos} = usePhotosStore();
+  const {userLocation, setUserLocation} = useUserStore();
   const [directions, setDirections] = useState<boolean>(false);
   const [distance, setDistance] = useState<number>(0);
-  const [location, setLocation] = useState<number[]>();
+  // const [location, setLocation] = useState<number[]>();
   const [mapType, setMapType] = useState<MapType>('standard');
-  const [imageLocation, setImageLocation] = useState<number[]>();
+  // const [imageLocation, setImageLocation] = useState<number[]>();
   const [duration, setDuration] = useState<number>(0);
   const [currentRegion, setCurrentRegion] = useState<Region>({} as Region);
   const [currentPhoto, setCurrentPhoto] = useState<PhotoType>({} as PhotoType);
@@ -55,7 +57,7 @@ const MapScreen = () => {
   ]);
   // const [newPhoto, setNewPhoto] = useState<PlaceType>();
   // const {photos, currentLocation, getCurrentLocation} = usePhotosStore();
-  const {photos} = usePhotosStore();
+
   const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
   const [infoModal, setInfoModal] = useState(false);
   // FIXME: Flickering imagaes/avation on map
@@ -70,60 +72,60 @@ const MapScreen = () => {
   //   setCurrentPhoto(route.params?.photo!);
   // }, [route.params?.photo]);
 
-  useFocusEffect(
-    useCallback(() => {
-      Geolocation.getCurrentPosition(
-        (position: GeoPosition) => {
-          setLocation([position.coords.latitude, position.coords.longitude]);
-        },
-        error => {
-          // See error code charts below.
-          console.log(error.code, error.message);
-          return [0, 0];
-        },
-        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-      );
-      let watchID: number = 0;
-      const watchLocation = async () => {
-        await requestLocationPermission();
-        try {
-          watchID = Geolocation.watchPosition(
-            (position: GeoPosition) => {
-              console.log('Watch Location:', position);
-              setLocation([
-                position.coords.latitude,
-                position.coords.longitude,
-              ]);
-              return;
-            },
-            error => {
-              // See error code charts below.
-              console.log(error.code, error.message);
-              setLocation([]);
-              return;
-            },
-            {
-              enableHighAccuracy: true,
-              interval: 5000,
-              fastestInterval: 5000,
-              distanceFilter: 10,
-            },
-          );
-          // console.log('WATCH ID', watchID);
-        } catch (error) {
-          console.log('Location Watch Error', error);
-        }
-      };
-      watchLocation();
-      // console.log('WATCH ID', watchID);
-      return () => {
-        // FIXME: watchID not being returned in above function
-        // stopObserving works somwtimes but throws yellow box error
-        Geolocation.clearWatch(watchID);
-        Geolocation.stopObserving();
-      };
-    }, []),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     Geolocation.getCurrentPosition(
+  //       (position: GeoPosition) => {
+  //         setLocation([position.coords.latitude, position.coords.longitude]);
+  //       },
+  //       error => {
+  //         // See error code charts below.
+  //         console.log(error.code, error.message);
+  //         return [0, 0];
+  //       },
+  //       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+  //     );
+  //     let watchID: number = 0;
+  //     const watchLocation = async () => {
+  //       await requestLocationPermission();
+  //       try {
+  //         watchID = Geolocation.watchPosition(
+  //           (position: GeoPosition) => {
+  //             console.log('Watch Location:', position);
+  //             setLocation([
+  //               position.coords.latitude,
+  //               position.coords.longitude,
+  //             ]);
+  //             return;
+  //           },
+  //           error => {
+  //             // See error code charts below.
+  //             console.log(error.code, error.message);
+  //             setLocation([]);
+  //             return;
+  //           },
+  //           {
+  //             enableHighAccuracy: true,
+  //             interval: 5000,
+  //             fastestInterval: 5000,
+  //             distanceFilter: 10,
+  //           },
+  //         );
+  //         // console.log('WATCH ID', watchID);
+  //       } catch (error) {
+  //         console.log('Location Watch Error', error);
+  //       }
+  //     };
+  //     watchLocation();
+  //     // console.log('WATCH ID', watchID);
+  //     return () => {
+  //       // FIXME: watchID not being returned in above function
+  //       // stopObserving works somwtimes but throws yellow box error
+  //       Geolocation.clearWatch(watchID);
+  //       Geolocation.stopObserving();
+  //     };
+  //   }, []),
+  // );
 
   const setDistanceAndDuration = (args: any) => {
     // console.log('DISTANCE AND DURATION', args);
@@ -198,7 +200,7 @@ const MapScreen = () => {
           },
           200,
         );
-        setLocation([position.coords.latitude, position.coords.longitude]);
+        setUserLocation([position.coords.latitude, position.coords.longitude]);
       },
       error => {
         // See error code charts below.
@@ -244,17 +246,17 @@ const MapScreen = () => {
   //   Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE;
   return (
     <SafeAreaView style={styles.safeView}>
-      {location?.length && (
+      {userLocation?.length && (
         <ModalInfo
           modalBool={infoModal}
           modalClose={infoModalClose}
           imageResponse={imageResponse!}
-          location={imageLocation!}
+          // location={imageLocation!}
         />
       )}
       {(route?.params?.newPhoto || route?.params?.photo) &&
       photos?.length > 0 &&
-      location?.length ? (
+      userLocation?.length ? (
         <>
           <MapMain
             mapRef={mapRef}
@@ -266,14 +268,14 @@ const MapScreen = () => {
             ]}>
             <Marker
               coordinate={{
-                latitude: location[0],
-                longitude: location[1],
+                latitude: userLocation[0],
+                longitude: userLocation[1],
               }}
             />
             {!route.params.photo && (
               <MapMarker
                 item={photos[0]}
-                traceRoute={() => traceRoute(photos[0], location)}
+                traceRoute={() => traceRoute(photos[0], userLocation)}
                 index={-1}
                 onPress={() => {
                   if (Platform.OS === 'ios') {
@@ -285,7 +287,9 @@ const MapScreen = () => {
             {route.params.photo && (
               <MapMarker
                 item={route.params.photo}
-                traceRoute={() => traceRoute(route.params?.photo!, location)}
+                traceRoute={() =>
+                  traceRoute(route.params?.photo!, userLocation)
+                }
                 index={-1}
                 onPress={() => {
                   if (Platform.OS === 'ios') {
@@ -299,7 +303,7 @@ const MapScreen = () => {
                 <MapMarker
                   index={index}
                   item={item}
-                  traceRoute={() => traceRoute(item, location)}
+                  traceRoute={() => traceRoute(item, userLocation)}
                   onPress={() => {
                     if (Platform.OS === 'ios') {
                       centerToPin(item, currentRegion!);
@@ -328,17 +332,17 @@ const MapScreen = () => {
           </MapMain>
           {/* <SearchInput /> */}
         </>
-      ) : photos?.length > 0 && location?.length ? (
+      ) : photos?.length > 0 && userLocation?.length ? (
         <>
           <MapMain
             mapRef={mapRef}
             mapType={mapType}
             setCurrentRegion={setCurrentRegion}
-            location={[location[0], location[1]]}>
+            location={[userLocation[0], userLocation[1]]}>
             <Marker
               coordinate={{
-                latitude: location[0],
-                longitude: location[1],
+                latitude: userLocation[0],
+                longitude: userLocation[1],
               }}
             />
             {photos.map((item, index) => {
@@ -346,7 +350,7 @@ const MapScreen = () => {
                 <MapMarker
                   index={index}
                   item={item}
-                  traceRoute={() => traceRoute(item, location)}
+                  traceRoute={() => traceRoute(item, userLocation)}
                   onPress={() => {
                     if (Platform.OS === 'ios') {
                       centerToPin(item, currentRegion);
@@ -355,11 +359,11 @@ const MapScreen = () => {
                 />
               );
             })}
-            {directions && currentPhoto && location?.length && (
+            {directions && currentPhoto && userLocation?.length && (
               <MapViewDirections
                 origin={{
-                  latitude: location[0],
-                  longitude: location[1],
+                  latitude: userLocation[0],
+                  longitude: userLocation[1],
                 }}
                 destination={{
                   latitude: currentPhoto.location[0],
@@ -375,17 +379,17 @@ const MapScreen = () => {
           </MapMain>
           {/* <SearchInput /> */}
         </>
-      ) : location?.length ? (
+      ) : userLocation?.length ? (
         <>
           <MapMain
             mapRef={mapRef}
             mapType={mapType}
             setCurrentRegion={setCurrentRegion}
-            location={[location[0], location[1]]}>
+            location={[userLocation[0], userLocation[1]]}>
             <Marker
               coordinate={{
-                latitude: location[0],
-                longitude: location[1],
+                latitude: userLocation[0],
+                longitude: userLocation[1],
               }}
               // pinColor={theme.colors.magenta}
             />
@@ -442,7 +446,7 @@ const MapScreen = () => {
           onPress={() =>
             handleSelectPicture(
               setImageResponse,
-              setImageLocation,
+              // setImageLocation,
               infoModalOpen,
             )
           }>

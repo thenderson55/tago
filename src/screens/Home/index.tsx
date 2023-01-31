@@ -217,7 +217,7 @@ function Home() {
         modalBool={infoModal}
         modalClose={infoModalClose}
         imageResponse={imageResponse!}
-        location={imageLocation!}
+        // location={imageLocation!}
       />
       {randomImage ? (
         <>
@@ -245,7 +245,7 @@ function Home() {
               onPress={() =>
                 handleSelectPicture(
                   setImageResponse,
-                  setImageLocation,
+                  // setImageLocation,
                   infoModalOpen,
                 )
               }>
@@ -263,7 +263,7 @@ function Home() {
           onPress={() =>
             handleSelectPicture(
               setImageResponse,
-              setImageLocation,
+              // setImageLocation,
               infoModalOpen,
             )
           }>

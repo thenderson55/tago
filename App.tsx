@@ -29,6 +29,8 @@ import useUserStore from './src/store/useUserStore';
 import {NativeBaseProvider} from 'native-base';
 import TabScreen from './src/TabScreen';
 import {WithSplashScreen} from './src/screens/SplashScreen';
+import {requestLocationPermission} from './src/utils';
+import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 
 const app = initializeApp(firebaseConfig);
 export const appStorage = getStorage(app);
@@ -41,7 +43,7 @@ GoogleSignin.configure({
 
 const App = () => {
   // const isDarkMode = useColorScheme() === 'dark';
-  const {setUser, user} = useUserStore();
+  const {setUser, user, setUserLocation} = useUserStore();
   const [initializing, setInitializing] = useState(true);
   const [isAppReady, setIsAppReady] = useState(false);
 
@@ -51,7 +53,74 @@ const App = () => {
 
   useEffect(() => {
     setIsAppReady(true);
-  }, []);
+    let watchID: number = 0;
+
+    const getLocation = async () => {
+      await requestLocationPermission();
+
+      Geolocation.getCurrentPosition(
+        (position: GeoPosition) => {
+          setUserLocation([
+            position.coords.latitude,
+            position.coords.longitude,
+          ]);
+        },
+        error => {
+          // See error code charts below.
+          console.log(error.code, error.message);
+          return [0, 0];
+        },
+        {
+          accuracy: {
+            android: 'high',
+            ios: 'best',
+          },
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 10000,
+        },
+      );
+      try {
+        watchID = Geolocation.watchPosition(
+          (position: GeoPosition) => {
+            console.log('Watch Location:', position);
+            setUserLocation([
+              position.coords.latitude,
+              position.coords.longitude,
+            ]);
+            return;
+          },
+          error => {
+            // See error code charts below.
+            console.log(error.code, error.message);
+            setUserLocation([]);
+            return;
+          },
+          {
+            accuracy: {
+              android: 'high',
+              ios: 'best',
+            },
+            enableHighAccuracy: true,
+            interval: 3000,
+            fastestInterval: 3000,
+            distanceFilter: 5,
+          },
+        );
+        // console.log('WATCH ID', watchID);
+      } catch (error) {
+        console.log('Location Watch Error', error);
+      }
+    };
+    getLocation();
+    // console.log('WATCH ID', watchID);
+    return () => {
+      // FIXME: watchID not being returned in above function
+      // stopObserving works somwtimes but throws yellow box error
+      Geolocation.clearWatch(watchID);
+      Geolocation.stopObserving();
+    };
+  }, [setUserLocation]);
 
   // Handle user state changes
   function onAuthStateChanged(currentUser: any) {
