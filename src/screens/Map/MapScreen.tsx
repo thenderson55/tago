@@ -340,13 +340,11 @@ const MapScreen = () => {
               <>
                 <MapMarker
                   item={photos[0]}
-                  traceRoute={() =>
-                    traceRoute(route.params?.photo!, userLocation)
-                  }
+                  traceRoute={() => traceRoute(photos[0], userLocation)}
                   index={-1}
                   onPress={() => {
                     if (Platform.OS === 'ios') {
-                      centerToPin(route.params?.photo!, currentRegion);
+                      centerToPin(photos[0], currentRegion);
                     }
                   }}
                 />
