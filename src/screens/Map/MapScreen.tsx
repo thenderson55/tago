@@ -68,6 +68,18 @@ const MapScreen = () => {
     setInfoModal(true);
   };
 
+  useEffect(() => {
+    // if route.params?.photo is not undefined, filter photos and replece with new photo
+    if (route.params?.photo) {
+      const newPhotos = photos.map(photo => {
+        if (photo.id === route.params?.photo?.id) {
+          return route.params?.photo;
+        }
+        return photo;
+      });
+    }
+  }, [route.params?.photo, photos]);
+
   // useEffect(() => {
   //   setCurrentPhoto(route.params?.photo!);
   // }, [route.params?.photo]);
@@ -244,6 +256,14 @@ const MapScreen = () => {
 
   // const defaultProvider =
   //   Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE;
+
+  // Remove route.params.photo from photos array
+  // so that it doesn't show up twice in the map
+  const filteredPhotos = photos.filter(
+    photo => photo.id !== route.params?.photo?.id,
+  );
+  //FIXME: need to cache images so don't have to fetch them every time when coming from photoList
+
   return (
     <SafeAreaView style={styles.safeView}>
       {userLocation?.length && (
@@ -272,7 +292,7 @@ const MapScreen = () => {
                 longitude: userLocation[1],
               }}
             />
-            {!route.params.photo && (
+            {!route.params && (
               <MapMarker
                 item={photos[0]}
                 traceRoute={() => traceRoute(photos[0], userLocation)}
@@ -285,33 +305,67 @@ const MapScreen = () => {
               />
             )}
             {route.params.photo && (
-              <MapMarker
-                item={route.params.photo}
-                traceRoute={() =>
-                  traceRoute(route.params?.photo!, userLocation)
-                }
-                index={-1}
-                onPress={() => {
-                  if (Platform.OS === 'ios') {
-                    centerToPin(route.params?.photo!, currentRegion);
-                  }
-                }}
-              />
-            )}
-            {photos?.slice(1).map((item, index) => {
-              return (
+              <>
                 <MapMarker
-                  index={index}
-                  item={item}
-                  traceRoute={() => traceRoute(item, userLocation)}
+                  item={route.params.photo}
+                  traceRoute={() =>
+                    traceRoute(route.params?.photo!, userLocation)
+                  }
+                  index={-1}
                   onPress={() => {
                     if (Platform.OS === 'ios') {
-                      centerToPin(item, currentRegion!);
+                      centerToPin(route.params?.photo!, currentRegion);
                     }
                   }}
                 />
-              );
-            })}
+
+                {filteredPhotos.map((item, index) => {
+                  return (
+                    <MapMarker
+                      index={index}
+                      item={item}
+                      traceRoute={() => traceRoute(item, userLocation)}
+                      onPress={() => {
+                        if (Platform.OS === 'ios') {
+                          centerToPin(item, currentRegion!);
+                        }
+                      }}
+                    />
+                  );
+                })}
+              </>
+            )}
+
+            {route.params.newPhoto && (
+              <>
+                <MapMarker
+                  item={photos[0]}
+                  traceRoute={() =>
+                    traceRoute(route.params?.photo!, userLocation)
+                  }
+                  index={-1}
+                  onPress={() => {
+                    if (Platform.OS === 'ios') {
+                      centerToPin(route.params?.photo!, currentRegion);
+                    }
+                  }}
+                />
+                {photos.slice(1).map((item, index) => {
+                  return (
+                    <MapMarker
+                      index={index}
+                      item={item}
+                      traceRoute={() => traceRoute(item, userLocation)}
+                      onPress={() => {
+                        if (Platform.OS === 'ios') {
+                          centerToPin(item, currentRegion!);
+                        }
+                      }}
+                    />
+                  );
+                })}
+              </>
+            )}
             {directions && (
               <MapViewDirections
                 origin={{
