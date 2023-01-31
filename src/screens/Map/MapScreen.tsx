@@ -49,6 +49,10 @@ const MapScreen = () => {
   const [duration, setDuration] = useState<number>(0);
   const [currentRegion, setCurrentRegion] = useState<Region>({} as Region);
   const [currentPhoto, setCurrentPhoto] = useState<PhotoType>({} as PhotoType);
+  const [coordinates, setCoordinates] = useState([
+    {latitude: 0, longitude: 0},
+    {latitude: 0, longitude: 0},
+  ]);
   // const [newPhoto, setNewPhoto] = useState<PlaceType>();
   // const {photos, currentLocation, getCurrentLocation} = usePhotosStore();
   const {photos} = usePhotosStore();
@@ -105,13 +109,13 @@ const MapScreen = () => {
               distanceFilter: 10,
             },
           );
-          console.log('WATCH ID', watchID);
+          // console.log('WATCH ID', watchID);
         } catch (error) {
           console.log('Location Watch Error', error);
         }
       };
       watchLocation();
-      console.log('WATCH ID', watchID);
+      // console.log('WATCH ID', watchID);
       return () => {
         // FIXME: watchID not being returned in above function
         // stopObserving works somwtimes but throws yellow box error
@@ -122,39 +126,65 @@ const MapScreen = () => {
   );
 
   const setDistanceAndDuration = (args: any) => {
-    console.log('DISTANCE AND DURATION', args);
+    // console.log('DISTANCE AND DURATION', args);
     if (args) {
       setDistance(args.distance);
       setDuration(args.duration);
     }
   };
-
   const mapPadding = 50;
   const traceRoute = (item: PhotoType, currentLocation: number[]) => {
     console.log('"currentLocation"', currentLocation);
-    console.log('"item"', item.location);
+    console.log('"item"', item);
     setDirections(!directions);
     setCurrentPhoto(item);
-    console.log('TRACE ROUTE');
-    mapRef.current?.fitToCoordinates(
-      [
-        {latitude: currentLocation[0], longitude: currentLocation[1]},
-        {
-          latitude: item.location[0],
-          longitude: item.location[1],
-        },
-      ],
+    const coords = [
+      {latitude: currentLocation[0], longitude: currentLocation[1]},
       {
-        edgePadding: {
-          top: mapPadding,
-          right: mapPadding,
-          bottom: mapPadding,
-          left: mapPadding,
-        },
-        animated: true,
+        latitude: item.location[0],
+        longitude: item.location[1],
       },
-    );
+    ];
+    setCoordinates(coords);
+    console.log('COORDS', coords);
+    mapRef.current?.fitToCoordinates(coords, {
+      edgePadding: {
+        top: mapPadding,
+        right: mapPadding,
+        bottom: mapPadding,
+        left: mapPadding,
+      },
+      animated: true,
+    });
   };
+  // useEffect(() => {
+  //   const mapPadding = 50;
+  //   const traceRoute = (item: PhotoType, currentLocation: number[]) => {
+  //     console.log('"currentLocation"', currentLocation);
+  //     console.log('"item"', item);
+  //     setDirections(!directions);
+  //     setCurrentPhoto(item);
+  //     const coords = [
+  //       {latitude: currentLocation[0], longitude: currentLocation[1]},
+  //       {
+  //         latitude: item.location[0],
+  //         longitude: item.location[1],
+  //       },
+  //     ];
+  //     setCoordinates(coords);
+  //     console.log('COORDS', coords);
+  //     mapRef.current?.fitToCoordinates(coords, {
+  //       edgePadding: {
+  //         top: mapPadding,
+  //         right: mapPadding,
+  //         bottom: mapPadding,
+  //         left: mapPadding,
+  //       },
+  //       animated: true,
+  //     });
+  //   };
+  //   traceRoute(currentPhoto, location!);
+  // }, [directions, currentPhoto, location]);
 
   const centerToLocation = async () => {
     Geolocation.getCurrentPosition(
@@ -248,7 +278,6 @@ const MapScreen = () => {
                 onPress={() => {
                   if (Platform.OS === 'ios') {
                     centerToPin(photos[0], currentRegion);
-                    setDirections(true);
                   }
                 }}
               />
@@ -261,7 +290,6 @@ const MapScreen = () => {
                 onPress={() => {
                   if (Platform.OS === 'ios') {
                     centerToPin(route.params?.photo!, currentRegion);
-                    setDirections(true);
                   }
                 }}
               />
@@ -283,16 +311,12 @@ const MapScreen = () => {
             {directions && (
               <MapViewDirections
                 origin={{
-                  latitude: location[0],
-                  longitude: location[1],
+                  latitude: coordinates[0].latitude,
+                  longitude: coordinates[0].longitude,
                 }}
                 destination={{
-                  latitude: route.params.photo?.location[0]
-                    ? route.params.photo.location[0]
-                    : photos[0].location[0],
-                  longitude: route.params.photo?.location[1]
-                    ? route.params.photo.location[1]
-                    : photos[0].location[1],
+                  latitude: coordinates[1].latitude,
+                  longitude: coordinates[1].longitude,
                 }}
                 apikey={GOOGLE_MAPS_API_KEY}
                 strokeColor={theme.colors.magenta}
@@ -440,24 +464,33 @@ const MapScreen = () => {
         <TouchableOpacity
           style={styles.directionsButton}
           onPress={() => setDirections(false)}>
-          <Text
-            style={{
-              color:
-                mapType === 'satellite'
-                  ? theme.colors.white
-                  : theme.colors.black,
-            }}>
-            Distance: {distance.toFixed(2)}
-          </Text>
-          <Text
-            style={{
-              color:
-                mapType === 'satellite'
-                  ? theme.colors.white
-                  : theme.colors.black,
-            }}>
-            Duration: {Math.ceil(duration)} min
-          </Text>
+          <View>
+            <Text
+              style={{
+                color:
+                  mapType === 'satellite'
+                    ? theme.colors.white
+                    : theme.colors.black,
+              }}>
+              Distance: {distance.toFixed(2)}
+            </Text>
+            <Text
+              style={{
+                color:
+                  mapType === 'satellite'
+                    ? theme.colors.white
+                    : theme.colors.black,
+              }}>
+              Duration: {Math.ceil(duration)} min
+            </Text>
+          </View>
+          {/* <Ionicons
+            name={'close-circle-outline'}
+            size={25}
+            color={
+              mapType === 'satellite' ? theme.colors.white : theme.colors.black
+            }
+          /> */}
         </TouchableOpacity>
       )}
     </SafeAreaView>
@@ -508,6 +541,7 @@ const styles = StyleSheet.create({
     // alignSelf: 'flex-end',
   },
   directionsButton: {
+    flexDirection: 'row',
     position: 'absolute',
     bottom: '8.2%',
     right: '7%',
