@@ -26,7 +26,6 @@
 <div align="center">
   <h2 align="center">TAGO</h2>
 </div>
-<br/>
 
 <!-- TABLE OF CONTENTS -->
 <!-- <details>
@@ -65,8 +64,6 @@ A hybrid mobile app built with React-Native.
 When walking around a city and you see somewhere interesting where you would like to go someday, just take a quick photo and it it will record it on a map for future reference.
 
 Currently rejected by the Apple App Store with a 4.3 - not unique enough....
-
-<br/>
 
 To run localhost version:
 
